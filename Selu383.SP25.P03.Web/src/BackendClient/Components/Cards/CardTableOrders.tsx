@@ -543,16 +543,16 @@ const CardTableOrders: React.FC<CardTableProps> = ({ color = "light" }) => {
                                     >
                                         {data.Category}
                                     </td>
-                                    <td
-                                        className={`py-2 px-3 font-normal text-base ${index === 0
-                                            ? "border-t-2 border-black"
-                                            : index === rowsToShow.length
-                                                ? "border-y"
-                                                : "border-t"
-                                            } whitespace-nowrap`}
-                                    >
-                                        {data.Company}
-                                    </td>
+                                    {/*<td*/}
+                                    {/*    className={`py-2 px-3 font-normal text-base ${index === 0*/}
+                                    {/*        ? "border-t-2 border-black"*/}
+                                    {/*        : index === rowsToShow.length*/}
+                                    {/*            ? "border-y"*/}
+                                    {/*            : "border-t"*/}
+                                    {/*        } whitespace-nowrap`}*/}
+                                    {/*>*/}
+                                    {/*    {*{data.Company}*/}
+                                    {/*</td>*/}
                                     <td
                                         className={`py-2 px-3 text-base font-normal ${index === 0
                                             ? "border-t-2 border-black"
