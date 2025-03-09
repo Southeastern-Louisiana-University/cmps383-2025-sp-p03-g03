@@ -1,12 +1,10 @@
 import { useState } from "react";
-import reactLogo from "../assets/react.svg";
-import viteLogo from "../assets/vite.svg";
 import novocaine from "../assets/a8ef64aec4eda2ac7ec380354de41544.jpg";
 import dogman from "../assets/dddab7549433592f49b94d5a1514487f.jpg";
 import rulebreakers from "../assets/bda1a61dcfbdec87b99ca7735e97774c.jpg";
-import "./App.css";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Navigation, Pagination } from "swiper/modules";
+import "./App.css";
 import "swiper/css";
 import "swiper/css/navigation";
 import "swiper/css/pagination";
@@ -17,13 +15,21 @@ function App() {
   return (
     <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100 text-gray-900 w-full">
       <Swiper
-        className="w-full md:h-[500px] h-full"
+        className="w-full md:h-[600px] h-full"
         spaceBetween={50}
         slidesPerView={1}
-        navigation
-        pagination={{ clickable: true }}
+        navigation={{
+          nextEl: ".swiper-button-next",
+          prevEl: ".swiper-button-prev",
+        }}
+        pagination={{
+          clickable: true,
+          el: ".swiper-pagination",
+          bulletClass: "swiper-pagination-bullet !bg-green-700",
+          bulletActiveClass: "swiper-pagination-bullet-active !bg-green-700",
+        }}
         modules={[Navigation, Pagination]}
-        loop // Enable infinite loop
+        loop
         onSwiper={(swiper) => console.log(swiper)}
         onSlideChange={() => console.log("slide change")}
       >
@@ -48,39 +54,37 @@ function App() {
             alt="Slide 3"
           />
         </SwiperSlide>
+
+        <div className="swiper-button-next !text-green-700"></div>
+        <div className="swiper-button-prev !text-green-700"></div>
+
+        <div className="swiper-pagination"></div>
       </Swiper>
-
-      <div className="flex space-x-8 mb-38"></div>
-      <h1 className="text-4xl font-bold text-green-600">Vite + React</h1>
-      <h1 className="text-4xl font-bold text-green-600">Vite + React</h1>
-      <h1 className="text-4xl font-bold text-green-600">Vite + React</h1>
-      <h1 className="text-4xl font-bold text-green-600">Vite + React</h1>
-      <h1 className="text-4xl font-bold text-green-600">Vite + React</h1>
-      <h1 className="text-4xl font-bold text-green-600">Vite + React</h1>
-      <h1 className="text-4xl font-bold text-green-600">Vite + React</h1>
-      <h1 className="text-4xl font-bold text-green-600">Vite + React</h1>
-      <h1 className="text-4xl font-bold text-green-600">Vite + React</h1>
-      <h1 className="text-4xl font-bold text-green-600">Vite + React</h1>
-      <h1 className="text-4xl font-bold text-green-600">Vite + React</h1>
-      <h1 className="text-4xl font-bold text-green-600">Vite + React</h1>
-      <h1 className="text-4xl font-bold text-green-600">Vite + React</h1>
-      <h1 className="text-4xl font-bold text-green-600">Vite + React</h1>
-
-      <div className="mt-6 p-6 bg-white shadow-md rounded-lg text-center w-full max-w-lg mx-auto">
-        <button
-          onClick={() => setCount((count) => count + 1)}
-          className="px-6 py-3 text-lg font-semibold bg-green-500 text-white rounded-lg shadow-md hover:bg-green-600 transition"
-        >
-          Count is {count}
-        </button>
-        <p className="mt-4 text-gray-600">
-          Edit <code className="bg-gray-200 px-1 rounded">src/App.tsx</code> and
-          save to test HMR
-        </p>
+      <div className="flex-grow">
+        <div className="flex space-x-8 mb-38"></div>
+        <h1 className="text-4xl font-bold text-green-700">Sample Text</h1>
+        <h1 className="text-4xl font-bold text-green-700">Sample Text</h1>
+        <h1 className="text-4xl font-bold text-green-700">Sample Text</h1>
+        <h1 className="text-4xl font-bold text-green-700">Sample Text</h1>
+        <h1 className="text-4xl font-bold text-green-700">Sample Text</h1>
+        <h1 className="text-4xl font-bold text-green-700">Sample Text</h1>
+        <h1 className="text-4xl font-bold text-green-700">Sample Text</h1>
+        <h1 className="text-4xl font-bold text-green-700">Sample Text</h1>
+        <h1 className="text-4xl font-bold text-green-700">Sample Text</h1>
+        <h1 className="text-4xl font-bold text-green-700">Sample Text</h1>
+        <h1 className="text-4xl font-bold text-green-700">Sample Text</h1>
+        <h1 className="text-4xl font-bold text-green-700">Sample Text</h1>
+        <h1 className="text-4xl font-bold text-green-700">Sample Text</h1>
+        <h1 className="text-4xl font-bold text-green-700">Sample Text</h1>
       </div>
-      <p className="mt-6 text-gray-500">
-        Click on the Vite and React logos to learn more
-      </p>
+
+      <footer>
+        <div className="flex flex-row items-center justify-center min-w-screen bg-green-600 text-white h-full mt-16">
+          <p className="text-xl font-bold mt-8 mb-8">
+            @ 2025 Lion's Den Cinema
+          </p>
+        </div>
+      </footer>
     </div>
   );
 }
