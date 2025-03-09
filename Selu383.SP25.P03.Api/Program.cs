@@ -1,6 +1,7 @@
 
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Scalar.AspNetCore;
 using Selu383.SP25.P03.Api.Data;
 using Selu383.SP25.P03.Api.Features.Users;
 
@@ -66,6 +67,10 @@ namespace Selu383.SP25.P03.Api
                 options.SlidingExpiration = true;
             });
 
+
+            // Add mapper for generic controller
+            builder.Services.AddAutoMapper(typeof(MappingProfile));
+
             var app = builder.Build();
 
             using (var scope = app.Services.CreateScope())
@@ -90,6 +95,10 @@ namespace Selu383.SP25.P03.Api
                .UseEndpoints(x =>
                {
                    x.MapControllers();
+
+                   // Add Scalar API reference
+                   // https://localhost:7027/scalar/
+                   x.MapScalarApiReference();
                });
             app.UseStaticFiles();
 
