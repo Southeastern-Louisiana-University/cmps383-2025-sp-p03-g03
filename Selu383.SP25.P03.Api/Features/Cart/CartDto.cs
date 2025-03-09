@@ -5,6 +5,8 @@ using Selu383.SP25.P03.Api.Controllers;
 namespace Selu383.SP25.P03.Api.Features.Cart
 
 {
+
+
     public class Cart : IEntity
     {
         public int Id { get; set; }
@@ -15,7 +17,7 @@ namespace Selu383.SP25.P03.Api.Features.Cart
         // Include the cart items for a complete view.
         public List<CartItemDto> Items { get; set; }
     }
-    
+
     public class CartDto //shopping cart - holds ticket selections
     {
         public int Id { get; set; }
@@ -34,7 +36,7 @@ namespace Selu383.SP25.P03.Api.Features.Cart
             builder.HasKey(e => e.Id);
             builder.Property(e => e.CreatedAt).IsRequired();
             builder.Property(e => e.UpdatedAt).IsRequired();
-            builder.HasMany(e => e.Items).WithOne().HasForeignKey("CartId");
+            //builder.HasMany(e => e.Items).WithOne().HasForeignKey("CartId");
         }
     }
 }

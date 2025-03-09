@@ -1,6 +1,7 @@
 
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Diagnostics;
 using Scalar.AspNetCore;
 using Selu383.SP25.P03.Api.Data;
 using Selu383.SP25.P03.Api.Features.Users;
@@ -14,8 +15,19 @@ namespace Selu383.SP25.P03.Api
             var builder = WebApplication.CreateBuilder(args);
 
             // Add services to the container.
+            // CJD 03082025
             builder.Services.AddDbContext<DataContext>(options =>
-                options.UseSqlServer(builder.Configuration.GetConnectionString("DataContext") ?? throw new InvalidOperationException("Connection string 'DataContext' not found.")));
+                options.UseSqlServer(builder.Configuration.GetConnectionString("DataContext")
+                ?? throw new InvalidOperationException("Connection string 'DataContext' not found."))
+
+                //.ConfigureWarnings(w => w.Ignore(RelationalEventId.PendingModelChangesWarning))
+                .EnableDetailedErrors()
+                );
+
+
+            // Add mapper for generic controller
+            builder.Services.AddAutoMapper(typeof(MappingProfile));
+
 
             builder.Services.AddControllers();
             // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
@@ -68,15 +80,22 @@ namespace Selu383.SP25.P03.Api
             });
 
 
-            // Add mapper for generic controller
-            builder.Services.AddAutoMapper(typeof(MappingProfile));
+            ///builder.Services.AddAutoMapper(typeof(Program));
+            //builder.Services.AddAutoMapper(MappingProfile);
 
             var app = builder.Build();
 
             using (var scope = app.Services.CreateScope())
             {
                 var db = scope.ServiceProvider.GetRequiredService<DataContext>();
-                await db.Database.MigrateAsync();
+
+                db.Database.EnsureDeleted();
+                System.Threading.Thread.Sleep(60000);
+                db.Database.EnsureCreated();
+
+
+                //await db.Database.MigrateAsync();
+
                 SeedTheaters.Initialize(scope.ServiceProvider);
                 await SeedRoles.Initialize(scope.ServiceProvider);
                 await SeedUsers.Initialize(scope.ServiceProvider);
@@ -113,6 +132,8 @@ namespace Selu383.SP25.P03.Api
             {
                 app.MapFallbackToFile("/index.html");
             }
+
+            
 
             app.Run();
         }

@@ -1,6 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using AutoMapper;
+using Microsoft.AspNetCore.Identity;
+using Selu383.SP25.P03.Api.Features.Users;
 
 namespace Selu383.SP25.P03.Api.Controllers
 {
@@ -19,6 +21,7 @@ namespace Selu383.SP25.P03.Api.Controllers
         private readonly DbContext _context;
         private readonly DbSet<TEntity> _dbSet;
         private readonly IMapper _mapper;
+
 
         public GenericController(DbContext context, IMapper mapper)
         {

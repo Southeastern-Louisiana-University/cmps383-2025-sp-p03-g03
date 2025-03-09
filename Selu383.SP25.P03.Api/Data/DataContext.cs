@@ -4,6 +4,8 @@ using Microsoft.EntityFrameworkCore;
 using Selu383.SP25.P03.Api.Features.Users;
 using Selu383.SP25.P03.Api.Features.Theaters;
 using Selu383.SP25.P03.Api.Features.Cart;
+using System.Reflection.Emit;
+using System.Reflection;
 
 namespace Selu383.SP25.P03.Api.Data
 {
@@ -11,14 +13,17 @@ namespace Selu383.SP25.P03.Api.Data
     {
         public DataContext(DbContextOptions<DataContext> options) : base(options)
         {
+
         }
 
         public DbSet<Theater> Theaters { get; set; }
         public DbSet<Cart> Carts { get; set; }
-        public DbSet<CartItem> CartItems { get; set; }
+        //public DbSet<CartItem> CartItems { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
+            
+            
             base.OnModelCreating(builder);
 
             builder.Entity<UserRole>().HasKey(x => new { x.UserId, x.RoleId });

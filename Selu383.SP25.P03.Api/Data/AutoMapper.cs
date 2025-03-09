@@ -10,6 +10,10 @@ namespace Selu383.SP25.P03.Api.Data
             //Cart
             CreateMap<Cart, CartDto>();
             CreateMap<CartDto, Cart>();
+
+            ////CartItem
+            //CreateMap<CartItem, CartItemDto>();
+            //CreateMap<CartItemDto, CartItem>();
         }
     }
 }
