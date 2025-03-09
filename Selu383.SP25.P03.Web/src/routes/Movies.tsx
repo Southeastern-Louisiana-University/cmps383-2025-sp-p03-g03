@@ -33,7 +33,7 @@ function Movies() {
               alt="dogman"
             />
             <h2 className="text-4xl font-bold text-green-700 text-center">
-              Dogman
+              Dog Man
             </h2>
           </div>
 
