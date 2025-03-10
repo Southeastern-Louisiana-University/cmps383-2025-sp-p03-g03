@@ -1,4 +1,5 @@
 <<<<<<< HEAD
+<<<<<<< HEAD
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Selu383.SP25.P03.Api.Controllers;
@@ -20,16 +21,22 @@ namespace Selu383.SP25.P03.Api.Features.Cart
     {
         public int Id { get; set; }
 =======
+=======
+>>>>>>> d9ade984211b2b251f742811013d3fad56904ff4
 ﻿namespace Selu383.SP25.P03.Api.Features.Cart
 {
     public class CartItemDto //an individual itemin the shopping cart
     {
         public int CartItemId { get; set; }
+<<<<<<< HEAD
+>>>>>>> d9ade984211b2b251f742811013d3fad56904ff4
+=======
 >>>>>>> d9ade984211b2b251f742811013d3fad56904ff4
         public int CartId { get; set; }
         public int ScreeningId { get; set; } // for assigning seats
         public int? SeatId { get; set; }
         public string TicketType { get; set; }
+<<<<<<< HEAD
 <<<<<<< HEAD
         //public decimal Price { get; set; }
         public int Quantity { get; set; }
@@ -53,8 +60,13 @@ namespace Selu383.SP25.P03.Api.Features.Cart
 }
 
 =======
+=======
+>>>>>>> d9ade984211b2b251f742811013d3fad56904ff4
         public decimal Price { get; set; }
         public int Quantity { get; set; }
     }
 }
+<<<<<<< HEAD
+>>>>>>> d9ade984211b2b251f742811013d3fad56904ff4
+=======
 >>>>>>> d9ade984211b2b251f742811013d3fad56904ff4

@@ -1,10 +1,13 @@
-import "./index.css";
+//import "./index.css";
 import App from "./routes/App.tsx";
 import Movies from "./routes/Movies.tsx";
 import * as React from "react";
 import * as ReactDOM from "react-dom/client";
 import { createBrowserRouter, RouterProvider, Outlet } from "react-router-dom";
 import TopBar from "./components/topbar";
+import Admin from "./BackendClient/Components/Layouts/Admin.tsx";
+import Dashboard from "./BackendClient/Components/Views/Admin/Dashboard.tsx";
+import Orders from "./BackendClient/Components/Views/Admin/Orders.tsx";
 
 // Layout component that includes the TopBar and Outlet
 const Layout = () => {
@@ -15,6 +18,17 @@ const Layout = () => {
     </>
   );
 };
+
+// Layout component that includes the TopBar and Outlet
+// const AdminLayout = () => {
+//   return (
+//     <>
+//       {/* <AdminNavbar />
+//       <HeaderStats /> 
+//       <Sidebar /> */}
+//     </>
+//   );
+// };
 
 const router = createBrowserRouter([
   {
@@ -28,9 +42,25 @@ const router = createBrowserRouter([
       {
         path: "/movies",
         element: <Movies />,
-      },
+    },
     ],
   },
+  {
+    path: "/admin",
+    element: <Admin />,
+    children:
+    [
+      {
+      path: "/admin/dashboard",
+      element: <Dashboard />
+      },
+      {
+        path: "/admin/orders",
+        element: <Orders />
+
+      }
+    ]
+  }
 ]);
 
 const rootElement = document.getElementById("root");

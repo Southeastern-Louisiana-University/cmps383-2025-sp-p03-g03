@@ -1,5 +1,6 @@
 import React from "react";
 import UserDropdown from "../Dropdowns/UserDropdown";
+import "../BackendCSS/Backend.css"
 
 const Navbar: React.FC = () => {
     const handleClick = (e: React.MouseEvent<HTMLAnchorElement>): void => {

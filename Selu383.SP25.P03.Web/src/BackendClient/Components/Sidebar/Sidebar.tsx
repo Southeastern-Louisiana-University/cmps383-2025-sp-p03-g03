@@ -3,6 +3,7 @@ import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import NotificationDropdown from "../Dropdowns/NotificationDropdown";
 import UserDropdown from "../Dropdowns/UserDropdown";
+import "../BackendCSS/Backend.css"
 //import UserDropdown from "";
 
 const Sidebar: React.FC = () => {
@@ -145,7 +146,7 @@ const Sidebar: React.FC = () => {
                             </li>
 
                             <li className="items-center">
-                                <Link className="text-blueGray-700 hover:text-blueGray-500 text-xs uppercase py-3 font-bold block" to="/eCommerce/Orders">
+                                <Link className="text-blueGray-700 hover:text-blueGray-500 text-xs uppercase py-3 font-bold block" to="/admin/Orders">
                                     <i className="fas fa-clipboard-list text-blueGray-300 mr-2 text-sm"></i>{" "}
                                     Orders
                                 </Link>
