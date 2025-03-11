@@ -47,7 +47,7 @@ export default function TopBar() {
               Q&A
             </h2>
           </Link>
-          <Link to="/">
+          <Link to="/admin">
             <h2 className="text-2xl text-white transition-transform hover:scale-110 hover:drop-shadow-xl hover:shadow-green-500/50 cursor-pointer">
               Log In/Sign Up
             </h2>
