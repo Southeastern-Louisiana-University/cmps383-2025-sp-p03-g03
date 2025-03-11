@@ -6,7 +6,7 @@ import { Link } from "react-router-dom";
 export default function TopBar() {
   return (
     <Headroom className="topbar" style={{ zIndex: 1000 }}>
-      <nav className="bg-yellow-400 shadow-lg shadow-green-500/50 p-2 flex justify-between items-center">
+      <nav className="bg-yellow-400 shadow-lg! shadow-green-900/50 p-2 flex justify-between items-center ">
         <div className="ml-8 flex space-x-16">
           <Link to="/">
             <img
