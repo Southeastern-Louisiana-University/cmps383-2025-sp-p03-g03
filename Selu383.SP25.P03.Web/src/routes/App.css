@@ -12,11 +12,9 @@ body {
 }
 
 .topbar {
-  z-index: 1000 !important; /* Ensure the Top Bar stays on top */
+  z-index: 1000 !important;
 }
 
 nav {
-  background-color: #fecc01 /*!important; /* Ensure the background color is not overridden */
+  background-color: #fecc01;
 }
-
-

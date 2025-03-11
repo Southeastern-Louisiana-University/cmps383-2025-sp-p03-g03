@@ -2,7 +2,12 @@ import App from "./routes/App.tsx";
 import Movies from "./routes/Movies.tsx";
 import * as React from "react";
 import * as ReactDOM from "react-dom/client";
-import { createBrowserRouter, RouterProvider, Outlet, Navigate } from "react-router-dom";
+import {
+  createBrowserRouter,
+  RouterProvider,
+  Outlet,
+  Navigate,
+} from "react-router-dom";
 import TopBar from "./components/topbar";
 import Admin from "./BackendClient/Components/Layouts/Admin.tsx";
 import Dashboard from "./BackendClient/Components/Views/Admin/Dashboard.tsx";
@@ -24,12 +29,16 @@ const router = createBrowserRouter([
     element: <Layout />,
     children: [
       {
-        path: "",
+        path: "/",
         element: <App />,
       },
       {
-        path: "movies",
+        path: "/movies",
         element: <Movies />,
+      },
+      {
+        path: "/admin",
+        element: <Admin />,
       },
     ],
   },
@@ -38,19 +47,19 @@ const router = createBrowserRouter([
     element: <Admin />,
     children: [
       {
-        index: true,  // This is the default route
-        element: <Navigate to="dashboard" replace />
+        index: true, // This is the default route
+        element: <Navigate to="dashboard" replace />,
       },
       {
         path: "dashboard",
-        element: <Dashboard />
+        element: <Dashboard />,
       },
       {
         path: "products",
-        element: <Products />
+        element: <Products />,
       },
-    ]
-  }
+    ],
+  },
 ]);
 
 const rootElement = document.getElementById("root");
