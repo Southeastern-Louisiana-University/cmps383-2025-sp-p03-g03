@@ -1,145 +1,43 @@
 import React, { useState, useMemo, useEffect } from "react";
 
-
 interface CardTableProps {
     color?: "light" | "dark";
 }
-
-
-// Define the shape of CustomDetails, if needed
-//interface CustomDetail {
-//    Date: string;
-//    Customer: string;
-//    Quantity: number;
-//    TotalAmount: number;
-//}
 
 // Define the shape of each product
 interface Product {
     id: number;
     Category: string;
-    //Company: string;
     Product: string;
     Description: string;
     Price: number;
-    //CustomDetails?: CustomDetail[];
 }
 
 const products: Product[] = [
     {
         id: 1,
         Category: "Tickets",
-        //Company: "Apple",
         Product: "General Admission",
         Description: "Adult Ticket",
         Price: 13,
-        //CustomDetails: [
-        //    {
-        //        Date: "2023-09-05",
-        //        Customer: "John Doe",
-        //        Quantity: 2,
-        //        TotalAmount: 1998,
-        //    },
-        //    {
-        //        Date: "2023-09-04",
-        //        Customer: "Jane Smith",
-        //        Quantity: 1,
-        //        TotalAmount: 999,
-        //    },
-        //],
     },
     {
         id: 2,
         Category: "Tickets",
-        //Company: "Nike",
         Product: "Senior Ticket",
         Description: "Age 60 or older with valid Id",
         Price: 8,
-    //    CustomDetails: [
-    //        {
-    //            Date: "2023-09-05",
-    //            Customer: "Alice Johnson",
-    //            Quantity: 3,
-    //            TotalAmount: 267,
-    //        },
-    //        {
-    //            Date: "2023-09-03",
-    //            Customer: "Bob Brown",
-    //            Quantity: 2,
-    //            TotalAmount: 178,
-    //        },
-    //    ],
     },
     {
         id: 3,
         Category: "Tickets",
-        //Company: "Penguin Books",
         Product: "Child Ticket",
         Description: "Children ages 3 to 11",
         Price: 8,
-        //CustomDetails: [
-        //    {
-        //        Date: "2023-09-02",
-        //        Customer: "Ella Williams",
-        //        Quantity: 5,
-        //        TotalAmount: 60,
-        //    },
-        //],
     },
-    //{
-    //    id: 4,
-    //    Category: "Home Appliances",
-    //    Company: "Samsung",
-    //    Product: "Smart Refrigerator",
-    //    Description: "Refrigerator with smart features and spacious design",
-    //    Price: 14,
-    //    CustomDetails: [
-    //        {
-    //            Date: "2023-09-05",
-    //            Customer: "David Wilson",
-    //            Quantity: 1,
-    //            TotalAmount: 14,
-    //        },
-    //    ],
-    //},
-    //{
-    //    id: 5,
-    //    Category: "Electronics",
-    //    Company: "Sony",
-    //    Product: "PlayStation 5",
-    //    Description: "Next-gen gaming console",
-    //    Price: 499,
-    //    CustomDetails: [
-    //        {
-    //            Date: "2023-09-06",
-    //            Customer: "Sarah Davis",
-    //            Quantity: 1,
-    //            TotalAmount: 499,
-    //        },
-    //    ],
-    //},
-    //// ... rest of the product objects (truncated for brevity)
-    //{
-    //    id: 19,
-    //    Category: "Home Appliances",
-    //    Company: "Cuisinart",
-    //    Product: "Coffee Maker",
-    //    Description: "Programmable coffee maker for coffee lovers",
-    //    Price: 69,
-    //    CustomDetails: [
-    //        {
-    //            Date: "2023-09-21",
-    //            Customer: "Eli Johnson",
-    //            Quantity: 2,
-    //            TotalAmount: 138,
-    //        },
-    //    ],
-    //},
 ];
 
-//React.FC<CardTableProps> = ({ color = "light" })
-
-const CardTableOrders: React.FC<CardTableProps> = ({ color = "light" }) => {
+const CardTableProducts: React.FC<CardTableProps> = ({ color = "light" }) => {
     const [searchValue, setSearchValue] = useState<string>("");
     const [productList, setProductList] = useState<Product[]>(products);
     const [rowsLimit] = useState<number>(5);
@@ -166,7 +64,6 @@ const CardTableOrders: React.FC<CardTableProps> = ({ color = "light" }) => {
             const results = products.filter((product) => {
                 return (
                     product.Category.toLowerCase().includes(lowerKeyword) ||
-                    //product.Company.toLowerCase().includes(lowerKeyword) ||
                     product.Product.toLowerCase().includes(lowerKeyword) ||
                     product.Description.toLowerCase().includes(lowerKeyword) ||
                     product.Price.toString().toLowerCase().includes(lowerKeyword)
@@ -263,7 +160,6 @@ const CardTableOrders: React.FC<CardTableProps> = ({ color = "light" }) => {
     const nextPage = (): void => {
         const startIndex = rowsLimit * (currentPage + 1);
         const endIndex = startIndex + rowsLimit;
-        // Note: If you want next page of the *sorted/filtered* list, slice from productList:
         const newArray = productList.slice(startIndex, endIndex);
         setRowsToShow(newArray);
         setCurrentPage(currentPage + 1);
@@ -303,30 +199,15 @@ const CardTableOrders: React.FC<CardTableProps> = ({ color = "light" }) => {
         setRowsToShow(sortedProducts.slice(0, rowsLimit));
     }, [rowsLimit]);
 
-    const getTableHeaderClass = () => {
-        return `px-6 align-middle border border-solid py-3 text-xs uppercase border-l-0 border-r-0 whitespace-nowrap font-semibold text-left ${color === "light"
-            ? "bg-blueGray-50 text-blueGray-500 border-blueGray-100"
-            : "bg-lightBlue-800 text-lightBlue-300 border-lightBlue-700"
-            }`;
-    };
-
     return (
-        <div className={`relative flex flex-col min-w-0 break-words w-full mb-6 shadow-lg rounded ${color === "light" ? "bg-white" : "bg-lightBlue-900 text-white"
-            }`}>
-
-            {/*<div className="w-full max-w-5xl px-2">*/}
-            {/*    <div>*/}
-            {/*        <h1 className="text-2xl font-medium">Products</h1>*/}
-            {/*    </div>*/}
-
+        <div className={`relative flex flex-col min-w-0 break-words w-full mb-6 shadow-lg rounded ${color === "light" ? "bg-white" : "bg-lightBlue-900 text-white"}`}>
             <div className="rounded-t mb-0 px-4 py-3 border-0">
                 <div className="flex flex-wrap items-center">
                     <div className="relative w-full px-4 max-w-full flex-grow flex-1">
-                        <h3 className={`font-semibold text-lg ${color === "light" ? "text-blueGray-700" : "text-white"
-                            }`}> Orders
+                        <h3 className={`font-semibold text-lg ${color === "light" ? "text-blueGray-700" : "text-white"}`}>
+                            Products
                         </h3>
                     </div>
-
 
                     {/* Search Bar */}
                     <div className="flex justify-end bg-[#222E3A]/[6%] px-2 mt-2 py-2 border-2 border-b-0 border-black">
@@ -368,10 +249,7 @@ const CardTableOrders: React.FC<CardTableProps> = ({ color = "light" }) => {
                             </div>
                         </div>
                     </div>
-
                 </div>
-
-
 
                 {/* Table */}
                 <div className="block w-full overflow-x-auto">
@@ -416,37 +294,6 @@ const CardTableOrders: React.FC<CardTableProps> = ({ color = "light" }) => {
                                             Category
                                         </span>
                                     </div>
-                                </th>
-                                <th className="py-3 px-3 flex items-center text-[#212B36] sm:text-base font-bold whitespace-nowrap group min-w-[157px]">
-                                    <svg
-                                        className={`w-4 h-4 cursor-pointer ${activeColumn.includes("Company")
-                                            ? "text-black"
-                                            : "text-[#BCBDBE] group-hover:text-black rotate-180"
-                                            } ${sortingColumn.includes("Company")
-                                                ? "rotate-180"
-                                                : "rotate-0"
-                                            }`}
-                                        //onClick={() => sortByColumn("Company")}
-                                        xmlns="http://www.w3.org/2000/svg"
-                                        width="24"
-                                        height="24"
-                                        fill="none"
-                                        viewBox="0 0 24 24"
-                                        stroke="currentColor"
-                                    >
-                                        <path
-                                            strokeLinecap="round"
-                                            strokeLinejoin="round"
-                                            strokeWidth="2"
-                                            d="M19 14l-7 7m0 0l-7-7m7 7V3"
-                                        />
-                                    </svg>
-                                    <span
-                                        className="cursor-pointer pl-1"
-                                        //onClick={() => sortByColumn("Company")}
-                                    >
-                                        Company
-                                    </span>
                                 </th>
                                 <th className="py-3 px-3 text-[#212B36] sm:text-base font-bold whitespace-nowrap group min-w-[197px]">
                                     <div className="flex items-center">
@@ -543,16 +390,6 @@ const CardTableOrders: React.FC<CardTableProps> = ({ color = "light" }) => {
                                     >
                                         {data.Category}
                                     </td>
-                                    {/*<td*/}
-                                    {/*    className={`py-2 px-3 font-normal text-base ${index === 0*/}
-                                    {/*        ? "border-t-2 border-black"*/}
-                                    {/*        : index === rowsToShow.length*/}
-                                    {/*            ? "border-y"*/}
-                                    {/*            : "border-t"*/}
-                                    {/*        } whitespace-nowrap`}*/}
-                                    {/*>*/}
-                                    {/*    {*{data.Company}*/}
-                                    {/*</td>*/}
                                     <td
                                         className={`py-2 px-3 text-base font-normal ${index === 0
                                             ? "border-t-2 border-black"
@@ -652,4 +489,4 @@ const CardTableOrders: React.FC<CardTableProps> = ({ color = "light" }) => {
     );
 };
 
-export default CardTableOrders;
+export default CardTableProducts;
