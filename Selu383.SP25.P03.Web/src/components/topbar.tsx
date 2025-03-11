@@ -1,12 +1,12 @@
 import Headroom from "react-headroom";
-import LDTheatreLogo from "../assets/lionsdencinemas.png";
+import LDTheatreLogo from "../assets/lionsdencinemas.svg";
 import "../routes/App.css";
 import { Link } from "react-router-dom";
 
 export default function TopBar() {
   return (
     <Headroom className="topbar" style={{ zIndex: 1000 }}>
-      <nav className="bg-yellow-400 shadow-lg shadow-green-500/50 p-2 flex justify-between items-center">
+      <nav className="bg-yellow-400 shadow-lg! shadow-green-900/50 p-2 flex justify-between items-center ">
         <div className="ml-8 flex space-x-16">
           <Link to="/">
             <img
@@ -47,7 +47,7 @@ export default function TopBar() {
               Q&A
             </h2>
           </Link>
-          <Link to="/">
+          <Link to="/admin">
             <h2 className="text-2xl text-white transition-transform hover:scale-110 hover:drop-shadow-xl hover:shadow-green-500/50 cursor-pointer">
               Log In/Sign Up
             </h2>

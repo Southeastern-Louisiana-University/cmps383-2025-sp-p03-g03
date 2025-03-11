@@ -9,7 +9,7 @@ function Movies() {
     <div className="flex flex-col items-center justify-top min-h-screen bg-gray-100 text-gray-900 w-full">
       <div className="flex-grow w-full">
         <div className="flex justify-center items-center w-full">
-          <h1 className="text-9xl font-bold text-green-700 mt-16">
+          <h1 className="text-9xl! font-bold text-green-700 mt-20 mb-16!">
             NOW PLAYING
           </h1>
         </div>

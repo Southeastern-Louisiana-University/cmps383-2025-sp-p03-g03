@@ -60,26 +60,48 @@ function App() {
 
         <div className="swiper-pagination"></div>
       </Swiper>
-      <div className="flex-grow">
+      <div className="flex-grow justify-center items-center mx-10">
         <div className="flex space-x-8 mb-38"></div>
-        <h1 className="text-4xl font-bold text-green-700">Sample Text</h1>
-        <h1 className="text-4xl font-bold text-green-700">Sample Text</h1>
-        <h1 className="text-4xl font-bold text-green-700">Sample Text</h1>
-        <h1 className="text-4xl font-bold text-green-700">Sample Text</h1>
-        <h1 className="text-4xl font-bold text-green-700">Sample Text</h1>
-        <h1 className="text-4xl font-bold text-green-700">Sample Text</h1>
-        <h1 className="text-4xl font-bold text-green-700">Sample Text</h1>
-        <h1 className="text-4xl font-bold text-green-700">Sample Text</h1>
-        <h1 className="text-4xl font-bold text-green-700">Sample Text</h1>
-        <h1 className="text-4xl font-bold text-green-700">Sample Text</h1>
-        <h1 className="text-4xl font-bold text-green-700">Sample Text</h1>
-        <h1 className="text-4xl font-bold text-green-700">Sample Text</h1>
-        <h1 className="text-4xl font-bold text-green-700">Sample Text</h1>
-        <h1 className="text-4xl font-bold text-green-700">Sample Text</h1>
+        <h1 className="text-4xl text-center font-bold text-green-700">
+          Lorem ipsum dolor sit amet consectetur adipisicing elit. A, maiores
+          ducimus itaque doloremque maxime nam soluta architecto ipsum provident
+          dolorem sed, omnis qui laboriosam, repellendus nulla natus quidem quam
+          unde?
+        </h1>
+        <h1 className="text-4xl text-center font-bold text-green-700">
+          Lorem ipsum dolor sit amet consectetur adipisicing elit. A, maiores
+          ducimus itaque doloremque maxime nam soluta architecto ipsum provident
+          dolorem sed, omnis qui laboriosam, repellendus nulla natus quidem quam
+          unde?
+        </h1>
+        <h1 className="text-4xl text-center font-bold text-green-700">
+          Lorem ipsum dolor sit amet consectetur adipisicing elit. A, maiores
+          ducimus itaque doloremque maxime nam soluta architecto ipsum provident
+          dolorem sed, omnis qui laboriosam, repellendus nulla natus quidem quam
+          unde?
+        </h1>
+        <h1 className="text-4xl text-center font-bold text-green-700">
+          Lorem ipsum dolor sit amet consectetur adipisicing elit. A, maiores
+          ducimus itaque doloremque maxime nam soluta architecto ipsum provident
+          dolorem sed, omnis qui laboriosam, repellendus nulla natus quidem quam
+          unde?
+        </h1>
+        <h1 className="text-4xl text-center font-bold text-green-700">
+          Lorem ipsum dolor sit amet consectetur adipisicing elit. A, maiores
+          ducimus itaque doloremque maxime nam soluta architecto ipsum provident
+          dolorem sed, omnis qui laboriosam, repellendus nulla natus quidem quam
+          unde?
+        </h1>
+        <h1 className="text-4xl text-center font-bold text-green-700">
+          Lorem ipsum dolor sit amet consectetur adipisicing elit. A, maiores
+          ducimus itaque doloremque maxime nam soluta architecto ipsum provident
+          dolorem sed, omnis qui laboriosam, repellendus nulla natus quidem quam
+          unde?
+        </h1>
       </div>
 
-      <footer>
-        <div className="flex flex-row items-center justify-center min-w-screen bg-green-600 text-white h-full mt-16">
+      <footer className="min-w-full">
+        <div className="flex flex-row min-w-full justify-center items-center bg-green-600 text-white h-full mt-16">
           <p className="text-xl font-bold mt-8 mb-8">
             @ 2025 Lion's Den Cinema
           </p>
