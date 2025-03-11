@@ -9,7 +9,7 @@ interface CardTableProps {
 interface Project {
     name: string;
     role: string;
-    unit: string;
+    // unit: string;
     company: string;
 }
 
@@ -18,31 +18,31 @@ const CardUsers: React.FC<CardTableProps> = ({ color = "light" }) => {
         {
             name: "Chad Delatte",
             role: "Admin",
-            unit: "X0479",
+            // unit: "X0479",
             company: "Web Weavers",
         },
         {
             name: "Chris Richard",
             role: "Android Developer",
-            unit: "X0543",
+            // unit: "X0543",
             company: "Web Weavers"
         },
         {
             name: "Cohen Schlicher",
             role: "Frontend Developer",
-            unit: "X0789",
+            // unit: "X0789",
             company: "Web Weavers"
         },
         {
             name: "Meghan Lawrence",
             role: "Frontend Developer",
-            unit: "A7017",
+            // unit: "A7017",
             company: "Web Weavers"
         },
         {
             name: "Peyton Perry",
             role: "Backend Developer",
-            unit: "A7017",
+            // unit: "A7017",
             company: "Web Weavers"
         }
     ];
@@ -70,7 +70,7 @@ const CardUsers: React.FC<CardTableProps> = ({ color = "light" }) => {
                         <tr>
                             <th className={getTableHeaderClass()}>Name</th>
                             <th className={getTableHeaderClass()}>Role</th>
-                            <th className={getTableHeaderClass()}>Unit</th>
+                            {/* <th className={getTableHeaderClass()}>Unit</th> */}
                             <th className={getTableHeaderClass()}>Company</th>
                             <th className={getTableHeaderClass()}></th>
                         </tr>
@@ -82,7 +82,7 @@ const CardUsers: React.FC<CardTableProps> = ({ color = "light" }) => {
                                     <span className={`ml-3 font-bold ${color === "light" ? "text-blueGray-600" : "text-white"}`}>{project.name}</span>
                                 </td>
                                 <td className="text-left border-t-0 px-6 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4">{project.role}</td>
-                                <td className="text-left border-t-0 px-6 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4">{project.unit}</td>
+                                {/* <td className="text-left border-t-0 px-6 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4">{project.unit}</td> */}
                                 <td className="text-left border-t-0 px-6 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4">{project.company}</td>
                                 <td className="border-t-0 px-6 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4 text-right">
                                     <TableDropdown />

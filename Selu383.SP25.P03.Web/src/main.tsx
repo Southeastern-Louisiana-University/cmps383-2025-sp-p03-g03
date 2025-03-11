@@ -7,6 +7,7 @@ import TopBar from "./components/topbar";
 import Admin from "./BackendClient/Components/Layouts/Admin.tsx";
 import Dashboard from "./BackendClient/Components/Views/Admin/Dashboard.tsx";
 import Products from "./BackendClient/Components/Views/Admin/Products.tsx";
+import Users from "./BackendClient/Components/Views/Admin/Users.tsx";
 
 // Layout component that includes the TopBar and Outlet
 const Layout = () => {
@@ -48,6 +49,10 @@ const router = createBrowserRouter([
       {
         path: "products",
         element: <Products />
+      },
+      {
+        path: "users",
+        element: <Users />
       },
     ]
   }

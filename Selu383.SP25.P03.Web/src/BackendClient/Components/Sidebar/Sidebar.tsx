@@ -112,7 +112,7 @@ const Sidebar: React.FC = () => {
                                 </Link>
                             </li>
 
-                            <li className="items-center">
+                            {/* <li className="items-center">
                                 <Link className={getNavLinkClass("/admin/settings")} to="/admin/settings">
                                     <i className={`fas fa-tools mr-2 text-sm ${getIconClass("/admin/settings")}`}></i>{" "}
                                     Settings
@@ -124,7 +124,7 @@ const Sidebar: React.FC = () => {
                                     <i className={`fas fa-table mr-2 text-sm ${getIconClass("/admin/tables")}`}></i>{" "}
                                     Tables
                                 </Link>
-                            </li>
+                            </li> */}
                             
                             <li className="items-center">
                                 <Link className={getNavLinkClass("/admin/users")} to="/admin/users">
@@ -134,7 +134,7 @@ const Sidebar: React.FC = () => {
                             </li>
                         </ul>
 
-                        <hr className="my-4 md:min-w-full" />
+                        {/* <hr className="my-4 md:min-w-full" />
                         <h6 className="md:min-w-full text-blueGray-500 text-xs uppercase font-bold block pt-1 pb-4 no-underline">
                             eCommerce
                         </h6>
@@ -157,9 +157,9 @@ const Sidebar: React.FC = () => {
                         <hr className="my-4 md:min-w-full" />
                         <h6 className="md:min-w-full text-blueGray-500 text-xs uppercase font-bold block pt-1 pb-4 no-underline">
                             Auth Layout Pages
-                        </h6>
+                        </h6> */}
 
-                        <ul className="md:flex-col md:min-w-full flex flex-col list-none md:mb-4">
+                        {/* <ul className="md:flex-col md:min-w-full flex flex-col list-none md:mb-4">
                             <li className="items-center">
                                 <Link className={getNavLinkClass("/auth/login")} to="/auth/login">
                                     <i className={`fas fa-fingerprint mr-2 text-sm ${getIconClass("/auth/login")}`}></i>{" "}
@@ -172,10 +172,10 @@ const Sidebar: React.FC = () => {
                                     <i className={`fas fa-clipboard-list mr-2 text-sm ${getIconClass("/auth/register")}`}></i>{" "}
                                     Register
                                 </Link>
-                            </li>
-                        </ul>
+                            </li> */}
+                        {/* </ul> */}
 
-                        <hr className="my-4 md:min-w-full" />
+                        {/* <hr className="my-4 md:min-w-full" />
                         <h6 className="md:min-w-full text-blueGray-500 text-xs uppercase font-bold block pt-1 pb-4 no-underline">
                             No Layout Pages
                         </h6>
@@ -198,9 +198,9 @@ const Sidebar: React.FC = () => {
                                 >
                                     <i className={`fas fa-user-circle mr-2 text-sm ${getIconClass("/profile")}`}></i>{" "}
                                     Profile Page
-                                </Link>
-                            </li>
-                        </ul>
+                                </Link> */}
+                            {/* </li> */}
+                        {/* </ul> */}
                     </div>
                 </div>
             </nav>
