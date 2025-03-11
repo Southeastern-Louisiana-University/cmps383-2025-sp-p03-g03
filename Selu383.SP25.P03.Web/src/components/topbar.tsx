@@ -1,5 +1,5 @@
 import Headroom from "react-headroom";
-import LDTheatreLogo from "../assets/lionsdencinemas.png";
+import LDTheatreLogo from "../assets/lionsdencinemas.svg";
 import "../routes/App.css";
 import { Link } from "react-router-dom";
 
