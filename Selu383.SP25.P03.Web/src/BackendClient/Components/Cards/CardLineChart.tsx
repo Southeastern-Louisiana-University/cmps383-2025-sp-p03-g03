@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useRef } from "react";
 import {
     Chart as ChartJS,
     CategoryScale,
@@ -23,89 +23,114 @@ ChartJS.register(
 );
 
 const CardLineChart: React.FC = () => {
-    React.useEffect(() => {
-        const options: ChartOptions<'line'> = {
-            maintainAspectRatio: false,
-            responsive: true,
-            plugins: {
-                title: {
-                    display: false,
-                    text: "Sales Charts",
-                    color: "white",
-                },
-                legend: {
-                    position: 'bottom',
-                    align: 'end',
-                    labels: {
-                        color: "white",
-                    },
-                },
-            },
-            interaction: {
-                mode: 'index',
-                intersect: false,
-            },
-            scales: {
-                x: {
-                    ticks: {
-                        color: "rgba(255,255,255,.7)",
-                    },
-                    display: true,
+    // Create a ref to store the chart instance
+    const chartInstanceRef = useRef<ChartJS | null>(null);
+    
+    useEffect(() => {
+        // Function to create or update chart
+        const initChart = () => {
+            // Get the canvas element
+            const ctx = document.getElementById("line-chart") as HTMLCanvasElement;
+            if (!ctx) return;
+            
+            // If there's an existing chart instance, destroy it first
+            if (chartInstanceRef.current) {
+                chartInstanceRef.current.destroy();
+            }
+            
+            const options: ChartOptions<'line'> = {
+                maintainAspectRatio: false,
+                responsive: true,
+                plugins: {
                     title: {
                         display: false,
-                        text: "Month",
+                        text: "Sales Charts",
                         color: "white",
                     },
-                    grid: {
-                        display: false,
-                        color: "rgba(33, 37, 41, 0.3)",
+                    legend: {
+                        position: 'bottom',
+                        align: 'end',
+                        labels: {
+                            color: "white",
+                        },
                     },
                 },
-                y: {
-                    ticks: {
-                        color: "rgba(255,255,255,.7)",
+                interaction: {
+                    mode: 'index',
+                    intersect: false,
+                },
+                scales: {
+                    x: {
+                        ticks: {
+                            color: "rgba(255,255,255,.7)",
+                        },
+                        display: true,
+                        title: {
+                            display: false,
+                            text: "Month",
+                            color: "white",
+                        },
+                        grid: {
+                            display: false,
+                            color: "rgba(33, 37, 41, 0.3)",
+                        },
                     },
-                    display: true,
-                    title: {
-                        display: false,
-                        text: "Value",
-                        color: "white",
-                    },
-                    grid: {
-                        //drawBorder: false,
-                        color: "rgba(255, 255, 255, 0.15)",
+                    y: {
+                        ticks: {
+                            color: "rgba(255,255,255,.7)",
+                        },
+                        display: true,
+                        title: {
+                            display: false,
+                            text: "Value",
+                            color: "white",
+                        },
+                        grid: {
+                            color: "rgba(255, 255, 255, 0.15)",
+                        },
                     },
                 },
-            },
-        };
+            };
 
-        const data: ChartData<'line'> = {
-            labels: ["January", "February", "March", "April", "May", "June", "July"],
-            datasets: [
-                {
-                    label: new Date().getFullYear().toString(),
-                    backgroundColor: "#4c51bf",
-                    borderColor: "#4c51bf",
-                    data: [65, 78, 66, 44, 56, 67, 75],
-                    fill: false,
-                },
-                {
-                    label: (new Date().getFullYear() - 1).toString(),
-                    backgroundColor: "#fff",
-                    borderColor: "#fff",
-                    data: [40, 68, 86, 74, 56, 60, 87],
-                    fill: false,
-                },
-            ],
-        };
+            const data: ChartData<'line'> = {
+                labels: ["January", "February", "March", "April", "May", "June", "July"],
+                datasets: [
+                    {
+                        label: new Date().getFullYear().toString(),
+                        backgroundColor: "#4c51bf",
+                        borderColor: "#4c51bf",
+                        data: [65, 78, 66, 44, 56, 67, 75],
+                        fill: false,
+                    },
+                    {
+                        label: (new Date().getFullYear() - 1).toString(),
+                        backgroundColor: "#fff",
+                        borderColor: "#fff",
+                        data: [40, 68, 86, 74, 56, 60, 87],
+                        fill: false,
+                    },
+                ],
+            };
 
-        const ctx = (document.getElementById("line-chart") as HTMLCanvasElement).getContext("2d")!;
-        new ChartJS(ctx, {
-            type: 'line',
-            data,
-            options
-        });
-    }, []);
+            // Create new chart instance and store it in the ref
+            chartInstanceRef.current = new ChartJS(ctx.getContext("2d")!, {
+                type: 'line',
+                data,
+                options
+            });
+        };
+        
+        // Initialize chart
+        initChart();
+        
+        // Cleanup function to destroy chart when component unmounts
+        return () => {
+            if (chartInstanceRef.current) {
+                chartInstanceRef.current.destroy();
+                chartInstanceRef.current = null;
+            }
+        };
+    }, []); // Empty dependency array means this effect runs once on mount
 
     return (
         <div className="relative flex flex-col min-w-0 break-words w-full mb-6 shadow-lg rounded bg-blueGray-700">
