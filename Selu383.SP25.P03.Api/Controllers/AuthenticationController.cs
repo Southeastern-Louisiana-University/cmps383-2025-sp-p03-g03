@@ -27,6 +27,11 @@ namespace Selu383.SP25.P03.Api.Controllers
         [Route("login")]
         public async Task<ActionResult<UserDto>> Login([FromBody] LoginDto dto)
         {
+            if (string.IsNullOrEmpty(dto.UserName) || string.IsNullOrEmpty(dto.Password))
+            {
+                return BadRequest("Username and password must be provided.");
+            }
+
             var result = await signInManager.PasswordSignInAsync(dto.UserName, dto.Password, false, false);
             if (result.Succeeded)
             {
