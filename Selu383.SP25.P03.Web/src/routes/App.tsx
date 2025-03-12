@@ -1,16 +1,16 @@
-import { useState } from "react";
+//import { useState } from "react";
 import novocaine from "../assets/a8ef64aec4eda2ac7ec380354de41544.jpg";
 import dogman from "../assets/dddab7549433592f49b94d5a1514487f.jpg";
 import rulebreakers from "../assets/bda1a61dcfbdec87b99ca7735e97774c.jpg";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Navigation, Pagination } from "swiper/modules";
 import "./App.css";
-import "swiper/css";
-import "swiper/css/navigation";
-import "swiper/css/pagination";
+import 'swiper/swiper-bundle.css';
+//import "swiper/css/navigation";
+//import "swiper/css/pagination";
 
 function App() {
-  const [count, setCount] = useState(0);
+  //const [count, setCount] = useState(0);
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100 text-gray-900 w-full">
