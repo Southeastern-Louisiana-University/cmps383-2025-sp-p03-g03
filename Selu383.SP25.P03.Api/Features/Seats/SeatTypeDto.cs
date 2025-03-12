@@ -3,6 +3,6 @@
     public class SeatTypeDto
     {
         public int Id { get; set; }
-        public string SeatType { get; set; }
+        public string? SeatType { get; set; }
     }
 }

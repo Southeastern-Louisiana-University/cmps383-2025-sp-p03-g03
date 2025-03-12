@@ -31,7 +31,7 @@ namespace Selu383.SP25.P03.Api.Controllers
         [Authorize]
         public async Task<ActionResult<UserDto>> CreateUser([FromBody] CreateUserDto dto)
         {
-            if (!dto.Roles.Any() || !dto.Roles.All(x => roles.Any(y => x == y.Name)))
+            if (dto.Roles == null || dto.Roles.Length == 0 || !dto.Roles.All(x => roles.Any(y => x == y.Name)))
             {
                 return BadRequest();
             }
@@ -39,9 +39,14 @@ namespace Selu383.SP25.P03.Api.Controllers
             var result = await userManager.CreateAsync(new User { UserName = dto.Username }, dto.Password);
             if (result.Succeeded)
             {
-                await userManager.AddToRolesAsync(await userManager.FindByNameAsync(dto.Username), dto.Roles);
-
                 var user = await userManager.FindByNameAsync(dto.Username);
+                if (user == null)
+                {
+                    return BadRequest();
+                }
+
+                await userManager.AddToRolesAsync(user, dto.Roles);
+
                 return new UserDto
                 {
                     Id = user.Id,
