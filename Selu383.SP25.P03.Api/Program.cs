@@ -90,8 +90,8 @@ namespace Selu383.SP25.P03.Api
                 var db = scope.ServiceProvider.GetRequiredService<DataContext>();
 
                 //db.Database.EnsureDeleted();
-                System.Threading.Thread.Sleep(60000);
-                //db.Database.EnsureCreated();
+                //System.Threading.Thread.Sleep(60000);
+                db.Database.EnsureCreated();
 
 
                 //await db.Database.MigrateAsync();
