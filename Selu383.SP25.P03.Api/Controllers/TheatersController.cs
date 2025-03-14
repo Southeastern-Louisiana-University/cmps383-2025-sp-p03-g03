@@ -81,6 +81,11 @@ namespace Selu383.SP25.P03.Api.Controllers
 
             var currentUser = await userManager.GetUserAsync(User);
 
+            if (currentUser == null)
+            {
+                return Forbid();
+            }
+
             if (!User.IsInRole(UserRoleNames.Admin) && currentUser.Id != dto.ManagerId)
             {
                 return Forbid();
