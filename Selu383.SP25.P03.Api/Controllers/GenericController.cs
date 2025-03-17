@@ -1,8 +1,11 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using AutoMapper;
-using Microsoft.AspNetCore.Identity;
-using Selu383.SP25.P03.Api.Features.Users;
+using System;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace Selu383.SP25.P03.Api.Controllers
 {
@@ -15,18 +18,17 @@ namespace Selu383.SP25.P03.Api.Controllers
     [Route("api/[controller]")]
     [ApiController]
     public class GenericController<TEntity, TDto> : ControllerBase
-        where TEntity : class, IEntity, new()
+        where TEntity : class, IEntity
         where TDto : class
     {
-        private readonly DbContext _context;
-        private readonly DbSet<TEntity> _dbSet;
-        private readonly IMapper _mapper;
-
+        protected readonly DbContext _context;
+        protected readonly DbSet<TEntity> _dbSet;
+        protected readonly IMapper _mapper;
 
         public GenericController(DbContext context, IMapper mapper)
         {
             _context = context ?? throw new ArgumentNullException(nameof(context));
-            _dbSet = _context.Set<TEntity>();
+            _dbSet = context.Set<TEntity>(); // Fixed the assignment syntax
             _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
         }
 
@@ -44,7 +46,6 @@ namespace Selu383.SP25.P03.Api.Controllers
         {
             var entity = await _dbSet.FindAsync(id);
             if (entity == null) return NotFound();
-
             return Ok(_mapper.Map<TDto>(entity));
         }
 
@@ -54,9 +55,22 @@ namespace Selu383.SP25.P03.Api.Controllers
         {
             if (dto == null) return BadRequest("Invalid data.");
 
+            // Map DTO to entity
             var entity = _mapper.Map<TEntity>(dto);
-            _dbSet.Add(entity);
 
+            // Validate required fields
+            var validationResults = new List<ValidationResult>();
+            var validationContext = new ValidationContext(entity);
+            if (!Validator.TryValidateObject(entity, validationContext, validationResults, true))
+            {
+                var errors = validationResults
+                    .Select(vr => new { Field = vr.MemberNames.FirstOrDefault() ?? "Unknown", Message = vr.ErrorMessage })
+                    .ToList();
+
+                return BadRequest(new { Message = "Validation failed", Errors = errors });
+            }
+
+            _dbSet.Add(entity);
             try
             {
                 await _context.SaveChangesAsync();
@@ -65,7 +79,6 @@ namespace Selu383.SP25.P03.Api.Controllers
             {
                 return BadRequest($"Database error: {ex.Message}");
             }
-
             return CreatedAtAction(nameof(GetById), new { id = entity.Id }, _mapper.Map<TDto>(entity));
         }
 
@@ -74,13 +87,25 @@ namespace Selu383.SP25.P03.Api.Controllers
         public virtual async Task<IActionResult> Update(int id, TDto dto)
         {
             if (dto == null || id <= 0) return BadRequest("Invalid data.");
-
             var entity = await _dbSet.FindAsync(id);
             if (entity == null) return NotFound();
 
+            // Map DTO to entity
             _mapper.Map(dto, entity);
-            _context.Entry(entity).State = EntityState.Modified;
 
+            // Validate required fields
+            var validationResults = new List<ValidationResult>();
+            var validationContext = new ValidationContext(entity);
+            if (!Validator.TryValidateObject(entity, validationContext, validationResults, true))
+            {
+                var errors = validationResults
+                    .Select(vr => new { Field = vr.MemberNames.FirstOrDefault() ?? "Unknown", Message = vr.ErrorMessage })
+                    .ToList();
+
+                return BadRequest(new { Message = "Validation failed", Errors = errors });
+            }
+
+            _context.Entry(entity).State = EntityState.Modified;
             try
             {
                 await _context.SaveChangesAsync();
@@ -90,7 +115,6 @@ namespace Selu383.SP25.P03.Api.Controllers
                 if (!await EntityExists(id)) return NotFound();
                 throw;
             }
-
             return NoContent();
         }
 
@@ -100,7 +124,6 @@ namespace Selu383.SP25.P03.Api.Controllers
         {
             var entity = await _dbSet.FindAsync(id);
             if (entity == null) return NotFound();
-
             _dbSet.Remove(entity);
             try
             {
@@ -110,13 +133,12 @@ namespace Selu383.SP25.P03.Api.Controllers
             {
                 return BadRequest($"Database error: {ex.Message}");
             }
-
             return NoContent();
         }
 
-        private async Task<bool> EntityExists(int id)
+        protected virtual async Task<bool> EntityExists(int id)
         {
-            return await _dbSet.FindAsync(id) != null;
+            return await _dbSet.AnyAsync(e => e.Id == id);
         }
     }
 }

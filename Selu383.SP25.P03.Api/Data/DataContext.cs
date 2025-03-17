@@ -4,6 +4,11 @@ using Microsoft.EntityFrameworkCore;
 using Selu383.SP25.P03.Api.Features.Users;
 using Selu383.SP25.P03.Api.Features.Theaters;
 using Selu383.SP25.P03.Api.Features.Cart;
+using Selu383.SP25.P03.Api.Features.Seats;
+using Selu383.SP25.P03.Api.Features.Movies;
+using Selu383.SP25.P03.Api.Features.Products;
+using Selu383.SP25.P03.Api.Features.Promos;
+using Selu383.SP25.P03.Api.Features.Tickets;
 using System.Reflection.Emit;
 using System.Reflection;
 
@@ -16,15 +21,33 @@ namespace Selu383.SP25.P03.Api.Data
 
         }
 
-        public DbSet<Theater> Theaters { get; set; }
         public DbSet<Cart> Carts { get; set; }
-        //public DbSet<CartItem> CartItems { get; set; }
+        public DbSet<CartItem> CartItems { get; set; }
+
+        public DbSet<Movie> Movies { get; set; }
+        public DbSet<MovieSchedule> MovieSchedules { get; set; }
+        public DbSet<MovieRoomScheduleLink> MovieRoomScheduleLinks { get; set; }
+
+        public DbSet<Product> Products { get; set; }
+        public DbSet<ProductPrice> ProductPrices { get; set; }
+
+        public DbSet<Promo> Promos { get; set; }
+        public DbSet<PromoSchedule> PromoSchedules { get; set; }
+
+        public DbSet<Seat> Seats { get; set; }
+        public DbSet<SeatType> SeatTypes { get; set; }
+
+        public DbSet<Theater> Theaters { get; set; }
+        public DbSet<Ticket> Tickets { get; set; }
+
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
             
             
             base.OnModelCreating(builder);
+            builder.ApplyConfigurationsFromAssembly(typeof(DataContext).GetTypeInfo().Assembly);
+
 
             builder.Entity<UserRole>().HasKey(x => new { x.UserId, x.RoleId });
 

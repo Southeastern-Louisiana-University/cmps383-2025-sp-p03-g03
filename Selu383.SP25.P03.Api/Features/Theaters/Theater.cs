@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Selu383.SP25.P03.Api.Features.Theaters
 {
-    public class Theater
+    public class Theater 
     {
         public int Id { get; set; }
         [MaxLength(120)]

@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Microsoft.EntityFrameworkCore;
+using Selu383.SP25.P03.Api.Features.Theaters;
 using Selu383.SP25.P03.Api.Controllers;
-using Selu383.SP25.P03.Api.Features.Promos;
 
 namespace Selu383.SP25.P03.Api.Features.Rooms
 {
@@ -16,6 +16,8 @@ namespace Selu383.SP25.P03.Api.Features.Rooms
         public string? Audio { get; set; }
         public bool IsActive { get; set; }
         public int TimeToClean { get; set; }
+        public int TheaterId { get; set; }
+        public Theater? Theaters { get; set; }
     }
     public class RoomDto
     {
@@ -28,6 +30,7 @@ namespace Selu383.SP25.P03.Api.Features.Rooms
         public string? Audio { get; set; }
         public bool IsActive { get; set; }
         public int TimeToClean { get; set; }
+        public int TheaterId { get; set; }
     }
     public class RoomConfiguration : IEntityTypeConfiguration<Room>
     {
@@ -42,6 +45,11 @@ namespace Selu383.SP25.P03.Api.Features.Rooms
             builder.Property(e => e.Audio).IsRequired();
             builder.Property(e => e.IsActive).IsRequired();
             builder.Property(e => e.TimeToClean).IsRequired();
+            builder.Property(e => e.TheaterId).IsRequired();
+
+            builder.HasOne(e => e.Theaters)
+                .WithMany()
+                .HasForeignKey(e => e.TheaterId);   
 
         }
     }

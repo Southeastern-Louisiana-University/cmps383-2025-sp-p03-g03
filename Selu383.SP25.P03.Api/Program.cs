@@ -79,22 +79,13 @@ namespace Selu383.SP25.P03.Api
                 options.SlidingExpiration = true;
             });
 
-
-            ///builder.Services.AddAutoMapper(typeof(Program));
-            //builder.Services.AddAutoMapper(MappingProfile);
-
             var app = builder.Build();
 
             using (var scope = app.Services.CreateScope())
             {
                 var db = scope.ServiceProvider.GetRequiredService<DataContext>();
 
-                //db.Database.EnsureDeleted();
-                //System.Threading.Thread.Sleep(60000);
-                db.Database.EnsureCreated();
-
-
-                //await db.Database.MigrateAsync();
+                await db.Database.MigrateAsync();
 
                 SeedTheaters.Initialize(scope.ServiceProvider);
                 await SeedRoles.Initialize(scope.ServiceProvider);

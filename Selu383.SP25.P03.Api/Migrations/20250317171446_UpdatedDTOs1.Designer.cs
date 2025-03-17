@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Selu383.SP25.P03.Api.Data;
 
@@ -11,9 +12,11 @@ using Selu383.SP25.P03.Api.Data;
 namespace Selu383.SP25.P03.Api.Migrations
 {
     [DbContext(typeof(DataContext))]
-    partial class DataContextModelSnapshot : ModelSnapshot
+    [Migration("20250317171446_UpdatedDTOs1")]
+    partial class UpdatedDTOs1
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -288,12 +291,6 @@ namespace Selu383.SP25.P03.Api.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("MovieId");
-
-                    b.HasIndex("MovieScheduleId");
-
-                    b.HasIndex("RoomId");
-
                     b.ToTable("MovieRoomScheduleLinks");
                 });
 
@@ -308,16 +305,11 @@ namespace Selu383.SP25.P03.Api.Migrations
                     b.Property<bool>("IsActive")
                         .HasColumnType("bit");
 
-                    b.Property<int>("MovieId")
-                        .HasColumnType("int");
-
                     b.PrimitiveCollection<string>("MovieTimes")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("MovieId");
 
                     b.ToTable("MovieSchedules");
                 });
@@ -433,9 +425,6 @@ namespace Selu383.SP25.P03.Api.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("TheaterId")
-                        .HasColumnType("int");
-
                     b.Property<int>("TimeToClean")
                         .HasColumnType("int");
 
@@ -446,8 +435,6 @@ namespace Selu383.SP25.P03.Api.Migrations
                         .HasColumnType("int");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("TheaterId");
 
                     b.ToTable("Room");
                 });
@@ -718,55 +705,6 @@ namespace Selu383.SP25.P03.Api.Migrations
                         .HasForeignKey("CartId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-                });
-
-            modelBuilder.Entity("Selu383.SP25.P03.Api.Features.Movies.MovieRoomScheduleLink", b =>
-                {
-                    b.HasOne("Selu383.SP25.P03.Api.Features.Movies.Movie", "Movie")
-                        .WithMany()
-                        .HasForeignKey("MovieId")
-                        .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired();
-
-                    b.HasOne("Selu383.SP25.P03.Api.Features.Movies.MovieSchedule", "MovieSchedule")
-                        .WithMany()
-                        .HasForeignKey("MovieScheduleId")
-                        .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired();
-
-                    b.HasOne("Selu383.SP25.P03.Api.Features.Rooms.Room", "Room")
-                        .WithMany()
-                        .HasForeignKey("RoomId")
-                        .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired();
-
-                    b.Navigation("Movie");
-
-                    b.Navigation("MovieSchedule");
-
-                    b.Navigation("Room");
-                });
-
-            modelBuilder.Entity("Selu383.SP25.P03.Api.Features.Movies.MovieSchedule", b =>
-                {
-                    b.HasOne("Selu383.SP25.P03.Api.Features.Movies.Movie", "Movie")
-                        .WithMany()
-                        .HasForeignKey("MovieId")
-                        .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired();
-
-                    b.Navigation("Movie");
-                });
-
-            modelBuilder.Entity("Selu383.SP25.P03.Api.Features.Rooms.Room", b =>
-                {
-                    b.HasOne("Selu383.SP25.P03.Api.Features.Theaters.Theater", "Theaters")
-                        .WithMany()
-                        .HasForeignKey("TheaterId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Theaters");
                 });
 
             modelBuilder.Entity("Selu383.SP25.P03.Api.Features.Theaters.Theater", b =>
