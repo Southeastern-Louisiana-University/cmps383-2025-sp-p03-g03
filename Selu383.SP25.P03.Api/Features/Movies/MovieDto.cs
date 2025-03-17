@@ -11,7 +11,7 @@ namespace Selu383.SP25.P03.Api.Features.Movies
         public string? Description { get; set; }
         public string? Category { get; set; }
         public int Runtime { get; set; }
-        public bool IsActive { get; set; }
+        public bool IsActive { get; set; } = true;
         public string? AgeRating { get; set; }
         public DateTime ReleaseDate { get; set; }
     }
@@ -22,7 +22,7 @@ namespace Selu383.SP25.P03.Api.Features.Movies
         public string? Description { get; set; }
         public string? Category { get; set; }
         public int Runtime { get; set; }
-        public bool IsActive { get; set; }
+        public bool IsActive { get; set; } = true;
         public string? AgeRating { get; set; }
         public DateTime ReleaseDate { get; set; }
     }
@@ -35,7 +35,9 @@ namespace Selu383.SP25.P03.Api.Features.Movies
             builder.Property(x => x.Description).IsRequired();
             builder.Property(x => x.Category).IsRequired();
             builder.Property(x => x.Runtime).IsRequired();
-            builder.Property(x => x.IsActive).IsRequired();
+            builder.Property(x => x.IsActive)
+                .HasDefaultValue(true)
+                .IsRequired();
             builder.Property(x => x.AgeRating).IsRequired();
             builder.Property(x => x.ReleaseDate).IsRequired();
         }

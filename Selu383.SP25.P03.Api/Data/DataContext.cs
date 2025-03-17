@@ -11,6 +11,7 @@ using Selu383.SP25.P03.Api.Features.Promos;
 using Selu383.SP25.P03.Api.Features.Tickets;
 using System.Reflection.Emit;
 using System.Reflection;
+using Selu383.SP25.P03.Api.Features.Rooms;
 
 namespace Selu383.SP25.P03.Api.Data
 {
@@ -33,6 +34,8 @@ namespace Selu383.SP25.P03.Api.Data
 
         public DbSet<Promo> Promos { get; set; }
         public DbSet<PromoSchedule> PromoSchedules { get; set; }
+
+        public DbSet<Room> Rooms { get; set; }
 
         public DbSet<Seat> Seats { get; set; }
         public DbSet<SeatType> SeatTypes { get; set; }

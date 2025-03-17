@@ -15,30 +15,31 @@ namespace Selu383.SP25.P03.Api.Data
                     return;   // DB has been seeded
                 }
                 context.Theaters.AddRange(
-                    new Theater
+                    new ()
                     {
-                        Name = "AMC Palace 10",
-                        Address = "123 Main St, Springfield",
-                        SeatCount = 150
+                        Active = true,
+                        Name = "Lion’s Den Cinemas: New Orleans",
+                        Address1 = "123 Main St",
+                        City = "New Orleans",
+                        State = "LA"
                     },
-                    new Theater
+                    new ()
                     {
-                        Name = "Regal Cinema",
-                        Address = "456 Elm St, Shelbyville",
-                        SeatCount = 200
+                        Active = true,
+                        Name = "Lion’s Den Cinemas: New York",
+                        Address1 = "456 Elm St",
+                        City = "New York",
+                        State = "NY"
                     },
-                    new Theater
+                    new ()
                     {
-                        Name = "Grand Theater",
-                        Address = "789 Broadway Ave, Metropolis",
-                        SeatCount = 300
-                    },
-                    new Theater
-                    {
-                        Name = "Vintage Drive-In",
-                        Address = "101 Retro Rd, Smallville",
-                        SeatCount = 75
+                        Active = false,
+                        Name = "Lion’s Den Cinemas: Los Angelos",
+                        Address1 = "789 Broadway Ave",
+                        City = "Los Angelos",
+                        State = "CA"
                     }
+
                 );
                 context.SaveChanges();
             }
