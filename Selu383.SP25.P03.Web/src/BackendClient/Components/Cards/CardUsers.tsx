@@ -60,7 +60,11 @@ const CardUsers: React.FC<CardTableProps> = ({ color = "light" }) => {
                     <div className="relative w-full px-4 max-w-full flex-grow flex-1">
                         <h3 className={`font-semibold text-lg ${color === "light" ? "text-blueGray-700" : "text-white"}`}>Users</h3>
                     </div>
-                    <DownloadCSV data={projects} fileName="Users" />
+                    {/* <DownloadCSV data={projects} fileName="Users" /> */}
+                    <DownloadCSV 
+                    data={projects as unknown as Record<string, unknown>[]} 
+                    fileName="Users" 
+                    />
                 </div>
             </div>
 

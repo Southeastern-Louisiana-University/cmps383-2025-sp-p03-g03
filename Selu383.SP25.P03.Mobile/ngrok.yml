@@ -1,0 +1,17 @@
+authtoken: 2Gxgiv4bKDXcqsBMA2amd41WB8A_559kzeexaBNsSbcmkYUv9
+version: "2"
+region: us
+
+tunnels: 
+    web:
+     addr: https://localhost:7116
+     url: frequently-gentle-alpaca.ngrok-free.app
+     proto: http
+     schemes:
+     - https
+    expo:
+     addr: http://localhost:8081
+     url: frequently-gentle-alpaca.ngrok-free.app
+     proto: http
+     schemes:
+     - http
