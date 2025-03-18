@@ -1,6 +1,8 @@
 
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Diagnostics;
+using Scalar.AspNetCore;
 using Selu383.SP25.P03.Api.Data;
 using Selu383.SP25.P03.Api.Features.Users;
 
@@ -13,8 +15,19 @@ namespace Selu383.SP25.P03.Api
             var builder = WebApplication.CreateBuilder(args);
 
             // Add services to the container.
+            // CJD 03082025
             builder.Services.AddDbContext<DataContext>(options =>
-                options.UseSqlServer(builder.Configuration.GetConnectionString("DataContext") ?? throw new InvalidOperationException("Connection string 'DataContext' not found.")));
+                options.UseSqlServer(builder.Configuration.GetConnectionString("DataContext")
+                ?? throw new InvalidOperationException("Connection string 'DataContext' not found."))
+
+                //.ConfigureWarnings(w => w.Ignore(RelationalEventId.PendingModelChangesWarning))
+                .EnableDetailedErrors()
+                );
+
+
+            // Add mapper for generic controller
+            builder.Services.AddAutoMapper(typeof(MappingProfile));
+
 
             builder.Services.AddControllers();
             // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
@@ -71,10 +84,21 @@ namespace Selu383.SP25.P03.Api
             using (var scope = app.Services.CreateScope())
             {
                 var db = scope.ServiceProvider.GetRequiredService<DataContext>();
+
                 await db.Database.MigrateAsync();
+
                 SeedTheaters.Initialize(scope.ServiceProvider);
                 await SeedRoles.Initialize(scope.ServiceProvider);
                 await SeedUsers.Initialize(scope.ServiceProvider);
+                await SeedRooms.InitializeAsync(scope.ServiceProvider);
+                await SeedMovies.InitializeAsync(scope.ServiceProvider);
+                await SeedMovieRoomScheduleLinks.InitializeAsync(scope.ServiceProvider);
+                await SeedMovieSchedule.InitializeAsync(scope.ServiceProvider);
+                await SeedProducts.InitializeAsync(scope.ServiceProvider);
+                await SeedProductPrices.InitializeAsync(scope.ServiceProvider);
+                await SeedSeats.InitializeAsync(scope.ServiceProvider);
+                await SeedSeatTypes.InitializeAsync(scope.ServiceProvider);
+
             }
 
             // Configure the HTTP request pipeline.
@@ -90,6 +114,10 @@ namespace Selu383.SP25.P03.Api
                .UseEndpoints(x =>
                {
                    x.MapControllers();
+
+                   // Add Scalar API reference
+                   // https://localhost:7027/scalar/
+                   x.MapScalarApiReference();
                });
             app.UseStaticFiles();
 
@@ -104,6 +132,8 @@ namespace Selu383.SP25.P03.Api
             {
                 app.MapFallbackToFile("/index.html");
             }
+
+            
 
             app.Run();
         }
