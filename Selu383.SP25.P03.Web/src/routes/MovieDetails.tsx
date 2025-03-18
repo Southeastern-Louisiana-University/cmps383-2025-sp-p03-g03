@@ -36,24 +36,17 @@ function MovieDetails() {
   }
 
   return (
-    <div>
-      <h1>{movie.title}</h1>
-      <p>
-        <strong>Description:</strong> {movie.description}
-      </p>
-      <p>
-        <strong>Category:</strong> {movie.category}
-      </p>
-      <p>
-        <strong>Runtime:</strong> {movie.runtime} minutes
-      </p>
-      <p>
-        <strong>Age Rating:</strong> {movie.ageRating}
-      </p>
-      <p>
-        <strong>Release Date:</strong>{" "}
-        {new Date(movie.releaseDate).toLocaleDateString()}
-      </p>
+    <div className="flex flex-row gap-4 p-8">
+      <div className="flex flex-col gap-2 p-8 sm:flex-row sm:items-left justify-left sm:gap-6 sm:py-4 mt-16">
+        <h1 className="text-5xl!">
+          <strong>{movie.title}</strong>
+        </h1>
+        <p className="text-xl">
+          {movie.ageRating} - {movie.runtime} minutes -{" "}
+          {new Date(movie.releaseDate).toLocaleDateString()} - {movie.category}
+        </p>
+        <p className="text-md mt-4">{movie.description}</p>
+      </div>
     </div>
   );
 }
