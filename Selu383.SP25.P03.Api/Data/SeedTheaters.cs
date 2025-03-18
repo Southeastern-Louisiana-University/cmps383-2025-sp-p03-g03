@@ -34,9 +34,9 @@ namespace Selu383.SP25.P03.Api.Data
                     new ()
                     {
                         Active = false,
-                        Name = "Lion’s Den Cinemas: Los Angelos",
+                        Name = "Lion’s Den Cinemas: Los Angeles",
                         Address1 = "789 Broadway Ave",
-                        City = "Los Angelos",
+                        City = "Los Angeles",
                         State = "CA"
                     }
 
