@@ -18,17 +18,17 @@ export default function TopBar() {
         </div>
         <div className="mr-24 flex space-x-16 justify-center!">
           <Link to="/movies">
-            <h2 className="text-8em text-white transition-transform hover:scale-110 hover:drop-shadow-xl hover:shadow-indigo-500/50! cursor-pointer">
+            <h2 className="text-2xl text-white transition-transform hover:scale-110 hover:drop-shadow-xl hover:shadow-indigo-500/50! cursor-pointer">
               Movies
             </h2>
           </Link>
           <Link to="/">
-            <h2 className="text-2em text-white transition-transform hover:scale-110 hover:drop-shadow-xl hover:shadow-indigo-500/50! cursor-pointer">
+            <h2 className="text-2xl text-white transition-transform hover:scale-110 hover:drop-shadow-xl hover:shadow-indigo-500/50! cursor-pointer">
               Showtimes
             </h2>
           </Link>
           <Link to="/">
-            <h2 className="text-2em text-white transition-transform hover:scale-110 hover:drop-shadow-xl hover:shadow-indigo-500/50! cursor-pointer">
+            <h2 className="text-2xl text-white transition-transform hover:scale-110 hover:drop-shadow-xl hover:shadow-indigo-500/50! cursor-pointer">
               Events
             </h2>
           </Link>
