@@ -5,9 +5,7 @@ import rulebreakers from "../assets/bda1a61dcfbdec87b99ca7735e97774c.jpg";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Navigation, Pagination } from "swiper/modules";
 import "./App.css";
-import "swiper/css";
-import "swiper/css/navigation";
-import "swiper/css/pagination";
+import "swiper/swiper-bundle.css";
 
 function App() {
   const [count, setCount] = useState(0);
@@ -25,8 +23,8 @@ function App() {
         pagination={{
           clickable: true,
           el: ".swiper-pagination",
-          bulletClass: "swiper-pagination-bullet !bg-green-700",
-          bulletActiveClass: "swiper-pagination-bullet-active !bg-green-700",
+          bulletClass: "swiper-pagination-bullet !bg-indigo-700",
+          bulletActiveClass: "swiper-pagination-bullet-active !bg-indigo-700",
         }}
         modules={[Navigation, Pagination]}
         loop
@@ -55,44 +53,44 @@ function App() {
           />
         </SwiperSlide>
 
-        <div className="swiper-button-next !text-green-700"></div>
-        <div className="swiper-button-prev !text-green-700"></div>
+        <div className="swiper-button-next !text-indigo-700"></div>
+        <div className="swiper-button-prev !text-indigo-700"></div>
 
         <div className="swiper-pagination"></div>
       </Swiper>
       <div className="flex-grow justify-center items-center mx-10">
         <div className="flex space-x-8 mb-38"></div>
-        <h1 className="text-4xl text-center font-bold text-green-700">
+        <h1 className="text-4xl text-center font-bold text-indigo-700">
           Lorem ipsum dolor sit amet consectetur adipisicing elit. A, maiores
           ducimus itaque doloremque maxime nam soluta architecto ipsum provident
           dolorem sed, omnis qui laboriosam, repellendus nulla natus quidem quam
           unde?
         </h1>
-        <h1 className="text-4xl text-center font-bold text-green-700">
+        <h1 className="text-4xl text-center font-bold text-indigo-700">
           Lorem ipsum dolor sit amet consectetur adipisicing elit. A, maiores
           ducimus itaque doloremque maxime nam soluta architecto ipsum provident
           dolorem sed, omnis qui laboriosam, repellendus nulla natus quidem quam
           unde?
         </h1>
-        <h1 className="text-4xl text-center font-bold text-green-700">
+        <h1 className="text-4xl text-center font-bold text-indigo-700">
           Lorem ipsum dolor sit amet consectetur adipisicing elit. A, maiores
           ducimus itaque doloremque maxime nam soluta architecto ipsum provident
           dolorem sed, omnis qui laboriosam, repellendus nulla natus quidem quam
           unde?
         </h1>
-        <h1 className="text-4xl text-center font-bold text-green-700">
+        <h1 className="text-4xl text-center font-bold text-indigo-700">
           Lorem ipsum dolor sit amet consectetur adipisicing elit. A, maiores
           ducimus itaque doloremque maxime nam soluta architecto ipsum provident
           dolorem sed, omnis qui laboriosam, repellendus nulla natus quidem quam
           unde?
         </h1>
-        <h1 className="text-4xl text-center font-bold text-green-700">
+        <h1 className="text-4xl text-center font-bold text-indigo-700">
           Lorem ipsum dolor sit amet consectetur adipisicing elit. A, maiores
           ducimus itaque doloremque maxime nam soluta architecto ipsum provident
           dolorem sed, omnis qui laboriosam, repellendus nulla natus quidem quam
           unde?
         </h1>
-        <h1 className="text-4xl text-center font-bold text-green-700">
+        <h1 className="text-4xl text-center font-bold text-indigo-700">
           Lorem ipsum dolor sit amet consectetur adipisicing elit. A, maiores
           ducimus itaque doloremque maxime nam soluta architecto ipsum provident
           dolorem sed, omnis qui laboriosam, repellendus nulla natus quidem quam
@@ -101,7 +99,7 @@ function App() {
       </div>
 
       <footer className="min-w-full">
-        <div className="flex flex-row min-w-full justify-center items-center bg-green-600 text-white h-full mt-16">
+        <div className="flex flex-row min-w-full justify-center items-center bg-indigo-600 text-white h-full mt-16">
           <p className="text-xl font-bold mt-8 mb-8">
             @ 2025 Lion's Den Cinema
           </p>
