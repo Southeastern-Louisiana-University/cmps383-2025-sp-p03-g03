@@ -36,7 +36,7 @@ function MovieDetails() {
   }
 
   return (
-    <div className="flex flex-row gap-4 p-8">
+    <div className="flex flex-row gap-4 p-8 text-indigo-700!">
       <div className="flex flex-col gap-2 p-8 sm:flex-row sm:items-left justify-left sm:gap-6 sm:py-4 mt-16">
         <h1 className="text-5xl!">
           <strong>{movie.title}</strong>
