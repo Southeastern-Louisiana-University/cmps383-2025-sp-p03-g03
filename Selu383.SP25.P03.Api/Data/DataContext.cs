@@ -52,21 +52,21 @@ namespace Selu383.SP25.P03.Api.Data
             builder.ApplyConfigurationsFromAssembly(typeof(DataContext).GetTypeInfo().Assembly);
 
 
-            builder.Entity<UserRole>().HasKey(x => new { x.UserId, x.RoleId });
+            //builder.Entity<UserRole>().HasKey(x => new { x.UserId, x.RoleId });
 
-            builder.Entity<User>()
-                .HasMany(e => e.UserRoles)
-                .WithOne(x => x.User)
-                .HasForeignKey(e => e.UserId)
-                .IsRequired()
-                .OnDelete(DeleteBehavior.Cascade);
+            //builder.Entity<User>()
+            //    .HasMany(e => e.UserRoles)
+            //    .WithOne(x => x.User)
+            //    .HasForeignKey(e => e.UserId)
+            //    .IsRequired()
+            //    .OnDelete(DeleteBehavior.Cascade);
 
-            builder.Entity<Role>()
-                .HasMany(e => e.UserRoles)
-                .WithOne(x => x.Role)
-                .HasForeignKey(e => e.RoleId)
-                .IsRequired()
-                .OnDelete(DeleteBehavior.Cascade);
+            //builder.Entity<Role>()
+            //    .HasMany(e => e.UserRoles)
+            //    .WithOne(x => x.Role)
+            //    .HasForeignKey(e => e.RoleId)
+            //    .IsRequired()
+            //    .OnDelete(DeleteBehavior.Cascade);
         }
     }
 }
