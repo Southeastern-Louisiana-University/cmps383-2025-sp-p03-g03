@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Microsoft.EntityFrameworkCore;
 using Selu383.SP25.P03.Api.Controllers;
+using Selu383.SP25.P03.Api.Features.Tickets;
 
 namespace Selu383.SP25.P03.Api.Features.Tickets
 {
@@ -22,21 +23,21 @@ namespace Selu383.SP25.P03.Api.Features.Tickets
         public string? TicketType { get; set; }
         public decimal Price { get; set; }
     }
+}
 
-    public class TicketConfiguration : IEntityTypeConfiguration<Ticket>
+public class TicketConfiguration : IEntityTypeConfiguration<Ticket>
+{
+    public void Configure(EntityTypeBuilder<Ticket> builder)
     {
-        public void Configure(EntityTypeBuilder<Ticket> builder)
-        {
-            builder.HasKey(x => x.Id);
-            builder.Property(e => e.OrderId).IsRequired();
-            builder.Property(e => e.ScreeningId).IsRequired();
-            builder.Property(e => e.SeatId).IsRequired();
-            builder.Property(e => e.TicketType)
-                .HasColumnType("nvarchar(50)")
-                .IsRequired();
-            builder.Property(e => e.Price)
-                .HasColumnType("decimal(18,2)")
-                .IsRequired();
-        }
+        builder.HasKey(x => x.Id);
+        builder.Property(e => e.OrderId).IsRequired();
+        builder.Property(e => e.ScreeningId).IsRequired();
+        builder.Property(e => e.SeatId).IsRequired();
+        builder.Property(e => e.TicketType)
+            .HasColumnType("nvarchar(50)")
+            .IsRequired();
+        builder.Property(e => e.Price)
+            .HasColumnType("decimal(18,2)")
+            .IsRequired();
     }
 }
