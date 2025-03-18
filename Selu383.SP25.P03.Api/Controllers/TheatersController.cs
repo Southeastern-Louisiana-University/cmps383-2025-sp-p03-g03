@@ -56,9 +56,10 @@ namespace Selu383.SP25.P03.Api.Controllers
             var theater = new Theater
             {
                 Name = dto.Name,
-                Address = dto.Address,
-                SeatCount = dto.SeatCount,
-                ManagerId = dto.ManagerId
+                Address1 = dto.Address1,
+                ManagerId = dto.ManagerId,
+                Active = dto.Active
+
             };
             theaters.Add(theater);
 
@@ -98,8 +99,8 @@ namespace Selu383.SP25.P03.Api.Controllers
             }
 
             theater.Name = dto.Name;
-            theater.Address = dto.Address;
-            theater.SeatCount = dto.SeatCount;
+            theater.Address1 = dto.Address1;
+            theater.Active = dto.Active;
 
             if (User.IsInRole(UserRoleNames.Admin))
             {
@@ -130,14 +131,15 @@ namespace Selu383.SP25.P03.Api.Controllers
             dataContext.SaveChanges();
 
             return Ok();
+        
         }
 
         private bool IsInvalid(TheaterDto dto)
         {
             return string.IsNullOrWhiteSpace(dto.Name) ||
                    dto.Name.Length > 120 ||
-                   string.IsNullOrWhiteSpace(dto.Address) ||
-                   dto.SeatCount <= 0 ||
+                   string.IsNullOrWhiteSpace(dto.Address1) ||
+                   //dto.SeatCount <= 0 ||
                    dto.ManagerId != null && !users.Any(x => x.Id == dto.ManagerId);
         }
 
@@ -148,8 +150,8 @@ namespace Selu383.SP25.P03.Api.Controllers
                 {
                     Id = x.Id,
                     Name = x.Name,
-                    Address = x.Address,
-                    SeatCount = x.SeatCount,
+                    Address1 = x.Address1,
+                    Active = x.Active,
                     ManagerId = x.ManagerId
                 });
         }

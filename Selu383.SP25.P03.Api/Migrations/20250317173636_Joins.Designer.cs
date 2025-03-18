@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Selu383.SP25.P03.Api.Data;
 
@@ -11,9 +12,11 @@ using Selu383.SP25.P03.Api.Data;
 namespace Selu383.SP25.P03.Api.Migrations
 {
     [DbContext(typeof(DataContext))]
-    partial class DataContextModelSnapshot : ModelSnapshot
+    [Migration("20250317173636_Joins")]
+    partial class Joins
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -249,9 +252,7 @@ namespace Selu383.SP25.P03.Api.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<bool>("IsActive")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bit")
-                        .HasDefaultValue(true);
+                        .HasColumnType("bit");
 
                     b.Property<DateTime>("ReleaseDate")
                         .HasColumnType("datetime2");
@@ -339,12 +340,10 @@ namespace Selu383.SP25.P03.Api.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("TheaterId")
+                    b.Property<int>("Price")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("TheaterId");
 
                     b.ToTable("Products");
                 });
@@ -357,21 +356,10 @@ namespace Selu383.SP25.P03.Api.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<DateOnly?>("EndDate")
-                        .HasColumnType("date");
-
-                    b.Property<decimal>("Price")
-                        .HasColumnType("decimal(18,2)");
-
                     b.Property<int>("ProductId")
                         .HasColumnType("int");
 
-                    b.Property<DateOnly>("StartDate")
-                        .HasColumnType("date");
-
                     b.HasKey("Id");
-
-                    b.HasIndex("ProductId");
 
                     b.ToTable("ProductPrices");
                 });
@@ -435,14 +423,7 @@ namespace Selu383.SP25.P03.Api.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<bool>("IsActive")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bit")
-                        .HasDefaultValue(true);
-
-                    b.Property<bool>("IsPremium")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bit")
-                        .HasDefaultValue(false);
+                        .HasColumnType("bit");
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -471,7 +452,7 @@ namespace Selu383.SP25.P03.Api.Migrations
 
                     b.HasIndex("TheaterId");
 
-                    b.ToTable("Rooms");
+                    b.ToTable("Room");
                 });
 
             modelBuilder.Entity("Selu383.SP25.P03.Api.Features.Seats.Seat", b =>
@@ -533,16 +514,8 @@ namespace Selu383.SP25.P03.Api.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<bool>("Active")
-                        .HasColumnType("bit");
-
-                    b.Property<string>("Address1")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Address2")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("City")
+                    b.Property<string>("Address")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<int?>("ManagerId")
@@ -550,19 +523,11 @@ namespace Selu383.SP25.P03.Api.Migrations
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(120)
+                        .HasColumnType("nvarchar(120)");
 
-                    b.Property<string>("Phone1")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Phone2")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("State")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Zip")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int>("SeatCount")
+                        .HasColumnType("int");
 
                     b.HasKey("Id");
 
@@ -763,19 +728,19 @@ namespace Selu383.SP25.P03.Api.Migrations
                     b.HasOne("Selu383.SP25.P03.Api.Features.Movies.Movie", "Movie")
                         .WithMany()
                         .HasForeignKey("MovieId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
                     b.HasOne("Selu383.SP25.P03.Api.Features.Movies.MovieSchedule", "MovieSchedule")
                         .WithMany()
                         .HasForeignKey("MovieScheduleId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
                     b.HasOne("Selu383.SP25.P03.Api.Features.Rooms.Room", "Room")
                         .WithMany()
                         .HasForeignKey("RoomId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
                     b.Navigation("Movie");
@@ -794,28 +759,6 @@ namespace Selu383.SP25.P03.Api.Migrations
                         .IsRequired();
 
                     b.Navigation("Movie");
-                });
-
-            modelBuilder.Entity("Selu383.SP25.P03.Api.Features.Products.Product", b =>
-                {
-                    b.HasOne("Selu383.SP25.P03.Api.Features.Theaters.Theater", "Theaters")
-                        .WithMany()
-                        .HasForeignKey("TheaterId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Theaters");
-                });
-
-            modelBuilder.Entity("Selu383.SP25.P03.Api.Features.Products.ProductPrice", b =>
-                {
-                    b.HasOne("Selu383.SP25.P03.Api.Features.Products.Product", "Product")
-                        .WithMany()
-                        .HasForeignKey("ProductId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Product");
                 });
 
             modelBuilder.Entity("Selu383.SP25.P03.Api.Features.Rooms.Room", b =>

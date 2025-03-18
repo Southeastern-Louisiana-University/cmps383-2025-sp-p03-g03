@@ -1,7 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Microsoft.EntityFrameworkCore;
 using Selu383.SP25.P03.Api.Controllers;
-using Selu383.SP25.P03.Api.Features.Rooms;
 
 namespace Selu383.SP25.P03.Api.Features.Seats
 {
