@@ -55,10 +55,10 @@ public class TheaterConfiguration : IEntityTypeConfiguration<Theater>
         builder.Property(e => e.Phone2);
         builder.Property(e => e.ManagerId);
         
-        builder.HasOne(e => e.Manager)
-            .WithMany()
-            .OnDelete(DeleteBehavior.NoAction)
-            .HasForeignKey(e => e.ManagerId);
+        //builder.HasOne(e => e.Manager)
+        //    .WithMany()
+        //    .OnDelete(DeleteBehavior.NoAction)
+        //    .HasForeignKey(e => e.ManagerId);
 
     }
 }

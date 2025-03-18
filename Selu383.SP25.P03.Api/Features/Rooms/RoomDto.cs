@@ -55,9 +55,9 @@ namespace Selu383.SP25.P03.Api.Features.Rooms
             builder.Property(e => e.TimeToClean).IsRequired();
             builder.Property(e => e.TheaterId).IsRequired();
 
-            builder.HasOne(e => e.Theaters)
-                .WithMany()
-                .HasForeignKey(e => e.TheaterId);   
+            //builder.HasOne(e => e.Theaters)
+            //    .WithMany()
+            //    .HasForeignKey(e => e.TheaterId);   
 
         }
     }

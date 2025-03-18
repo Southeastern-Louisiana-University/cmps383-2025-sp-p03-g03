@@ -34,20 +34,20 @@ namespace Selu383.SP25.P03.Api.Features.Movies
             builder.Property(x => x.MovieId).IsRequired();
             builder.Property(x => x.MovieScheduleId).IsRequired();
 
-            builder.HasOne(x => x.Room)
-                .WithMany()
-                .OnDelete(DeleteBehavior.NoAction)
-                .HasForeignKey(x => x.RoomId);
+            //builder.HasOne(x => x.Room)
+            //    .WithMany()
+            //    .OnDelete(DeleteBehavior.NoAction)
+            //    .HasForeignKey(x => x.RoomId);
 
-            builder.HasOne(x => x.Movie)
-                .WithMany()
-                .OnDelete(DeleteBehavior.NoAction)
-                .HasForeignKey(x => x.MovieId);
+            //builder.HasOne(x => x.Movie)
+            //    .WithMany()
+            //    .OnDelete(DeleteBehavior.NoAction)
+            //    .HasForeignKey(x => x.MovieId);
 
-            builder.HasOne(x => x.MovieSchedule)
-                .WithMany()
-                .OnDelete(DeleteBehavior.NoAction)
-                .HasForeignKey(x => x.MovieScheduleId);
+            //builder.HasOne(x => x.MovieSchedule)
+            //    .WithMany()
+            //    .OnDelete(DeleteBehavior.NoAction)
+            //    .HasForeignKey(x => x.MovieScheduleId);
         }
     }
 }

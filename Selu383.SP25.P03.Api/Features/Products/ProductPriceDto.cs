@@ -39,10 +39,10 @@ namespace Selu383.SP25.P03.Api.Features.Products
 
             builder.Property(e => e.EndDate);
 
-            builder.HasOne(x => x.Product)
-                .WithMany()
-                .OnDelete(DeleteBehavior.NoAction)
-                .HasForeignKey(x => x.ProductId);
+            //builder.HasOne(x => x.Product)
+            //    .WithMany()
+            //    .OnDelete(DeleteBehavior.NoAction)
+            //    .HasForeignKey(x => x.ProductId);
         }
     }
 }
