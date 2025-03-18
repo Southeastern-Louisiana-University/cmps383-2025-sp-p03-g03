@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Microsoft.EntityFrameworkCore;
 using Selu383.SP25.P03.Api.Controllers;
+using Selu383.SP25.P03.Api.Features.Theaters;
 
 namespace Selu383.SP25.P03.Api.Features.Products
 {
@@ -8,15 +9,16 @@ namespace Selu383.SP25.P03.Api.Features.Products
     {
         public int Id { get; set; }
         public string? Name { get; set; }
-        public int Price { get; set; }
         public bool IsActive { get; set; }
+        public int TheaterId { get; set; }
+        public Theater? Theaters { get; set; }
     }
     public class ProductDto
     {
         public int Id { get; set; }
         public string? Name { get; set; }
-        public int Price { get; set; }
         public bool IsActive { get; set; }
+        public int TheaterId { get; set; }
     }
     public class CartConfiguration : IEntityTypeConfiguration<Product>
     {
@@ -24,7 +26,6 @@ namespace Selu383.SP25.P03.Api.Features.Products
         {
             builder.HasKey(e => e.Id);
             builder.Property(e => e.Name).IsRequired();
-            builder.Property(e => e.Price).IsRequired();
             builder.Property(e => e.IsActive).IsRequired();
 
         }

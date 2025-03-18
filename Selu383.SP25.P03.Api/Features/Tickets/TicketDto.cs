@@ -1,6 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Microsoft.EntityFrameworkCore;
-using Selu383.SP25.P03.Api.Features.Cart;
 using Selu383.SP25.P03.Api.Controllers;
 
 namespace Selu383.SP25.P03.Api.Features.Tickets
@@ -32,8 +31,12 @@ namespace Selu383.SP25.P03.Api.Features.Tickets
             builder.Property(e => e.OrderId).IsRequired();
             builder.Property(e => e.ScreeningId).IsRequired();
             builder.Property(e => e.SeatId).IsRequired();
-            builder.Property(e => e.TicketType).IsRequired();
-            builder.Property(e => e.Price).IsRequired();
+            builder.Property(e => e.TicketType)
+                .HasColumnType("nvarchar(50)")
+                .IsRequired();
+            builder.Property(e => e.Price)
+                .HasColumnType("decimal(18,2)")
+                .IsRequired();
         }
     }
 }
