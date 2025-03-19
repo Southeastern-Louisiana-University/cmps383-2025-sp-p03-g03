@@ -1,6 +1,6 @@
 //everything in here is exapmle code from chatgpt -- this is strictly proof of concept at the moment.
 
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { QRCodeSVG } from "qrcode.react";
 
 interface QRCodeComponentProps {
