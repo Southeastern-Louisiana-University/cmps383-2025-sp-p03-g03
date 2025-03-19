@@ -71,7 +71,7 @@ function Movies() {
             <Link
               to={`/movies/${movie.id}`} // Link to the movie details page
               key={movie.id}
-              className="flex flex-col items-center gap-4 transition-transform hover:scale-110 cursor-pointer"
+              className="flex flex-col items-center gap-4 transition-transform hover:scale-110 hover:underline! underline-offset-10! text-indigo-700! cursor-pointer"
             >
               {/* Poster Container */}
               <div className="flex justify-center items-center">
@@ -90,7 +90,7 @@ function Movies() {
                   </div>
                 )}
               </div>
-              <h2 className="text-4xl font-bold text-indigo-700 text-center">
+              <h2 className="text-4xl font-bold text-indigo-700 text-center ">
                 {movie.title}
               </h2>
             </Link>
