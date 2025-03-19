@@ -79,26 +79,26 @@ namespace Selu383.SP25.P03.Api
                 options.SlidingExpiration = true;
             });
 
-
-            ///builder.Services.AddAutoMapper(typeof(Program));
-            //builder.Services.AddAutoMapper(MappingProfile);
-
             var app = builder.Build();
 
             using (var scope = app.Services.CreateScope())
             {
                 var db = scope.ServiceProvider.GetRequiredService<DataContext>();
 
-                //db.Database.EnsureDeleted();
-                //System.Threading.Thread.Sleep(60000);
-                db.Database.EnsureCreated();
-
-
-                //await db.Database.MigrateAsync();
+                await db.Database.MigrateAsync();
 
                 SeedTheaters.Initialize(scope.ServiceProvider);
                 await SeedRoles.Initialize(scope.ServiceProvider);
                 await SeedUsers.Initialize(scope.ServiceProvider);
+                await SeedRooms.InitializeAsync(scope.ServiceProvider);
+                await SeedMovies.InitializeAsync(scope.ServiceProvider);
+                await SeedMovieRoomScheduleLinks.InitializeAsync(scope.ServiceProvider);
+                await SeedMovieSchedule.InitializeAsync(scope.ServiceProvider);
+                await SeedProducts.InitializeAsync(scope.ServiceProvider);
+                await SeedProductPrices.InitializeAsync(scope.ServiceProvider);
+                await SeedSeats.InitializeAsync(scope.ServiceProvider);
+                await SeedSeatTypes.InitializeAsync(scope.ServiceProvider);
+
             }
 
             // Configure the HTTP request pipeline.

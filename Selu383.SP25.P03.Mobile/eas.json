@@ -15,7 +15,8 @@
       "autoIncrement": true,
       "android": {
         "buildType": "apk"
-      }
+      },
+      "owner": "cmps383-2025-sp-p03-g03"
     }
   },
   "submit": {
