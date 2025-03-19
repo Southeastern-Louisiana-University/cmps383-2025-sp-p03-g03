@@ -28,6 +28,7 @@ namespace Selu383.SP25.P03.Api.Data
         public DbSet<Movie> Movies { get; set; }
         public DbSet<MovieSchedule> MovieSchedules { get; set; }
         public DbSet<MovieRoomScheduleLink> MovieRoomScheduleLinks { get; set; }
+        public DbSet<MoviePoster> MoviePoster { get; set; }
 
         public DbSet<Product> Products { get; set; }
         public DbSet<ProductPrice> ProductPrices { get; set; }
