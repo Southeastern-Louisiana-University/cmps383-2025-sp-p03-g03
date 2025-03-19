@@ -8,12 +8,23 @@ export default function QRCodeComponent() {
   //fetch movie data by id -- seat number, theater number, and showtime
   //all of this is to be placed
   const [data, setData] = useState<string>("");
+  const [user, setUser] = useState();
 
   useEffect(() => {
-    const fetchData = async () => {
+    const fetchUser = async () => {
+      try {
+        const userResponse = await fetch(`https://localhost:7027/api/users`);
+        const result = await userResponse.json();
+        setUser(result.userResponse);
+      } catch (error) {
+        console.error("Error fetching user data", error);
+      }
+    };
+
+    const fetchUserTickets = async () => {
       try {
         // Replace with your actual API endpoint
-        const response = await fetch("/api/getUserTickets");
+        const response = await fetch(`https://localhost:7027/api/Ticket`);
         const result = await response.json();
         // Assume the data you want is in result.data
         setData(result.data);
@@ -22,7 +33,7 @@ export default function QRCodeComponent() {
       }
     };
 
-    fetchData();
+    fetchUserTickets();
   }, []);
 
   return (
