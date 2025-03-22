@@ -69,6 +69,10 @@ namespace Selu383.SP25.P03.Api.Data
             CreateMap<MoviePoster, MoviePosterDto>();
             CreateMap<MoviePosterDto, MoviePoster>();
 
+            //UserTickets
+            CreateMap<UserTicket, UserTicketDto>();
+            CreateMap<UserTicketDto, UserTicket>();
+
         }
     }
 }
