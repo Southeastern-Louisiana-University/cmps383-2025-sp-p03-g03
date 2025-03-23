@@ -4,7 +4,7 @@
     "slug": "selu383-sp25-p03-Mobile-g03",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/images/icon.png",
+    "icon": "./assets/images/movie-theater.png",
     "scheme": "myapp",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
