@@ -28,6 +28,11 @@ namespace Selu383.SP25.P03.Api
             // Add mapper for generic controller
             builder.Services.AddAutoMapper(typeof(MappingProfile));
 
+            // Add SPA static files support
+            builder.Services.AddSpaStaticFiles(configuration => {
+                configuration.RootPath = "wwwroot";
+            });
+
 
             builder.Services.AddControllers();
             // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
@@ -107,6 +112,9 @@ namespace Selu383.SP25.P03.Api
                 app.MapOpenApi();
             }
 
+
+
+
             app.UseHttpsRedirection();
             app.UseAuthentication();
             app.UseRouting()
@@ -121,19 +129,34 @@ namespace Selu383.SP25.P03.Api
                });
             app.UseStaticFiles();
 
-            if (app.Environment.IsDevelopment())
-            {
-                app.UseSpa(x =>
-                {
-                    x.UseProxyToSpaDevelopmentServer("http://localhost:5173");
-                });
-            }
-            else
-            {
-                app.MapFallbackToFile("/index.html");
-            }
+            //if (app.Environment.IsDevelopment())
+            //{
+            //    app.UseSpa(x =>
+            //    {
+            //        x.UseProxyToSpaDevelopmentServer("http://localhost:5173");
+            //    });
+            //}
+            //else
+            //{
+            //    app.MapFallbackToFile("/index.html");
+            //}
 
-            
+
+            // Configure the SPA
+            app.UseSpa(spa => {
+                spa.Options.SourcePath = "../Selu383.SP25.P03.Web"; // Path to your Vite frontend project relative to the backend
+
+                if (app.Environment.IsDevelopment())
+                {
+                    // Use Vite development server
+                    spa.UseProxyToSpaDevelopmentServer("http://localhost:5173"); // Default Vite port
+                }
+                else
+                {
+                    app.MapFallbackToFile("/index.html");
+                }
+            });
+
 
             app.Run();
         }
