@@ -44,17 +44,15 @@ function ShowtimeChoice() {
         );
 
         // Fetch movie details
-        const movieResponse = await fetch(
-          `https://localhost:7027/api/movie/${movieId}`
-        );
+        const movieResponse = await fetch(`/api/movie/${movieId}`);
         if (!movieResponse.ok) throw new Error("Movie not found");
         const movieData = await movieResponse.json();
         setMovie(movieData);
 
         // Fetch schedules (with theater filter if provided)
         const url = theaterId
-          ? `https://localhost:7027/api/MovieSchedule/GetByMovieId/${movieId}?theaterId=${theaterId}`
-          : `https://localhost:7027/api/MovieSchedule/GetByMovieId/${movieId}`;
+          ? `/api/MovieSchedule/GetByMovieId/${movieId}?theaterId=${theaterId}`
+          : `/api/MovieSchedule/GetByMovieId/${movieId}`;
 
         const scheduleResponse = await fetch(url);
         if (!scheduleResponse.ok) throw new Error("Failed to fetch schedules");
