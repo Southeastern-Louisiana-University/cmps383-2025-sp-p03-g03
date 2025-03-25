@@ -29,9 +29,9 @@ namespace Selu383.SP25.P03.Api
             builder.Services.AddAutoMapper(typeof(MappingProfile));
 
             // Add SPA static files support
-            builder.Services.AddSpaStaticFiles(configuration => {
-                configuration.RootPath = "wwwroot";
-            });
+            //builder.Services.AddSpaStaticFiles(configuration => {
+            //    configuration.RootPath = "wwwroot";
+            //});
 
 
             builder.Services.AddControllers();
