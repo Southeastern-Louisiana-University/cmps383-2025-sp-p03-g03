@@ -10,7 +10,7 @@ function Movies() {
     const fetchMovies = async () => {
       try {
         // Fetch the list of movies
-        const response = await fetch(`https://localhost:7027/api/movie`);
+        const response = await fetch(`/api/movie`);
         if (!response.ok) {
           throw new Error("Failed to fetch movies");
         }
@@ -22,7 +22,7 @@ function Movies() {
           data.map(async (movie) => {
             try {
               const posterResponse = await fetch(
-                `https://localhost:7027/api/movieposter/${movie.id}`
+                `/api/movieposter/${movie.id}`
               );
               if (!posterResponse.ok) {
                 throw new Error(`Failed to fetch poster for movie ${movie.id}`);
@@ -79,7 +79,7 @@ function Movies() {
                   <img
                     src={`data:${movie.poster.imageType};base64,${movie.poster.imageData}`}
                     alt={movie.poster.name}
-                    className="w-96 h-auto object-cover rounded-2xl"
+                    className="w-auto h-lvh object-cover rounded-2xl"
                     onError={(e) => {
                       e.target.src = "path/to/fallback-image.jpg"; // Fallback image
                     }}

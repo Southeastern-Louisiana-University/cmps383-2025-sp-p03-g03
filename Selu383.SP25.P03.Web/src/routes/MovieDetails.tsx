@@ -1,36 +1,55 @@
 import React, { useState, useEffect } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
+import { Button } from "@headlessui/react";
+import { TicketIcon } from "@heroicons/react/24/outline";
+
+interface Movie {
+  id: number;
+  title: string;
+  ageRating: string;
+  runtime: number;
+  releaseDate: string;
+  category: string;
+  description: string;
+}
+
+interface MoviePoster {
+  imageType: string;
+  imageData: string;
+  name: string;
+}
 
 function MovieDetails() {
-  const { id } = useParams();
-  const [movie, setMovie] = useState(null);
-  const [poster, setPoster] = useState(null);
+  const { id } = useParams<{ id: string }>();
+  const navigate = useNavigate();
+  const [movie, setMovie] = useState<Movie | null>(null);
+  const [poster, setPoster] = useState<MoviePoster | null>(null);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchMovie = async () => {
       try {
-        const response = await fetch(`https://localhost:7027/api/movie/${id}`);
-        if (!response.ok) {
-          throw new Error("Movie not found");
-        }
-        const data = await response.json();
-        setMovie(data);
+        setLoading(true);
+        const [movieResponse, posterResponse] = await Promise.all([
+          fetch(`/api/movie/${id}`),
+          fetch(`/api/movieposter/${id}`),
+        ]);
 
-        // Fetch the movie poster
-        const posterResponse = await fetch(
-          `https://localhost:7027/api/movieposter/${id}`
-        );
-        if (!posterResponse.ok) {
-          throw new Error("Poster not found");
-        }
-        const posterData = await posterResponse.json();
+        if (!movieResponse.ok) throw new Error("Movie not found");
+        if (!posterResponse.ok) throw new Error("Poster not found");
+
+        const [movieData, posterData] = await Promise.all([
+          movieResponse.json(),
+          posterResponse.json(),
+        ]);
+
+        setMovie(movieData);
         setPoster(posterData);
       } catch (error) {
-        setError(error.message);
-        setMovie(null);
-        setPoster(null);
+        setError(
+          error instanceof Error ? error.message : "An unknown error occurred"
+        );
       } finally {
         setLoading(false);
       }
@@ -39,37 +58,44 @@ function MovieDetails() {
     fetchMovie();
   }, [id]);
 
-  if (loading) {
-    return <div>Loading...</div>;
-  }
-
-  if (error) {
-    return <div>Error: {error}</div>;
-  }
+  if (loading)
+    return <div className="text-center py-8">Loading movie details...</div>;
+  if (error)
+    return <div className="text-center text-red-500 py-8">Error: {error}</div>;
+  if (!movie) return <div className="text-center py-8">Movie not found</div>;
 
   return (
-    <div className="flex flex-row gap-4 p-8 text-indigo-700 justify-center items-start mt-24">
-      {/* Poster Container */}
-      <div className="flex justify-center items-center">
+    <div className="flex flex-col md:flex-row gap-8 p-8 max-w-6xl mx-auto mt-16">
+      {/* Poster */}
+      <div className="flex-shrink-0">
         {poster && (
           <img
             src={`data:${poster.imageType};base64,${poster.imageData}`}
             alt={poster.name}
-            className="w-96 h-auto object-cover rounded-2xl"
+            className="w-80 h-auto rounded-lg shadow-lg"
           />
         )}
       </div>
 
-      {/* Text Container */}
-      <div className="flex flex-col gap-2 items-start">
-        <h1 className="text-5xl">
-          <strong>{movie.title}</strong>
-        </h1>
-        <p className="text-xl">
-          {movie.ageRating} - {movie.runtime} minutes -{" "}
-          {new Date(movie.releaseDate).toLocaleDateString()} - {movie.category}
-        </p>
-        <p className="text-md mt-4">{movie.description}</p>
+      {/* Movie Info */}
+      <div className="flex flex-col gap-4">
+        <h1 className="text-4xl font-bold text-indigo-800">{movie.title}</h1>
+
+        <div className="flex gap-4 text-lg text-indigo-700">
+          <span>{movie.ageRating}</span>
+          <span>{movie.runtime} min</span>
+          <span>{new Date(movie.releaseDate).toLocaleDateString()}</span>
+          <span>{movie.category}</span>
+        </div>
+
+        <p className="text-lg text-gray-700 mt-4">{movie.description}</p>
+
+        <Button
+          onClick={() => navigate(`/movies/${id}/theaters?movieId=${id}`)}
+          className="mt-6 flex items-center gap-2 bg-indigo-600! hover:bg-indigo-700 text-white py-3 px-6 rounded-lg transition-colors w-fit"
+        >
+          Buy Tickets <TicketIcon className="h-5 w-5" />
+        </Button>
       </div>
     </div>
   );
