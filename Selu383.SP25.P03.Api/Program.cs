@@ -144,7 +144,7 @@ namespace Selu383.SP25.P03.Api
 
             // Configure the SPA
             app.UseSpa(spa => {
-                spa.Options.SourcePath = "../Selu383.SP25.P03.Web"; // Path to your Vite frontend project relative to the backend
+                //spa.Options.SourcePath = "../Selu383.SP25.P03.Web"; // Path to your Vite frontend project relative to the backend
 
                 if (app.Environment.IsDevelopment())
                 {
