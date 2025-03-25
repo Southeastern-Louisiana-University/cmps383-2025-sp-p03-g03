@@ -12,6 +12,9 @@ import TopBar from "./components/topbar";
 import Admin from "./BackendClient/Components/Layouts/Admin.tsx";
 import Dashboard from "./BackendClient/Components/Views/Admin/Dashboard.tsx";
 import Products from "./BackendClient/Components/Views/Admin/Products.tsx";
+import MovieDetails from "./routes/MovieDetails.tsx";
+import TheatreChoice from "./routes/TicketBuyingProcess/TheatreChoice.tsx";
+import ShowtimeChoice from "./routes/TicketBuyingProcess/ShowtimeChoice.tsx";
 
 // Layout component that includes the TopBar and Outlet
 const Layout = () => {
@@ -29,16 +32,34 @@ const router = createBrowserRouter([
     element: <Layout />,
     children: [
       {
-        path: "/",
+        index: true,
         element: <App />,
       },
       {
-        path: "/movies",
-        element: <Movies />,
-      },
-      {
-        path: "/admin",
-        element: <Admin />,
+        path: "movies",
+        children: [
+          {
+            index: true,
+            element: <Movies />,
+          },
+          {
+            path: ":id",
+            children: [
+              {
+                index: true,
+                element: <MovieDetails />,
+              },
+              {
+                path: "theaters", // Corrected path (relative)
+                element: <TheatreChoice />,
+              },
+              {
+                path: "showtimes", // Corrected path (relative)
+                element: <ShowtimeChoice />,
+              },
+            ],
+          },
+        ],
       },
     ],
   },
@@ -47,7 +68,7 @@ const router = createBrowserRouter([
     element: <Admin />,
     children: [
       {
-        index: true, // This is the default route
+        index: true,
         element: <Navigate to="dashboard" replace />,
       },
       {
