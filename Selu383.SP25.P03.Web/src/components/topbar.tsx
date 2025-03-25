@@ -2,12 +2,8 @@ import Headroom from "react-headroom";
 import LDTheatreLogo from "../assets/lionsdencinemas.svg";
 import "../routes/App.css";
 import { Link } from "react-router-dom";
-import loginModal from "./loginModal";
-import { useState } from "react";
 
 export default function TopBar() {
-  const [isModalOpen, setIsModalOpen] = useState(false);
-
   return (
     <Headroom className="topbar" style={{ zIndex: 1000 }}>
       <nav className="bg-indigo-300! shadow-lg! shadow-indigo-900/50! p-2 flex justify-between items-center ">
