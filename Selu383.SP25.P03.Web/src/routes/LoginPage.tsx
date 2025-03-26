@@ -2,51 +2,45 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../components/authContext";
 
-const LoginPage: React.FC = () => {
+function LoginPage() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string>("");
   const navigate = useNavigate();
-  const { setIsAuthenticated } = useAuth();
+  const { setIsAuthenticated, setUserId } = useAuth();
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
     e.preventDefault();
 
     if (!username || !password) {
       setError("Please fill out all fields");
     } else {
       setError("");
-      var loginUrl = "/api/authentication/login";
+      const loginUrl = "/api/authentication/login";
 
       fetch(loginUrl, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({
-          username: username,
-          password: password,
-        }),
+        body: JSON.stringify({ username, password }),
       })
-        .then((data) => {
-          console.log(data);
-          if (data.ok) {
-            setError("Login Successful");
-            setIsAuthenticated(true); // on successful login we set our auth to true.
-            navigate("/");
-          } else {
-            setError("Error logging in");
+        .then(async (response) => {
+          if (!response.ok) {
+            throw new Error("Login failed");
           }
+
+          const data = await response.json(); // setting data to set our user id and authentication
+          console.log(data);
+          setUserId(data.id.toString());
+          setIsAuthenticated(true);
+          navigate("/"); //send user back to home page
         })
         .catch((error) => {
           console.error(error);
-          setError("Error Logging in");
+          setError("Error logging in");
         });
-      console.log(error);
     }
-
-    console.log("Username:", username, "Password:", password);
   };
 
   return (
@@ -60,6 +54,7 @@ const LoginPage: React.FC = () => {
       }}
     >
       <h2>Login</h2>
+      {error && <p style={{ color: "red" }}>{error}</p>}
       <form onSubmit={handleSubmit}>
         <div style={{ marginBottom: "1rem" }}>
           <label htmlFor="username">Username: </label>
@@ -88,6 +83,6 @@ const LoginPage: React.FC = () => {
       </form>
     </div>
   );
-};
+}
 
 export default LoginPage;

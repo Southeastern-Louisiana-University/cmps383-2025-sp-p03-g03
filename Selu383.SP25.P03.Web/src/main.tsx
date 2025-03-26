@@ -13,10 +13,11 @@ import Admin from "./BackendClient/Components/Layouts/Admin.tsx";
 import Dashboard from "./BackendClient/Components/Views/Admin/Dashboard.tsx";
 import Products from "./BackendClient/Components/Views/Admin/Products.tsx";
 import MovieDetails from "./routes/MovieDetails.tsx";
-import LoginPage from "./routes/LoginPage.tsx";
 import { AuthProvider } from "./components/authContext.tsx";
 import TheatreChoice from "./routes/TicketBuyingProcess/TheatreChoice.tsx";
 import ShowtimeChoice from "./routes/TicketBuyingProcess/ShowtimeChoice.tsx";
+import LoginPage from "./routes/LoginPage.tsx";
+import MyTickets from "./routes/MyTicketsPage.tsx";
 
 // Layout component that includes the TopBar and Outlet
 const Layout = () => {
@@ -66,6 +67,10 @@ const router = createBrowserRouter([
       {
         path: "/LoginPage",
         element: <LoginPage />,
+      },
+      {
+        path: "/MyTickets",
+        element: <MyTickets />,
       },
     ],
   },
