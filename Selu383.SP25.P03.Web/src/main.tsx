@@ -14,6 +14,7 @@ import Dashboard from "./BackendClient/Components/Views/Admin/Dashboard.tsx";
 import Products from "./BackendClient/Components/Views/Admin/Products.tsx";
 import MovieDetails from "./routes/MovieDetails.tsx";
 import { elements } from "chart.js";
+import LoginPage from "./routes/LoginPage.tsx";
 
 // Layout component that includes the TopBar and Outlet
 const Layout = () => {
@@ -45,6 +46,10 @@ const router = createBrowserRouter([
       {
         path: "/movies/:id",
         element: <MovieDetails />,
+      },
+      {
+        path: "/LoginPage",
+        element: <LoginPage />,
       },
     ],
   },
