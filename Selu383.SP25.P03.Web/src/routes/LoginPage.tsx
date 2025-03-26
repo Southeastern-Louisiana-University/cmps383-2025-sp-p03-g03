@@ -13,7 +13,8 @@ const LoginPage: React.FC = () => {
       setError("Please fill out all fields");
     } else {
       setError("");
-      var loginUrl = "/api/users";
+      var loginUrl = "/api/authentication/login";
+
       fetch(loginUrl, {
         method: "POST",
         headers: {
@@ -75,6 +76,7 @@ const LoginPage: React.FC = () => {
             required
           />
         </div>
+
         <button type="submit">Login</button>
       </form>
     </div>
