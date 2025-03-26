@@ -6,12 +6,16 @@ import { Swiper, SwiperSlide } from "swiper/react";
 import { Navigation, Pagination } from "swiper/modules";
 import "./App.css";
 import "swiper/swiper-bundle.css";
+import { Button } from "@headlessui/react";
+import { TicketIcon } from "@heroicons/react/24/outline";
+import { useNavigate } from "react-router-dom";
 
 function App() {
   //const [count, setCount] = useState(0);
+  const navigate = useNavigate();
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100 text-gray-900 w-full">
+    <div className="flex flex-col items-center! justify-center! min-h-screen bg-gray-100 text-gray-900 w-full">
       <Swiper
         className="w-full md:h-[600px] h-full"
         spaceBetween={50}
@@ -58,7 +62,15 @@ function App() {
 
         <div className="swiper-pagination"></div>
       </Swiper>
-      <div className="flex-grow justify-center items-center mx-10">
+      <div className="flex flex-col items-center justify-center mx-10">
+        {" "}
+        {/* Changed this line */}
+        <Button
+          onClick={() => navigate(`/movies`)}
+          className="mt-6 flex items-center gap-2 bg-indigo-600! hover:bg-indigo-700 text-white py-3 px-6 rounded-lg transition-colors w-fit"
+        >
+          Buy Tickets <TicketIcon className="h-5 w-5" />
+        </Button>
         <div className="flex space-x-8 mb-38"></div>
         <h1 className="text-4xl text-center font-bold text-indigo-700">
           Lorem ipsum dolor sit amet consectetur adipisicing elit. A, maiores

@@ -1,33 +1,48 @@
 import React, { useState, useEffect } from "react";
-import { Link } from "react-router-dom"; // Import Link
+import { Link } from "react-router-dom";
+
+// Define interfaces for the data structures
+interface Movie {
+  id: number;
+  title: string;
+  // Add other movie properties as needed
+  poster: MoviePoster | null;
+}
+
+interface MoviePoster {
+  imageType: string;
+  imageData: string;
+  name: string;
+  // Add other poster properties as needed
+}
 
 function Movies() {
-  const [movies, setMovies] = useState([]); // State to store the list of movies
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const [movies, setMovies] = useState<Movie[]>([]); // State to store the list of movies with type annotation
+  const [loading, setLoading] = useState<boolean>(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchMovies = async () => {
       try {
         // Fetch the list of movies
-        const response = await fetch(`https://localhost:7027/api/movie`);
+        const response = await fetch(`/api/movie`);
         if (!response.ok) {
           throw new Error("Failed to fetch movies");
         }
-        const data = await response.json();
+        const data: Omit<Movie, "poster">[] = await response.json(); // Temporary type for initial movie data
         console.log(data); // Log the API response
 
         // Fetch the poster for each movie
-        const moviesWithPosters = await Promise.all(
+        const moviesWithPosters: Movie[] = await Promise.all(
           data.map(async (movie) => {
             try {
               const posterResponse = await fetch(
-                `https://localhost:7027/api/movieposter/${movie.id}`
+                `/api/movieposter/${movie.id}`
               );
               if (!posterResponse.ok) {
                 throw new Error(`Failed to fetch poster for movie ${movie.id}`);
               }
-              const posterData = await posterResponse.json();
+              const posterData: MoviePoster = await posterResponse.json();
               return { ...movie, poster: posterData }; // Add poster data to the movie object
             } catch (error) {
               console.error(error);
@@ -38,7 +53,9 @@ function Movies() {
 
         setMovies(moviesWithPosters);
       } catch (error) {
-        setError(error.message);
+        setError(
+          error instanceof Error ? error.message : "An unknown error occurred"
+        );
         setMovies([]);
       } finally {
         setLoading(false);
@@ -69,9 +86,9 @@ function Movies() {
         <div className="grid grid-cols-3 gap-15 m-20">
           {movies.map((movie) => (
             <Link
-              to={`/movies/${movie.id}`} // Link to the movie details page
+              to={`/movies/${movie.id}`}
               key={movie.id}
-              className="flex flex-col items-center gap-4 transition-transform hover:scale-110 cursor-pointer"
+              className="flex flex-col items-center gap-4 transition-transform hover:scale-110 hover:underline! underline-offset-10! text-indigo-700! cursor-pointer"
             >
               {/* Poster Container */}
               <div className="flex justify-center items-center">
@@ -79,9 +96,12 @@ function Movies() {
                   <img
                     src={`data:${movie.poster.imageType};base64,${movie.poster.imageData}`}
                     alt={movie.poster.name}
-                    className="w-96 h-auto object-cover rounded-2xl"
-                    onError={(e) => {
-                      e.target.src = "path/to/fallback-image.jpg"; // Fallback image
+                    className="w-auto h-lvh object-cover rounded-2xl"
+                    onError={(
+                      e: React.SyntheticEvent<HTMLImageElement, Event>
+                    ) => {
+                      const target = e.target as HTMLImageElement;
+                      target.src = "path/to/fallback-image.jpg"; // Fallback image
                     }}
                   />
                 ) : (
@@ -90,7 +110,7 @@ function Movies() {
                   </div>
                 )}
               </div>
-              <h2 className="text-4xl font-bold text-indigo-700 text-center">
+              <h2 className="text-4xl font-bold text-indigo-700 text-center ">
                 {movie.title}
               </h2>
             </Link>

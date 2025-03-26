@@ -1,10 +1,10 @@
 {
   "expo": {
     "name": "Selu383-SP25-P03-Mobile-g03",
-    "slug": "selu383-sp25-p03-Mobile-g03",
+    "slug": "selu383-sp25-p03-mobile-g03",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/images/icon.png",
+    "icon": "./assets/images/movie-theater.png",
     "scheme": "myapp",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
@@ -13,7 +13,7 @@
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/images/adaptive-icon.png",
+        "foregroundImage": "./assets/images/movie-theater.png",
         "backgroundColor": "#ffffff"
       },
       "package": "com.selu383.sp25.p03.g03"
@@ -21,14 +21,14 @@
     "web": {
       "bundler": "metro",
       "output": "static",
-      "favicon": "./assets/images/favicon.png"
+      "favicon": "./assets/images/movie-theater.png"
     },
     "plugins": [
       "expo-router",
       [
         "expo-splash-screen",
         {
-          "image": "./assets/images/splash-icon.png",
+          "image": "./assets/images/movie-theater.png",
           "imageWidth": 200,
           "resizeMode": "contain",
           "backgroundColor": "#ffffff"
@@ -46,6 +46,6 @@
         "projectId": "9c71d735-bef9-4c0b-a027-979202cc81a6"
       }
     },
-    "owner": "kuro11"
+    "owner": "chrisrichjr"
   }
 }

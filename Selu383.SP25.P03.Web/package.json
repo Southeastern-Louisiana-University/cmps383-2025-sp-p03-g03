@@ -10,6 +10,8 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@headlessui/react": "^2.2.0",
+    "@heroicons/react": "^2.2.0",
     "@popperjs/core": "^2.11.8",
     "@tailwindcss/vite": "^4.0.12",
     "chart.js": "^4.4.8",
