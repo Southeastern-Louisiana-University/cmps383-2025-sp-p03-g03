@@ -25,6 +25,13 @@ const UserDropdown: React.FC = () => {
   }, []);
 
   const handleLogout = () => {
+    var logOutUrl = "api/authentication/logout";
+    fetch(logOutUrl, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
     setIsAuthenticated(false);
   };
 

@@ -43,6 +43,7 @@ const LoginPage: React.FC = () => {
           console.error(error);
           setError("Error Logging in");
         });
+      console.log(error);
     }
 
     console.log("Username:", username, "Password:", password);
