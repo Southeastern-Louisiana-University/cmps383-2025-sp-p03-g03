@@ -33,6 +33,7 @@ const UserDropdown: React.FC = () => {
       },
     });
     setIsAuthenticated(false);
+    window.location.reload();
   };
 
   return (
