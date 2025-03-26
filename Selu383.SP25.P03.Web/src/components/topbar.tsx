@@ -30,11 +30,11 @@ export default function TopBar() {
               My Tickets
             </h2>
           </Link>
-          <Link to="/">
-            <h2 className="text-2xl text-white transition-transform hover:scale-110 hover:drop-shadow-xl hover:shadow-indigo-500/50! cursor-pointer">
-              Showtimes
-            </h2>
-          </Link>
+          {/*<Link to="/">*/}
+          {/*  <h2 className="text-2xl text-white transition-transform hover:scale-110 hover:drop-shadow-xl hover:shadow-indigo-500/50! cursor-pointer">*/}
+          {/*    Showtimes*/}
+          {/*  </h2>*/}
+          {/*</Link>*/}
 
           <Link to="/">
             <h2 className="text-2xl text-white transition-transform hover:scale-110 hover:drop-shadow-xl hover:shadow-indigo-500/50! cursor-pointer">
