@@ -3,10 +3,41 @@ import React, { useState } from "react";
 const LoginPage: React.FC = () => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const [error, setError] = useState<string>("");
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    // Handle your login logic here (e.g., API call, validation, etc.)
+    e.preventDefault();
+
+    if (!username || !password) {
+      setError("Please fill out all fields");
+    } else {
+      setError("");
+      var loginUrl = "/api/users";
+      fetch(loginUrl, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          username: username,
+          password: password,
+        }),
+      })
+        .then((data) => {
+          console.log(data);
+          if (data.ok) {
+            setError("Login Successful");
+          } else {
+            setError("Error logging in");
+          }
+        })
+        .catch((error) => {
+          console.error(error);
+          setError("Error Logging in");
+        });
+    }
+
     console.log("Username:", username, "Password:", password);
   };
 
