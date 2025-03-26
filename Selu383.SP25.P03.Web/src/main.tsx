@@ -15,6 +15,8 @@ import Products from "./BackendClient/Components/Views/Admin/Products.tsx";
 import MovieDetails from "./routes/MovieDetails.tsx";
 import { elements } from "chart.js";
 import LoginPage from "./routes/LoginPage.tsx";
+import AuthorizeView from "./components/authorizeView.tsx";
+import { AuthProvider } from "./components/authContext.tsx";
 
 // Layout component that includes the TopBar and Outlet
 const Layout = () => {
@@ -78,7 +80,9 @@ const rootElement = document.getElementById("root");
 if (rootElement) {
   ReactDOM.createRoot(rootElement).render(
     <React.StrictMode>
-      <RouterProvider router={router} />
+      <AuthProvider>
+        <RouterProvider router={router} />
+      </AuthProvider>
     </React.StrictMode>
   );
 }

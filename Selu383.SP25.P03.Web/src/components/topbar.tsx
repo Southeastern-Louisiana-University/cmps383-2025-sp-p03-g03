@@ -2,8 +2,11 @@ import Headroom from "react-headroom";
 import LDTheatreLogo from "../assets/lionsdencinemas.svg";
 import "../routes/App.css";
 import { Link } from "react-router-dom";
+import { useAuth } from "./authContext";
+import UserDropdown from "./userIconDropdown";
 
 export default function TopBar() {
+  const { isAuthenticated } = useAuth();
   return (
     <Headroom className="topbar" style={{ zIndex: 1000 }}>
       <nav className="bg-indigo-300! shadow-lg! shadow-indigo-900/50! p-2 flex justify-between items-center ">
@@ -47,11 +50,15 @@ export default function TopBar() {
               Q&A
             </h2>
           </Link>
-          <Link to="/LoginPage">
-            <h2 className="text-2xl text-white transition-transform hover:scale-110 hover:drop-shadow-xl hover:shadow-indigo-500/50! cursor-pointer">
-              Log In/Sign Up
-            </h2>
-          </Link>
+          {isAuthenticated ? (
+            <UserDropdown />
+          ) : (
+            <Link to="/LoginPage">
+              <h2 className="text-2xl text-white transition-transform hover:scale-110 hover:drop-shadow-xl hover:shadow-indigo-500/50! cursor-pointer">
+                Log In/Sign Up
+              </h2>
+            </Link>
+          )}
         </div>
       </nav>
     </Headroom>
