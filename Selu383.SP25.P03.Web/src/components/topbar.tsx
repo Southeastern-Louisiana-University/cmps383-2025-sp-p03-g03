@@ -25,16 +25,17 @@ export default function TopBar() {
               Movies
             </h2>
           </Link>
+          <Link to="/MyTickets">
+            <h2 className="text-2xl text-white transition-transform hover:scale-110 hover:drop-shadow-xl hover:shadow-indigo-500/50! cursor-pointer">
+              My Tickets
+            </h2>
+          </Link>
           <Link to="/">
             <h2 className="text-2xl text-white transition-transform hover:scale-110 hover:drop-shadow-xl hover:shadow-indigo-500/50! cursor-pointer">
               Showtimes
             </h2>
           </Link>
-          <Link to="/">
-            <h2 className="text-2xl text-white transition-transform hover:scale-110 hover:drop-shadow-xl hover:shadow-indigo-500/50! cursor-pointer">
-              Events
-            </h2>
-          </Link>
+
           <Link to="/">
             <h2 className="text-2xl text-white transition-transform hover:scale-110 hover:drop-shadow-xl hover:shadow-indigo-500/50! cursor-pointer">
               About
@@ -45,11 +46,7 @@ export default function TopBar() {
               My Theater
             </h2>
           </Link>
-          <Link to="/">
-            <h2 className="text-2xl text-white transition-transform hover:scale-110 hover:drop-shadow-xl hover:shadow-indigo-500/50! cursor-pointer">
-              Q&A
-            </h2>
-          </Link>
+
           {isAuthenticated ? (
             <UserDropdown />
           ) : (
