@@ -67,7 +67,7 @@ const Sidebar: React.FC = () => {
                                         className="md:block text-left md:pb-2 text-blueGray-600 mr-0 inline-block whitespace-nowrap text-sm uppercase font-bold p-4 px-0"
                                         to="/"
                                     >
-                                        Outside Inside
+                                        Lions Den Cinemas
                                     </Link>
                                 </div>
                                 <div className="w-6/12 flex justify-end">
@@ -120,16 +120,24 @@ const Sidebar: React.FC = () => {
                             </li>
 
                             <li className="items-center">
-                                <Link className={getNavLinkClass("/admin/tables")} to="/admin/tables">
-                                    <i className={`fas fa-table mr-2 text-sm ${getIconClass("/admin/tables")}`}></i>{" "}
-                                    Tables
+                                <Link className={getNavLinkClass("/admin/theaters")} to="/admin/theaters">
+                                    <i className={`fas fa-table mr-2 text-sm ${getIconClass("/admin/theaters")}`}></i>{" "}
+                                    Theaters
+                                </Link>
+                            </li>
+
+
+                            <li className="items-center">
+                                <Link className={getNavLinkClass("/admin/rooms")} to="/admin/rooms">
+                                    <i className={`fas fa-table mr-2 text-sm ${getIconClass("/admin/rooms")}`}></i>{" "}
+                                    Theater Rooms
                                 </Link>
                             </li>
                             
                             <li className="items-center">
-                                <Link className={getNavLinkClass("/admin/users")} to="/admin/users">
-                                    <i className={`fas fa-users mr-2 text-sm ${getIconClass("/admin/users")}`}></i>{" "}
-                                    Users
+                                <Link className={getNavLinkClass("/admin/seattypes")} to="/admin/seattypes">
+                                    <i className={`fas fa-users mr-2 text-sm ${getIconClass("/admin/seattypes")}`}></i>{" "}
+                                    Seat Types
                                 </Link>
                             </li>
                         </ul>
