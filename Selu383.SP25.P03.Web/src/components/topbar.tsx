@@ -25,11 +25,7 @@ export default function TopBar() {
               Movies
             </h2>
           </Link>
-          <Link to="/MyTickets">
-            <h2 className="text-2xl text-white transition-transform hover:scale-110 hover:drop-shadow-xl hover:shadow-indigo-500/50! cursor-pointer">
-              My Tickets
-            </h2>
-          </Link>
+
           {/*<Link to="/">*/}
           {/*  <h2 className="text-2xl text-white transition-transform hover:scale-110 hover:drop-shadow-xl hover:shadow-indigo-500/50! cursor-pointer">*/}
           {/*    Showtimes*/}
@@ -48,10 +44,17 @@ export default function TopBar() {
           </Link>
 
           {isAuthenticated ? (
-            <UserDropdown />
+            <div className="flex items-center space-x-4">
+              <Link to="/MyTickets">
+                <h2 className="text-2xl text-white transition-transform hover:scale-110 hover:drop-shadow-xl hover:shadow-indigo-500/50 cursor-pointer">
+                  My Tickets
+                </h2>
+              </Link>
+              <UserDropdown />
+            </div>
           ) : (
             <Link to="/LoginPage">
-              <h2 className="text-2xl text-white transition-transform hover:scale-110 hover:drop-shadow-xl hover:shadow-indigo-500/50! cursor-pointer">
+              <h2 className="text-2xl text-white transition-transform hover:scale-110 hover:drop-shadow-xl hover:shadow-indigo-500/50 cursor-pointer">
                 Log In/Sign Up
               </h2>
             </Link>
