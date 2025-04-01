@@ -17,7 +17,7 @@ import { AuthProvider } from "./components/authContext.tsx";
 import TheatreChoice from "./routes/TicketBuyingProcess/TheatreChoice.tsx";
 import ShowtimeChoice from "./routes/TicketBuyingProcess/ShowtimeChoice.tsx";
 import LoginPage from "./routes/LoginPage.tsx";
-import MyTickets from "./components/MyTicketsPage.tsx";
+import MyTickets from "./routes/MyTicketsPage.tsx";
 
 // Layout component that includes the TopBar and Outlet
 const Layout = () => {
