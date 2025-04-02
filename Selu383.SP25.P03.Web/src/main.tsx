@@ -14,8 +14,7 @@ import Dashboard from "./BackendClient/Components/Views/Admin/Dashboard.tsx";
 import Products from "./BackendClient/Components/Views/Admin/Products.tsx";
 import MovieDetails from "./routes/MovieDetails.tsx";
 import { AuthProvider } from "./components/authContext.tsx";
-import TheatreChoice from "./routes/TicketBuyingProcess/TheatreChoice.tsx";
-import ShowtimeChoice from "./routes/TicketBuyingProcess/ShowtimeChoice.tsx";
+import TheatreChoice from "./routes/TheatreChoice.tsx";
 import LoginPage from "./routes/LoginPage.tsx";
 import MyTickets from "./routes/MyTicketsPage.tsx";
 
@@ -52,17 +51,13 @@ const router = createBrowserRouter([
                 index: true,
                 element: <MovieDetails />,
               },
-              {
-                path: "theaters", // Corrected path (relative)
-                element: <TheatreChoice />,
-              },
-              {
-                path: "showtimes", // Corrected path (relative)
-                element: <ShowtimeChoice />,
-              },
             ],
           },
         ],
+      },
+      {
+        path: "/theaters",
+        element: <TheatreChoice />,
       },
       {
         path: "/LoginPage",

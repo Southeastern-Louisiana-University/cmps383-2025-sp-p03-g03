@@ -36,7 +36,6 @@ interface Theater {
 function MovieDetails() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
-  const [searchParams] = useSearchParams();
   const [movie, setMovie] = useState<Movie | null>(null);
   const [poster, setPoster] = useState<MoviePoster | null>(null);
   const [theaters, setTheaters] = useState<Theater[]>([]);
@@ -45,7 +44,7 @@ function MovieDetails() {
   const [error, setError] = useState<string | null>(null);
   const [showShowtimes, setShowShowtimes] = useState(false);
 
-  const theaterId = searchParams.get("theaterId");
+  const theaterId = localStorage.getItem("theaterId");
   const movieId = id;
 
   useEffect(() => {
