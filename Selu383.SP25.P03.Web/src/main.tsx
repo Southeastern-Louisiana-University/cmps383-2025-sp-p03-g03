@@ -27,7 +27,6 @@ import RoomFormPage from "./BackendClient/Components/Room/RoomForm.tsx";
 
 import SeatTypeListPage from "./BackendClient/Components/Seats/SeatTypeListPage.tsx";
 import SeatTypeForm from "./BackendClient/Components/Seats/SeatTypeForm.tsx";
-import SeatRowConfiguration from "./BackendClient/Components/Seats/SeatRowConfiguration.tsx";
 
 
 // Layout component that includes the TopBar and Outlet
