@@ -18,6 +18,7 @@ import TheatreChoice from "./routes/TicketBuyingProcess/TheatreChoice.tsx";
 import ShowtimeChoice from "./routes/TicketBuyingProcess/ShowtimeChoice.tsx";
 import LoginPage from "./routes/LoginPage.tsx";
 import MyTickets from "./routes/MyTicketsPage.tsx";
+import ConcessionsPage from "./routes/ConcessionsPage.tsx";
 
 // Layout component that includes the TopBar and Outlet
 const Layout = () => {
@@ -71,6 +72,10 @@ const router = createBrowserRouter([
       {
         path: "/MyTickets",
         element: <MyTickets />,
+      },
+      {
+        path: "/Concessions",
+        element: <ConcessionsPage />,
       },
     ],
   },
