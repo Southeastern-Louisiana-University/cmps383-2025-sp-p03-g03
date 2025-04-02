@@ -22,7 +22,7 @@ namespace Selu383.SP25.P03.Api.Features.Rooms
     }
     public class RoomDto
     {
-        int Id { get; set; }
+        public int Id { get; set; }
         public string? Name { get; set; }
         public int NumOfSeats { get; set; }
         public int rows { get; set; }

@@ -91,7 +91,7 @@ function Movies() {
               className="flex flex-col items-center gap-4 transition-transform hover:scale-110 hover:underline! underline-offset-10! text-indigo-700! cursor-pointer"
             >
               {/* Poster Container */}
-              <div className="flex justify-center items-center">
+                  <div className="flex justify-center items-center">
                 {movie.poster ? (
                   <img
                     src={`data:${movie.poster.imageType};base64,${movie.poster.imageData}`}

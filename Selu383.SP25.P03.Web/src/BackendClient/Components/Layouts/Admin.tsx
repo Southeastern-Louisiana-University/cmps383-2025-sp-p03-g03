@@ -16,7 +16,7 @@ const Admin: React.FC = () => {
                 <AdminNavbar />
                 <HeaderStats />
                 
-                <div className="px-4 md:px-10 mx-auto w-full -m-24">
+                <div className="px-4 md:px-10 mx-auto w-full m-24">
                     {/* This is where child routes will render */}
                     
                     <Outlet />

@@ -45,7 +45,14 @@ export default function TopBar() {
           </Link>
 
           {isAuthenticated ? (
-            <UserDropdown />
+            <div className="flex items-center space-x-4">
+              <Link to="/MyTickets">
+                <h2 className="text-2xl text-white transition-transform hover:scale-110 hover:drop-shadow-xl hover:shadow-indigo-500/50 cursor-pointer">
+                  My Tickets
+                </h2>
+              </Link>
+              <UserDropdown />
+            </div>
           ) : (
             <Link to="/LoginPage">
               <h2 className="text-lg! md:text-xl! lg:text-2xl! text-white! transition-transform! hover:scale-110! hover:drop-shadow-xl! hover:shadow-indigo-500/50! cursor-pointer!">

@@ -4,7 +4,8 @@ import { Link } from "react-router-dom";
 import { useAuth } from "../components/authContext";
 
 const UserDropdown: React.FC = () => {
-  const { setIsAuthenticated } = useAuth();
+  const { setIsAuthenticated, isAuthenticated, role, setUserId, setRole } =
+    useAuth();
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
@@ -31,8 +32,12 @@ const UserDropdown: React.FC = () => {
       headers: {
         "Content-Type": "application/json",
       },
+    }).finally(() => {
+      setIsAuthenticated(false);
+      setUserId(null);
+      setRole(null);
+      window.location.reload();
     });
-    setIsAuthenticated(false);
   };
 
   return (
@@ -51,6 +56,14 @@ const UserDropdown: React.FC = () => {
           >
             Profile
           </Link>
+          {isAuthenticated && role?.includes("Admin") && (
+            <Link
+              to="/admin"
+              className="block px-4 py-2 text-gray-800 hover:bg-gray-200"
+            >
+              Admin Dashboard
+            </Link>
+          )}
           <button
             onClick={handleLogout}
             className="w-full text-left px-4 py-2 text-gray-800 hover:bg-gray-200"
