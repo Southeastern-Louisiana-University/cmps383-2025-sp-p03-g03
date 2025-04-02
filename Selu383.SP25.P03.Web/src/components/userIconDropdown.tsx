@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from "react";
-import { FaUserCircle } from "react-icons/fa";
+// import { FaUserCircle } from "react-icons/fa";
 import { Link } from "react-router-dom";
 import { useAuth } from "../components/authContext";
 
