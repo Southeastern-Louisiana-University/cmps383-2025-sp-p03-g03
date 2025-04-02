@@ -91,12 +91,12 @@ function Movies() {
               className="flex flex-col items-center gap-4 transition-transform hover:scale-110 hover:underline! underline-offset-10! text-indigo-700! cursor-pointer"
             >
               {/* Poster Container */}
-              <div className="flex justify-center items-center">
+                  <div className="flex justify-center items-center">
                 {movie.poster ? (
                   <img
                     src={`data:${movie.poster.imageType};base64,${movie.poster.imageData}`}
                     alt={movie.poster.name}
-                    className="w-auto h-lvh object-cover rounded-2xl"
+                              className="aspect-3/5 w-full object-cover  rounded-2xl"
                     onError={(
                       e: React.SyntheticEvent<HTMLImageElement, Event>
                     ) => {
