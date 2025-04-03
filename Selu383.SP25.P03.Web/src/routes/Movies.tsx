@@ -6,7 +6,7 @@ interface Movie {
   id: number;
   title: string;
   // Add other movie properties as needed
-  poster: MoviePoster | null;
+  poster: MoviePoster[] | null;
 }
 
 interface MoviePoster {
@@ -42,7 +42,7 @@ function Movies() {
               if (!posterResponse.ok) {
                 throw new Error(`Failed to fetch poster for movie ${movie.id}`);
               }
-              const posterData: MoviePoster = await posterResponse.json();
+              const posterData: MoviePoster[] = await posterResponse.json();
               return { ...movie, poster: posterData }; // Add poster data to the movie object
             } catch (error) {
               console.error(error);
@@ -94,8 +94,8 @@ function Movies() {
                   <div className="flex justify-center items-center">
                 {movie.poster ? (
                   <img
-                    src={`data:${movie.poster.imageType};base64,${movie.poster.imageData}`}
-                    alt={movie.poster.name}
+                    src={`data:${movie.poster[0].imageType};base64,${movie.poster[0].imageData}`}
+                    alt={movie.poster[0].name}
                               className="aspect-3/5 w-full object-cover  rounded-2xl"
                     onError={(
                       e: React.SyntheticEvent<HTMLImageElement, Event>

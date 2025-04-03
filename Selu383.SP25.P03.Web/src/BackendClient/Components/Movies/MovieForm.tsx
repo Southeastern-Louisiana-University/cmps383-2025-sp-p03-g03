@@ -7,7 +7,7 @@ import {
 } from '../../../Services/MovieService';
 import { Upload, Image, Trash2, Clock, Calendar } from 'lucide-react';
 //import "../../../index.css";
-//import "../BackendCSS/Backend.css";
+import "../BackendCSS/Backend.css";
 
 const MovieFormPage: React.FC = () => {
     const { id: urlId } = useParams<{ id: string }>();
