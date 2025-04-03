@@ -140,6 +140,13 @@ const Sidebar: React.FC = () => {
                                     Seat Types
                                 </Link>
                             </li>
+
+                            <li className="items-center">
+                                <Link className={getNavLinkClass("/admin/movies")} to="/admin/movies">
+                                    <i className={`fas fa-users mr-2 text-sm ${getIconClass("/admin/movies")}`}></i>{" "}
+                                    Movies
+                                </Link>
+                            </li>
                         </ul>
 
                         <hr className="my-4 md:min-w-full" />

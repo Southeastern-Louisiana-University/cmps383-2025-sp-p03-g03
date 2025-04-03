@@ -37,7 +37,7 @@ function Movies() {
           data.map(async (movie) => {
             try {
               const posterResponse = await fetch(
-                `/api/movieposter/${movie.id}`
+                `/api/MoviePoster/GetByMovieId/${movie.id}`
               );
               if (!posterResponse.ok) {
                 throw new Error(`Failed to fetch poster for movie ${movie.id}`);
