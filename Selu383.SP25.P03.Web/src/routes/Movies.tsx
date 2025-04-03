@@ -96,7 +96,7 @@ function Movies() {
                   <img
                     src={`data:${movie.poster.imageType};base64,${movie.poster.imageData}`}
                     alt={movie.poster.name}
-                              className="aspect-3/5 w-full object-cover  rounded-2xl"
+                    className="aspect-4/5 rounded-2xl"
                     onError={(
                       e: React.SyntheticEvent<HTMLImageElement, Event>
                     ) => {
