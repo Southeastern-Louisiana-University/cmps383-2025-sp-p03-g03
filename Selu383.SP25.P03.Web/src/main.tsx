@@ -26,6 +26,9 @@ import RoomFormPage from "./BackendClient/Components/Room/RoomForm.tsx";
 import SeatTypeListPage from "./BackendClient/Components/Seats/SeatTypeListPage.tsx";
 import SeatTypeForm from "./BackendClient/Components/Seats/SeatTypeForm.tsx";
 
+import MovieListPage from "./BackendClient/Components/Movies/MovieListPage.tsx";
+import MovieForm from "./BackendClient/Components/Movies/MovieForm.tsx";
+
 
 // Layout component that includes the TopBar and Outlet
 const Layout = () => {
@@ -65,8 +68,8 @@ const router = createBrowserRouter([
                                 element: <TheatreChoice />,
                             },
                             {
-                                path: "showtimes",
-                                element: <ShowtimeChoice />,
+                                //path: "showtimes",
+                                //element: <ShowtimeChoice />,
                             },
                         ],
                     },
@@ -167,6 +170,24 @@ const router = createBrowserRouter([
                     {
                         path: "new",
                         element: <SeatTypeForm />,
+                    },
+                ],
+            },
+            // Seat type management routes
+            {
+                path: "Movies",
+                children: [
+                    {
+                        index: true,
+                        element: <MovieListPage />,
+                    },
+                    {
+                        path: ":id",
+                        element: <MovieForm />,
+                    },
+                    {
+                        path: "new",
+                        element: <MovieForm />,
                     },
                 ],
             },
