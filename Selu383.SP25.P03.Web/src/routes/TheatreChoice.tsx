@@ -12,9 +12,19 @@ function TheatreChoice() {
   const navigate = useNavigate();
   const [theaters, setTheaters] = useState<Theater[]>([]);
   const [loading, setLoading] = useState(true);
+  const [selectedTheater, setSelectedTheater] = useState<number | null>(null);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
+    const savedTheaterId = localStorage.getItem("theaterId");
+    if (savedTheaterId) {
+      try {
+        setSelectedTheater(JSON.parse(savedTheaterId));
+      } catch (e) {
+        console.error("Failed to parse saved theater ID", e);
+      }
+    }
+
     const fetchTheaters = async () => {
       try {
         setLoading(true);
@@ -37,6 +47,7 @@ function TheatreChoice() {
   }, []);
 
   const handleTheaterSelect = (theaterId: number) => {
+    setSelectedTheater(theaterId);
     localStorage.setItem("theaterId", JSON.stringify(theaterId));
     console.log(theaterId);
   };
@@ -66,12 +77,18 @@ function TheatreChoice() {
           </h2>
           <p className="text-gray-600 mt-2">{theater.location}</p>
 
-          <Button
-            onClick={() => handleTheaterSelect(theater.id)}
-            className="mt-4 bg-indigo-600! hover:bg-indigo-700 text-white py-2 px-4 rounded transition-colors"
-          >
-            Select Theater
-          </Button>
+          {selectedTheater === theater.id ? (
+            <Button className="mt-4 bg-gray-400! text-white py-2 px-4 rounded transition-colors cursor-default">
+              Selected
+            </Button>
+          ) : (
+            <Button
+              onClick={() => handleTheaterSelect(theater.id)}
+              className="mt-4 bg-indigo-600! hover:bg-indigo-700! text-white py-2 px-4 rounded transition-colors"
+            >
+              Select Theater
+            </Button>
+          )}
         </div>
       ))}
     </div>

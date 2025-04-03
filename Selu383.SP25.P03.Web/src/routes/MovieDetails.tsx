@@ -154,8 +154,11 @@ function MovieDetails() {
 
         <div className="flex gap-4 text-lg text-indigo-700">
           <span>{movie.ageRating}</span>
+          <p>-</p>
           <span>{movie.runtime} min</span>
+          <p>-</p>
           <span>{new Date(movie.releaseDate).toLocaleDateString()}</span>
+          <p>-</p>
           <span>{movie.category}</span>
         </div>
 

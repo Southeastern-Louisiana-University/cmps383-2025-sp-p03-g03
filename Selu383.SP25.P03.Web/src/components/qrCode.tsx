@@ -11,9 +11,7 @@ export default function QRCodeComponent({ userId }: QRCodeComponentProps) {
   useEffect(() => {
     const fetchUserTickets = async () => {
       try {
-        const response = await fetch(
-          `https://localhost:7027/api/UserTicket/GetByUserId/${userId}`
-        );
+        const response = await fetch(`/api/UserTicket/GetByUserId/${userId}`);
         const result = await response.json();
 
         setData(result.data);

@@ -8,7 +8,13 @@ import UserDropdown from "./userIconDropdown";
 export default function TopBar() {
   const { isAuthenticated } = useAuth();
   return (
-    <Headroom className="topbar!" style={{ zIndex: "1000!" }}>
+    <Headroom
+      style={{
+        zIndex: "1000 !important",
+      }}
+      className="headroom-wrapper"
+      pinStart={0}
+    >
       <nav className="bg-indigo-300! shadow-lg! shadow-indigo-900/50! p-2! flex! justify-between! items-center!">
         {/* Logo Section */}
         <div className="ml-4! md:ml-8! flex! space-x-8! md:space-x-16!">
@@ -45,12 +51,7 @@ export default function TopBar() {
           </Link>
 
           {isAuthenticated ? (
-            <div className="flex items-center space-x-4">
-              <Link to="/MyTickets">
-                <h2 className="text-2xl text-white transition-transform hover:scale-110 hover:drop-shadow-xl hover:shadow-indigo-500/50 cursor-pointer">
-                  My Tickets
-                </h2>
-              </Link>
+            <div className="flex! items-center! space-x-4!">
               <UserDropdown />
             </div>
           ) : (

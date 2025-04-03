@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from "react";
-// import { FaUserCircle } from "react-icons/fa";
 import { Link } from "react-router-dom";
 import { useAuth } from "../components/authContext";
+import { FaUserCircle } from "react-icons/fa";
 
 const UserDropdown: React.FC = () => {
   const { setIsAuthenticated, isAuthenticated, role, setUserId, setRole } =
@@ -41,32 +41,32 @@ const UserDropdown: React.FC = () => {
   };
 
   return (
-    <div ref={dropdownRef} className="relative inline-block">
-      <button onClick={() => setIsOpen(!isOpen)}>
+    <div ref={dropdownRef} className="relative z-[1001]">
+      <button onClick={() => setIsOpen(!isOpen)} className="focus:outline-none">
         <FaUserCircle
           size={32}
-          className="text-white transition-transform hover:scale-110 cursor-pointer"
+          className="text-white transition-transform hover:scale-110 cursor-pointer hover:drop-shadow-xl hover:shadow-indigo-500/50"
         />
       </button>
       {isOpen && (
-        <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg z-20">
+        <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg shadow-indigo-900/50 z-[1002]">
           <Link
             to="/profile"
-            className="block px-4 py-2 text-gray-800 hover:bg-gray-200"
+            className="block px-4 py-2 text-gray-800 hover:bg-gray-200 transition-colors"
           >
             Profile
           </Link>
           {isAuthenticated && role?.includes("Admin") && (
             <Link
               to="/admin"
-              className="block px-4 py-2 text-gray-800 hover:bg-gray-200"
+              className="block px-4 py-2 text-gray-800 hover:bg-gray-200 transition-colors"
             >
               Admin Dashboard
             </Link>
           )}
           <button
             onClick={handleLogout}
-            className="w-full text-left px-4 py-2 text-gray-800 hover:bg-gray-200"
+            className="w-full text-left px-4 py-2 text-gray-800 hover:bg-gray-200 transition-colors"
           >
             Logout
           </button>
