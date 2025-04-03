@@ -3,10 +3,10 @@ import Movies from "./routes/Movies.tsx";
 import * as React from "react";
 import * as ReactDOM from "react-dom/client";
 import {
-    createBrowserRouter,
-    RouterProvider,
-    Outlet,
-    Navigate,
+  createBrowserRouter,
+  RouterProvider,
+  Outlet,
+  Navigate,
 } from "react-router-dom";
 import TopBar from "./components/topbar";
 import Admin from "./BackendClient/Components/Layouts/Admin.tsx";
@@ -14,8 +14,7 @@ import Dashboard from "./BackendClient/Components/Views/Admin/Dashboard.tsx";
 import Products from "./BackendClient/Components/Views/Admin/Products.tsx";
 import MovieDetails from "./routes/MovieDetails.tsx";
 import { AuthProvider } from "./components/authContext.tsx";
-import TheatreChoice from "./routes/TicketBuyingProcess/TheatreChoice.tsx";
-import ShowtimeChoice from "./routes/TicketBuyingProcess/ShowtimeChoice.tsx";
+import TheatreChoice from "./routes/TheatreChoice.tsx";
 import LoginPage from "./routes/LoginPage.tsx";
 import MyTickets from "./routes/MyTicketsPage.tsx";
 // Import the theater, user, and room components
@@ -27,17 +26,15 @@ import RoomFormPage from "./BackendClient/Components/Room/RoomForm.tsx";
 import SeatTypeListPage from "./BackendClient/Components/Seats/SeatTypeListPage.tsx";
 import SeatTypeForm from "./BackendClient/Components/Seats/SeatTypeForm.tsx";
 
-import MovieListPage from "./BackendClient/Components/Movies/MovieListPage.tsx";
-import MovieForm from "./BackendClient/Components/Movies/MovieForm.tsx";
 
 // Layout component that includes the TopBar and Outlet
 const Layout = () => {
-    return (
-        <>
-            <TopBar />
-            <Outlet />
-        </>
-    );
+  return (
+    <>
+      <TopBar />
+      <Outlet />
+    </>
+  );
 };
 
 const router = createBrowserRouter([
@@ -173,24 +170,6 @@ const router = createBrowserRouter([
                     },
                 ],
             },
-            // New movie management routes
-            {
-                path: "movies",
-                children: [
-                    {
-                        index: true,
-                        element: <MovieListPage />,
-                    },
-                    {
-                        path: ":id",
-                        element: <MovieForm />,
-                    },
-                    {
-                        path: "new",
-                        element: <MovieForm />,
-                    },
-                ],
-            },
             // User management routes
             {
                 path: "users",
@@ -216,11 +195,11 @@ const router = createBrowserRouter([
 const rootElement = document.getElementById("root");
 
 if (rootElement) {
-    ReactDOM.createRoot(rootElement).render(
-        <React.StrictMode>
-            <AuthProvider>
-                <RouterProvider router={router} />
-            </AuthProvider>
-        </React.StrictMode>
-    );
+  ReactDOM.createRoot(rootElement).render(
+    <React.StrictMode>
+      <AuthProvider>
+        <RouterProvider router={router} />
+      </AuthProvider>
+    </React.StrictMode>
+  );
 }
