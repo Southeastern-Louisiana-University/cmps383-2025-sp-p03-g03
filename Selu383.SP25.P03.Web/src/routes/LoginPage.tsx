@@ -7,7 +7,7 @@ function LoginPage() {
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string>("");
   const navigate = useNavigate();
-  const { setIsAuthenticated, setUserId } = useAuth();
+  const { setIsAuthenticated, setUserId, setRole } = useAuth();
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -30,11 +30,12 @@ function LoginPage() {
             throw new Error("Login failed");
           }
 
-          const data = await response.json(); // setting data to set our user id and authentication
+          const data = await response.json();
           console.log(data);
           setUserId(data.id.toString());
+          setRole(data.roles);
           setIsAuthenticated(true);
-          navigate("/"); //send user back to home page
+          navigate("/");
         })
         .catch((error) => {
           console.error(error);
