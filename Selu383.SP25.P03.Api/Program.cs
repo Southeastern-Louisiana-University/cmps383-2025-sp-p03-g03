@@ -38,6 +38,16 @@ namespace Selu383.SP25.P03.Api
             // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
             builder.Services.AddOpenApi();
             builder.Services.AddRazorPages();
+           
+            builder.Services.AddCors(options =>
+            {
+                options.AddDefaultPolicy(policy =>
+                {
+                    policy.AllowAnyOrigin()
+                          .AllowAnyHeader()
+                          .AllowAnyMethod();
+                });
+            });
 
             builder.Services.AddIdentity<User, Role>()
                 .AddEntityFrameworkStores<DataContext>()
@@ -114,7 +124,7 @@ namespace Selu383.SP25.P03.Api
 
 
 
-
+            app.UseCors();
             app.UseHttpsRedirection();
             app.UseAuthentication();
             app.UseRouting()
@@ -142,21 +152,7 @@ namespace Selu383.SP25.P03.Api
             }
 
 
-            ////Configure the SPA
-            //app.UseSpa(spa =>
-            //{
-            //    //spa.Options.SourcePath = "../Selu383.SP25.P03.Web"; // Path to your Vite frontend project relative to the backend
-
-            //    if (app.Environment.IsDevelopment())
-            //    {
-            //        // Use Vite development server
-            //        spa.UseProxyToSpaDevelopmentServer("http://localhost:5173"); // Default Vite port
-            //    }
-            //    else
-            //    {
-            //        app.MapFallbackToFile("/index.html");
-            //    }
-            //});
+            
 
 
             app.Run();

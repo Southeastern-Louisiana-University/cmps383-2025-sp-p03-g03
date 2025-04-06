@@ -2,7 +2,7 @@ import { View, Text, TextInput, Pressable, Image, TouchableOpacity } from 'react
 import axios from 'axios';
 import { useRouter, Link } from 'expo-router';
 import React, { useState } from 'react';
-import { BASE_URL } from '../../constants/baseUrl';
+import { BASE_URL } from '../../utils/baseUrl';
 
 function Register() {
     const router = useRouter();
