@@ -62,7 +62,7 @@ export default function Index() {
             return (
               <View style={styles.posterCard}>
                 <Image
-                  source={getLocalPoster(item.title ?? "")}
+                  source={getLocalPoster(item.title)}
                   style={isStretched ? styles.posterImageFixed : styles.posterImage}
                   resizeMode="cover"
                 />
