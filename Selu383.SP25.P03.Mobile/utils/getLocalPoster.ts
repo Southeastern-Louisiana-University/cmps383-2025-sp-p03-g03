@@ -1,36 +1,27 @@
 
+const posters: { [key: string]: any } = {
+  "dune: part two": require("../assets/images/posters/dune.jpg"),
+  "godzilla x kong: the new empire": require("../assets/images/posters/godzilla-x-kong.jpg"),
+  "kingdom of the planet of the apes": require("../assets/images/posters/apes.jpg"),
+  "ghostbusters: frozen empire": require("../assets/images/posters/ghostbusters.jpg"),
+  "the fall guy": require("../assets/images/posters/fall-guy.jpg"),
+  "a quiet place: day one": require("../assets/images/posters/quiet-place.jpg"),
+  "inside out 2": require("../assets/images/posters/inside-out-2.jpg"),
+  "furiosa: a mad max saga": require("../assets/images/posters/furiosa.jpg"),
+  "deadpool & wolverine": require("../assets/images/posters/deadpool.jpg"),
+  "bad boys: ride or die": require("../assets/images/posters/bad-boys.jpg"),
+  "the garfield movie": require("../assets/images/posters/garfield.jpg"),
+  "oppenheimer": require("../assets/images/posters/oppenheimer.jpg"),
+};
+
 export function getLocalPoster(title: string): any {
-    const formatted = title.toLowerCase().replace(/[^a-z0-9]/gi, '');
-  
-    
-  
-    switch (formatted) {
-      case 'duneparttwo':
-        return require('../assets/images/posters/dune.jpg');
-      case 'godzillaxkongthenewempire':
-        return require('../assets/images/posters/godzilla-x-kong.jpg');
-      case 'kingdomoftheplanetoftheapes':
-        return require('../assets/images/posters/apes.jpg');
-      case 'ghostbustersfrozenempire':
-        return require('../assets/images/posters/ghostbusters.jpg');
-      case 'thefallguy':
-        return require('../assets/images/posters/fall-guy.jpg');
-    //   case 'aquietplacedayone':
-    //     return require('../assets/images/posters/quiet-place.jpg');
-    //   case 'insideout2':
-    //     return require('../assets/images/posters/inside-out-2.jpg');
-    //     case 'furiosaamadmaxsaga':
-    //     return require('../assets/images/posters/furiosa.jpg');
-    //   case 'deadpoolwolverine':
-    //     return require('../assets/images/posters/deadpool.jpg');
-    //   case 'badboysrideordie':
-    //     return require('../assets/images/posters/bad-boys.jpg');
-    //   case 'thegarfieldmovie':
-    //     return require('../assets/images/posters/garfield.jpg');
-    //   case 'oppenheimer':
-    //     return require('../assets/images/posters/oppenheimer.jpg');
-    //   default:
-    //     return require('../assets/images/posters/placeholder.jpg');
-    // }
+  const key = title?.trim().toLowerCase();
+  const poster = posters[key];
+
+  if (!poster) {
+   
+    return require("../assets/images/posters/placeholder.jpg");
   }
-  
+
+  return poster;
+}
