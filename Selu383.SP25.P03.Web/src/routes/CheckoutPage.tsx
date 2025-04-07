@@ -18,12 +18,12 @@ interface Showtime {
   id: number;
   time: string;
   movieId: number;
-  theaterId: number;
 }
 
 interface Theater {
   id: number;
   name: string;
+  location?: string;
 }
 
 interface Movie {
@@ -32,69 +32,38 @@ interface Movie {
   runtime: number;
   ageRating: string;
   posterUrl?: string;
+  description?: string;
+  releaseDate?: string;
+  category?: string;
+}
+
+interface MoviePoster {
+  imageType: string;
+  imageData: string;
+  name: string;
 }
 
 export default function Checkout() {
   const location = useLocation();
   const navigate = useNavigate();
-  const { selectedSeats, showtime, theater } = location.state || {};
-  const [movie, setMovie] = useState<Movie | null>(null);
-  const [loading, setLoading] = useState(true);
+  const { selectedSeats, showtime, theater, movie, poster } =
+    location.state || {};
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [paymentProcessing, setPaymentProcessing] = useState(false);
   const [orderComplete, setOrderComplete] = useState(false);
 
   useEffect(() => {
-    if (!showtime || !theater || !selectedSeats?.length) {
-      navigate("/");
-      return;
+    console.log("location.state:", location.state);
+    if (!showtime || !theater || !selectedSeats?.length || !movie) {
+      setError("Please select a movie, theater, showtime, and seats first.");
     }
-
-    const fetchMovie = async () => {
-      try {
-        const response = await fetch(`/api/movies/${showtime.movieId}`);
-        if (!response.ok) throw new Error("Movie not found");
-        const data = await response.json();
-        setMovie(data);
-      } catch (err) {
-        setError(err instanceof Error ? err.message : "Unknown error");
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchMovie();
-  }, [showtime, navigate, theater, selectedSeats]);
+  }, [showtime, theater, selectedSeats, movie]);
 
   const handlePayment = async () => {
     try {
       setPaymentProcessing(true);
-
-      // Simulate payment processing
       await new Promise((resolve) => setTimeout(resolve, 1500));
-
-      const response = await fetch("/api/reservations", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          showtimeId: showtime.id,
-          seatIds: selectedSeats.map((s: Seat) => s.id), // Explicitly type the parameter
-          paymentAmount: calculateTotal(),
-          paymentMethod: "credit-card",
-        }),
-      });
-
-      if (!response.ok) throw new Error("Reservation failed");
-
-      // Mark seats as reserved
-      await Promise.all(
-        selectedSeats.map(
-          (
-            seat: Seat // Explicitly type the parameter
-          ) => fetch(`/api/seats/${seat.id}/reserve`, { method: "POST" })
-        )
-      );
-
       setOrderComplete(true);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Payment failed");
@@ -139,15 +108,25 @@ export default function Checkout() {
 
   const calculateTotal = () => {
     return selectedSeats.reduce(
-      (total: number, seat: Seat) => total + getSeatPrice(seat.seatTypeId), // Explicitly type both parameters
+      (total: number, seat: Seat) => total + getSeatPrice(seat.seatTypeId),
       0
     );
   };
 
   if (loading) return <div className="text-center py-20">Loading...</div>;
-  if (error)
-    return <div className="text-center text-red-500 py-20">Error: {error}</div>;
-  if (!movie) return <div className="text-center py-20">Movie not found</div>;
+  if (!showtime || !theater || !selectedSeats?.length || !movie) {
+    return (
+      <div className="max-w-4xl mx-auto p-6 text-center text-red-500">
+        <p>{error}</p>
+        <Button
+          onClick={() => navigate("/")}
+          className="mt-4 bg-indigo-600! hover:bg-indigo-700! text-white py-3 px-6 rounded-lg"
+        >
+          Return to Home
+        </Button>
+      </div>
+    );
+  }
 
   if (orderComplete) {
     return (
@@ -158,7 +137,7 @@ export default function Checkout() {
         </h1>
         <p className="text-xl text-gray-600 mb-8">
           Your tickets for <span className="font-bold">{movie.title}</span> have
-          been reserved.
+          been purchased.
         </p>
 
         <div className="bg-white rounded-xl shadow-md p-6 mb-8 text-left">
@@ -181,19 +160,15 @@ export default function Checkout() {
               </span>
             </div>
             <div className="border-t pt-4">
-              {selectedSeats.map(
-                (
-                  seat: Seat // Explicitly type the parameter
-                ) => (
-                  <div key={seat.id} className="flex justify-between mb-2">
-                    <span>
-                      Seat {seat.row}
-                      {seat.seatNumber} ({getSeatType(seat.seatTypeId)})
-                    </span>
-                    <span>${getSeatPrice(seat.seatTypeId)}</span>
-                  </div>
-                )
-              )}
+              {selectedSeats.map((seat: Seat) => (
+                <div key={seat.id} className="flex justify-between mb-2">
+                  <span>
+                    Seat {seat.row}
+                    {seat.seatNumber} ({getSeatType(seat.seatTypeId)})
+                  </span>
+                  <span>${getSeatPrice(seat.seatTypeId)}</span>
+                </div>
+              ))}
             </div>
             <div className="flex justify-between border-t pt-4 font-bold text-lg">
               <span>Total:</span>
@@ -205,13 +180,13 @@ export default function Checkout() {
         <div className="flex flex-col sm:flex-row gap-4 justify-center">
           <Button
             onClick={() => window.print()}
-            className="bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-3 rounded-lg"
+            className="bg-indigo-600! hover:bg-indigo-700! text-white px-6 py-3 rounded-lg"
           >
             Print Tickets
           </Button>
           <Button
             onClick={() => navigate("/")}
-            className="bg-white border border-indigo-600 text-indigo-600 hover:bg-indigo-50 px-6 py-3 rounded-lg"
+            className="bg-white border border-indigo-600! text-indigo-600! hover:bg-indigo-50 px-6 py-3 rounded-lg"
           >
             Back to Home
           </Button>
@@ -224,16 +199,18 @@ export default function Checkout() {
     <div className="max-w-4xl mx-auto p-6">
       <Button
         onClick={() => navigate(-1)}
-        className="flex items-center gap-2 text-indigo-600 mb-6"
+        className="flex items-center gap-2 text-indigo-600 mb-6 hover:text-indigo-800 transition-colors"
       >
         <ArrowLeftIcon className="h-5 w-5" />
         Back to seat selection
       </Button>
 
       <h1 className="text-3xl font-bold text-indigo-800 mb-6">Checkout</h1>
+      {error && (
+        <div className="mb-4 p-3 bg-red-100 text-red-700 rounded">{error}</div>
+      )}
 
       <div className="grid md:grid-cols-3 gap-8">
-        {/* Order Summary */}
         <div className="md:col-span-2 bg-white rounded-xl shadow-md p-6">
           <h2 className="text-xl font-bold text-indigo-700 mb-4">
             Order Summary
@@ -241,11 +218,19 @@ export default function Checkout() {
 
           <div className="flex gap-4 mb-6">
             <div className="flex-shrink-0">
-              <img
-                src={movie.posterUrl || `/placeholder-poster.jpg`}
-                alt={movie.title}
-                className="w-24 h-auto rounded"
-              />
+              {poster ? (
+                <img
+                  src={`data:${poster.imageType};base64,${poster.imageData}`}
+                  alt={movie.title}
+                  className="w-24 h-auto rounded"
+                />
+              ) : (
+                <img
+                  src="/placeholder-poster.jpg"
+                  alt={movie.title}
+                  className="w-24 h-auto rounded"
+                />
+              )}
             </div>
             <div>
               <h3 className="text-lg font-bold">{movie.title}</h3>
@@ -260,21 +245,19 @@ export default function Checkout() {
           </div>
 
           <div className="border-t pt-4">
-            <h3 className="font-bold mb-2">Selected Seats</h3>
+            <h3 className="font-bold mb-2">
+              Selected Seats ({selectedSeats.length})
+            </h3>
             <ul className="space-y-2">
-              {selectedSeats.map(
-                (
-                  seat: Seat // Explicitly type the parameter
-                ) => (
-                  <li key={seat.id} className="flex justify-between">
-                    <span>
-                      Seat {seat.row}
-                      {seat.seatNumber} ({getSeatType(seat.seatTypeId)})
-                    </span>
-                    <span>${getSeatPrice(seat.seatTypeId)}</span>
-                  </li>
-                )
-              )}
+              {selectedSeats.map((seat: Seat) => (
+                <li key={seat.id} className="flex justify-between">
+                  <span>
+                    Seat {seat.row}
+                    {seat.seatNumber} ({getSeatType(seat.seatTypeId)})
+                  </span>
+                  <span>${getSeatPrice(seat.seatTypeId)}</span>
+                </li>
+              ))}
             </ul>
           </div>
 
@@ -284,7 +267,6 @@ export default function Checkout() {
           </div>
         </div>
 
-        {/* Payment Form */}
         <div className="bg-white rounded-xl shadow-md p-6">
           <h2 className="text-xl font-bold text-indigo-700 mb-4">
             Payment Information
@@ -335,7 +317,7 @@ export default function Checkout() {
             <Button
               onClick={handlePayment}
               disabled={paymentProcessing}
-              className="w-full bg-indigo-600 hover:bg-indigo-700 text-white py-3 rounded-lg font-medium mt-4 disabled:opacity-50 disabled:cursor-not-allowed"
+              className="w-full bg-indigo-600! hover:bg-indigo-700! text-white py-3 rounded-lg font-medium mt-4 disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {paymentProcessing ? "Processing..." : "Complete Purchase"}
             </Button>

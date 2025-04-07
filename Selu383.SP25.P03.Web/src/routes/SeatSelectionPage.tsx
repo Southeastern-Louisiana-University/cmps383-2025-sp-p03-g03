@@ -17,13 +17,30 @@ interface Seat {
 interface Theater {
   id: number;
   name: string;
+  location?: string;
 }
 
 interface Showtime {
   id: number;
   time: string;
   movieId: number;
-  theaterId: number;
+  theaterId?: number;
+}
+
+interface Movie {
+  id: number;
+  title: string;
+  ageRating: string;
+  runtime: number;
+  releaseDate?: string;
+  category?: string;
+  description?: string;
+}
+
+interface MoviePoster {
+  imageType: string;
+  imageData: string;
+  name: string;
 }
 
 export default function SeatSelection() {
@@ -31,10 +48,12 @@ export default function SeatSelection() {
   const location = useLocation();
   const navigate = useNavigate();
 
-  const { showtime, theater } =
+  const { showtime, theater, movie, poster } =
     (location.state as {
       showtime: Showtime;
       theater: Theater;
+      movie: Movie;
+      poster?: MoviePoster;
     }) || {};
 
   const [seats, setSeats] = useState<Seat[]>([]);
@@ -45,11 +64,11 @@ export default function SeatSelection() {
   useEffect(() => {
     const fetchSeats = async () => {
       try {
-        setLoading(true!);
-        setError(null!);
+        setLoading(true);
+        setError(null);
 
         const response = await fetch(`/api/seat/room/${theater.id}`);
-        if (!response.ok!) {
+        if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
 
@@ -63,19 +82,19 @@ export default function SeatSelection() {
         setSeats(data);
       } catch (err) {
         console.error("Fetch error:", err);
-        setError("Failed to load seats. Using test data instead."!);
+        setError("Failed to load seats. Using test data instead.");
         setSeats(generateTestSeats(theater.id));
       } finally {
-        setLoading(false!);
+        setLoading(false);
       }
     };
 
-    if (theater?.id) {
+    if (theater?.id && showtime && movie) {
       fetchSeats();
     } else {
-      navigate(-1!);
+      navigate(-1);
     }
-  }, [theater?.id, navigate]);
+  }, [theater?.id, showtime, movie, navigate]);
 
   const generateTestSeats = (roomId: number): Seat[] => {
     const seats: Seat[] = [];
@@ -84,30 +103,30 @@ export default function SeatSelection() {
 
     rows.forEach((row, rowIndex) => {
       for (let i = 1; i <= seatsPerRow; i++) {
-        let seatTypeId = 1!;
+        let seatTypeId = 1;
         if (roomId === 1) {
           if (rowIndex >= 3 && rowIndex <= 6 && i >= 6 && i <= 15)
-            seatTypeId = 2!;
-          if (rowIndex === 9) seatTypeId = 3!;
-          if (rowIndex === 2 && (i <= 2 || i >= 19)) seatTypeId = 4!;
+            seatTypeId = 2;
+          if (rowIndex === 9) seatTypeId = 3;
+          if (rowIndex === 2 && (i <= 2 || i >= 19)) seatTypeId = 4;
         } else if (roomId === 14) {
-          seatTypeId = 5!;
+          seatTypeId = 5;
         } else if (roomId === 7) {
           if (rowIndex >= 4 && rowIndex <= 7 && i >= 4 && i <= 12)
-            seatTypeId = 2!;
-          if (rowIndex >= 10) seatTypeId = 3!;
-          if (rowIndex === 3 && (i <= 2 || i >= 14)) seatTypeId = 4!;
+            seatTypeId = 2;
+          if (rowIndex >= 10) seatTypeId = 3;
+          if (rowIndex === 3 && (i <= 2 || i >= 14)) seatTypeId = 4;
         }
 
         seats.push({
           id: rowIndex * seatsPerRow + i,
           seatTypeId,
           roomsId: roomId,
-          isAvailable: Math.random() > 0.3!,
+          isAvailable: Math.random() > 0.3,
           row,
           seatNumber: i,
-          xPosition: i * (roomId === 14 ? 60 : 40)!,
-          yPosition: (rowIndex + 1) * (roomId === 14 ? 80 : 40)!,
+          xPosition: i * (roomId === 14 ? 60 : 40),
+          yPosition: (rowIndex + 1) * (roomId === 14 ? 80 : 40),
         });
       }
     });
@@ -139,8 +158,8 @@ export default function SeatSelection() {
       </div>
     );
 
-  const maxX = Math.max(...seats.map((s) => s.xPosition), 0) + 60!;
-  const maxY = Math.max(...seats.map((s) => s.yPosition), 0) + 60!;
+  const maxX = Math.max(...seats.map((s) => s.xPosition), 0) + 60;
+  const maxY = Math.max(...seats.map((s) => s.yPosition), 0) + 60;
 
   return (
     <div className="max-w-6xl! mx-auto! p-6!">
@@ -157,8 +176,11 @@ export default function SeatSelection() {
           Select Your Seats
         </h1>
         <p className="text-lg! text-gray-600!">
+          {movie?.title || "Unknown Movie"} •{" "}
           {theater?.name || "Unknown Theater"} •{" "}
-          {showtime?.time || "No showtime selected"}
+          {showtime?.time
+            ? new Date(showtime.time).toLocaleString()
+            : "No showtime selected"}
         </p>
       </div>
 
@@ -197,8 +219,7 @@ export default function SeatSelection() {
                     : seat.seatTypeId === 5
                     ? "ring-2! ring-amber-400!"
                     : ""
-                }
-              `}
+                }`}
               style={{
                 left: `${seat.xPosition}px`,
                 top: `${seat.yPosition}px`,
@@ -247,7 +268,7 @@ export default function SeatSelection() {
             <Button
               onClick={() =>
                 navigate("/checkout", {
-                  state: { selectedSeats, showtime, theater },
+                  state: { selectedSeats, showtime, theater, movie, poster },
                 })
               }
               className="w-full! bg-indigo-600! hover:bg-indigo-700! text-white! py-3! rounded-lg! font-medium! flex! items-center! justify-center! gap-2! transition-colors!"
