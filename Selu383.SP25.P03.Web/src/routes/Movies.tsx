@@ -85,8 +85,8 @@ function Movies() {
   return (
     <div className="flex flex-col min-h-screen bg-gray-900 text-white">
       {/* Header */}
-      <div className="w-full bg-gradient-to-b from-indigo-950 to-gray-900 py-8 text-center">
-        <h1 className="text-4xl sm:text-5xl md:text-6xl font-extrabold text-indigo-300 tracking-wide drop-shadow-lg">
+      <div className="w-full bg-gradient-to-b from-indigo-950 to-gray-900 py-8! text-center">
+        <h1 className="text-4xl! sm:text-5xl! md:text-6xl! font-extrabold text-indigo-300 tracking-wide drop-shadow-lg">
           NOW PLAYING
         </h1>
       </div>
