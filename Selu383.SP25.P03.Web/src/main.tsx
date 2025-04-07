@@ -18,13 +18,13 @@ import TheatreChoice from "./routes/TheatreChoice.tsx";
 import LoginPage from "./routes/LoginPage.tsx";
 import MyTickets from "./routes/MyTicketsPage.tsx";
 // Import the theater, user, and room components
-import TheaterListPage from "./BackendClient/Components/Theater/TheaterListPage.tsx";
-import TheaterFormPage from "./BackendClient/Components/Theater/TheaterForm.tsx";
-import RoomListPage from "./BackendClient/Components/Room/RoomListPage.tsx";
-import RoomFormPage from "./BackendClient/Components/Room/RoomForm.tsx";
+// import TheaterListPage from "./BackendClient/Components/Theater/TheaterListPage.tsx";
+// import TheaterFormPage from "./BackendClient/Components/Theater/TheaterForm.tsx";
+// import RoomListPage from "./BackendClient/Components/Room/RoomListPage.tsx";
+// import RoomFormPage from "./BackendClient/Components/Room/RoomForm.tsx";
 
-import SeatTypeListPage from "./BackendClient/Components/Seats/SeatTypeListPage.tsx";
-import SeatTypeForm from "./BackendClient/Components/Seats/SeatTypeForm.tsx";
+// import SeatTypeListPage from "./BackendClient/Components/Seats/SeatTypeListPage.tsx";
+// import SeatTypeForm from "./BackendClient/Components/Seats/SeatTypeForm.tsx";
 
 // Layout component that includes the TopBar and Outlet
 const Layout = () => {
