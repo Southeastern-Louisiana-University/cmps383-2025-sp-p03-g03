@@ -5,17 +5,19 @@ namespace Selu383.SP25.P03.Api.Data
 {
     public class SeedSeats
     {
+
         public static async Task InitializeAsync(IServiceProvider serviceProvider)
         {
             using (var dataContext = new DataContext(serviceProvider.GetRequiredService<DbContextOptions<DataContext>>()))
             {
+
+                // Seed seats only if none exist
                 if (!dataContext.Seats.Any())
                 {
-                    // generate seats for a sample room - Room 1 (ID = 1)
                     // This is a 10 row x 20 column IMAX theater
 
                     var seats = new List<Seat>();
-                    int seatId = 1;
+                    //int seatId = 1;
 
                     // Generate seats for Room 1
                     for (int rowNum = 1; rowNum <= 10; rowNum++)
@@ -50,7 +52,7 @@ namespace Selu383.SP25.P03.Api.Data
 
                             seats.Add(new Seat
                             {
-                                Id = seatId++,
+
                                 SeatTypeId = seatTypeId,
                                 RoomsId = 1,
                                 isAvailable = true,
@@ -79,7 +81,7 @@ namespace Selu383.SP25.P03.Api.Data
 
                             seats.Add(new Seat
                             {
-                                Id = seatId++,
+
                                 SeatTypeId = seatTypeId,
                                 RoomsId = 14,
                                 isAvailable = true,
@@ -125,7 +127,7 @@ namespace Selu383.SP25.P03.Api.Data
 
                             seats.Add(new Seat
                             {
-                                Id = seatId++,
+
                                 SeatTypeId = seatTypeId,
                                 RoomsId = 7,
                                 isAvailable = true,
