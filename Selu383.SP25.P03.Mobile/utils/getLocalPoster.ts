@@ -1,17 +1,16 @@
-// getLocalPoster.ts
-import dune from "../app/assets/images/posters/dune.jpg";
-import godzilla from "../app/assets/images/posters/godzilla-x-kong.jpg";
-import apes from "../app/assets/images/posters/apes.jpg";
-import ghostbusters from "../app/assets/images/posters/ghostbusters.jpg";
-import fallGuy from "../app/assets/images/posters/fall-guy.jpg";
-import quietPlace from "../app/assets/images/posters/quiet-place.jpg";
-import insideOut2 from "../app/assets/images/posters/inside-out-2.jpg";
-import furiosa from "../app/assets/images/posters/furiosa.jpg";
-import deadpool from "../app/assets/images/posters/deadpool.jpg";
-import badBoys from "../app/assets/images/posters/bad-boys.jpg";
-import garfield from "../app/assets/images/posters/garfield.jpg";
-import oppenheimer from "../app/assets/images/posters/oppenheimer.jpg";
-import placeholder from "../app/assets/images/posters/placeholder.jpg";
+import apes from "../assets/images/posters/apes.jpg";
+import badBoys from "../assets/images/posters/bad-boys.jpg";
+import deadpool from "../assets/images/posters/deadpool.jpg";
+import dune from "../assets/images/posters/dune.jpg";
+import fallGuy from "../assets/images/posters/fall-guy.jpg";
+import furiosa from "../assets/images/posters/furiosa.jpg";
+import garfield from "../assets/images/posters/garfield.jpg";
+import ghostbusters from "../assets/images/posters/ghostbusters.jpg";
+import godzilla from "../assets/images/posters/godzilla-x-kong.jpg";
+import insideOut2 from "../assets/images/posters/inside-out-2.jpg";
+import oppenheimer from "../assets/images/posters/oppenheimer.jpg";
+import placeholder from "../assets/images/posters/placeholder.jpg";
+import quietPlace from "../assets/images/posters/quiet-place.jpg";
 
 const posters: { [key: string]: any } = {
   "dune: part two": dune,
@@ -30,5 +29,5 @@ const posters: { [key: string]: any } = {
 
 export function getLocalPoster(title: string): any {
   const key = title?.trim().toLowerCase();
-  return posters[key] ?? placeholder;
+  return posters[key] || placeholder;
 }
