@@ -27,11 +27,9 @@ export default function Index() {
   useEffect(() => {
     getMovies()
       .then((data) => {
-        console.log("🎬 Movies fetched:", data);
+        
         setMovies(data);
-      })
-      .catch((err) => {
-        console.error("❌ Failed to fetch movies:", err);
+      
       })
       .finally(() => setLoading(false));
   }, []);
@@ -49,6 +47,10 @@ export default function Index() {
           numColumns={2}
           columnWrapperStyle={{ justifyContent: "space-between" }}
           contentContainerStyle={styles.listContainer}
+          initialNumToRender={6}
+          maxToRenderPerBatch={10}
+          windowSize={5}
+          removeClippedSubviews={true}
           renderItem={({ item }) => {
             const stretchedTitles = [
               "duneparttwo",
