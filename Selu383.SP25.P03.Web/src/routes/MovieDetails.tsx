@@ -55,7 +55,6 @@ function MovieDetails() {
         setLoading(true);
         setError(null);
 
-        // Fetch all necessary data in parallel
         const [movieResponse, posterResponse, theatersResponse] =
           await Promise.all([
             fetch(`/api/movie/${id}`),
@@ -76,7 +75,6 @@ function MovieDetails() {
         setPoster(posterData);
         setTheaters(theatersData);
 
-        // Fetch schedules if theaterId is provided
         if (theaterId) {
           const scheduleResponse = await fetch(
             `/api/MovieSchedule/GetByMovieId/${id}?theaterId=${theaterId}`
@@ -105,10 +103,8 @@ function MovieDetails() {
     }
 
     if (!theaterId) {
-      // If no theater selected, show theater selection
       setShowShowtimes(true);
     } else {
-      // Toggle showtimes visibility
       setShowShowtimes(!showShowtimes);
     }
   };
@@ -116,7 +112,6 @@ function MovieDetails() {
   const handleTheaterSelect = (selectedTheaterId: string) => {
     localStorage.setItem("theaterId", selectedTheaterId);
     setShowShowtimes(true);
-    // Refresh schedules for the selected theater
     fetch(
       `/api/MovieSchedule/GetByMovieId/${id}?theaterId=${selectedTheaterId}`
     )
@@ -141,13 +136,32 @@ function MovieDetails() {
     });
   };
 
-  if (loading)
-    return <div className="text-center py-8">Loading movie details...</div>;
-  if (error)
-    return <div className="text-center text-red-500 py-8">Error: {error}</div>;
-  if (!movie) return <div className="text-center py-8">Movie not found</div>;
+  const currentYear = new Date().getFullYear();
 
-  // Get all active showtimes
+  if (loading)
+    return (
+      <div className="flex items-center justify-center min-h-screen bg-gray-900 text-white">
+        <div className="text-xl text-indigo-300 animate-pulse">
+          Loading movie details...
+        </div>
+      </div>
+    );
+  if (error)
+    return (
+      <div className="flex items-center justify-center min-h-screen bg-gray-900 text-white">
+        <div className="text-center">
+          <div className="text-2xl text-red-500 font-bold">Error</div>
+          <p className="text-gray-300 mt-2">{error}</p>
+        </div>
+      </div>
+    );
+  if (!movie)
+    return (
+      <div className="flex items-center justify-center min-h-screen bg-gray-900 text-white">
+        <div className="text-xl text-gray-300">Movie not found</div>
+      </div>
+    );
+
   const activeShowtimes = schedules
     .filter((schedule) => schedule.isActive)
     .flatMap((schedule) =>
@@ -158,127 +172,157 @@ function MovieDetails() {
       }))
     );
 
-  // Find selected theater
   const selectedTheater = theaters.find((t) => t.id.toString() === theaterId);
 
   return (
-    <div className="flex flex-col md:flex-row gap-8 p-8 max-w-6xl mx-auto mt-16">
-      {/* Poster */}
-      <div className="flex-shrink-0">
-        {poster && (
-          <img
-            src={`data:${poster.imageType};base64,${poster.imageData}`}
-            alt={poster.name}
-            className="w-80 h-auto rounded-lg shadow-lg"
-          />
-        )}
-      </div>
-
-      {/* Movie Info */}
-      <div className="flex flex-col gap-4 flex-grow">
-        <h1 className="text-4xl font-bold text-indigo-800">{movie.title}</h1>
-
-        <div className="flex gap-4 text-lg text-indigo-700">
-          <span>{movie.ageRating}</span>
-          <p>-</p>
-          <span>{movie.runtime} min</span>
-          <p>-</p>
-          <span>{new Date(movie.releaseDate).toLocaleDateString()}</span>
-          <p>-</p>
-          <span>{movie.category}</span>
+    <div className="flex flex-col min-h-screen bg-gray-900 text-white">
+      <div className="flex flex-col md:flex-row gap-8 p-8 max-w-6xl mx-auto mt-16 flex-1">
+        {/* Poster */}
+        <div className="flex-shrink-0">
+          {poster && (
+            <img
+              src={`data:${poster.imageType};base64,${poster.imageData}`}
+              alt={`${movie.title} poster`}
+              className="w-80 h-auto rounded-lg shadow-lg shadow-indigo-950/50 transition-all duration-300 hover:shadow-indigo-800/70"
+              loading="lazy"
+            />
+          )}
         </div>
 
-        <p className="text-lg text-gray-700 mt-4">{movie.description}</p>
+        {/* Movie Info */}
+        <div className="flex flex-col gap-4 flex-grow">
+          <h1 className="text-4xl font-extrabold text-indigo-300 drop-shadow-lg">
+            {movie.title}
+          </h1>
 
-        <Button
-          onClick={handleShowtimesClick}
-          className="mt-6 flex items-center gap-2 bg-indigo-600! hover:bg-indigo-700! text-white py-3 px-6 rounded-lg transition-colors w-fit"
-        >
-          {theaterId ? "Show Showtimes" : "Select Theater"}{" "}
-          <TicketIcon className="h-5 w-5" />
-        </Button>
-
-        {/* Theater Selection */}
-        {showShowtimes && !theaterId && (
-          <div className="mt-6 bg-white p-6 rounded-lg shadow-md">
-            <h2 className="text-2xl font-bold text-indigo-800 mb-4">
-              Select Theater
-            </h2>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              {theaters.map((theater) => (
-                <div
-                  key={theater.id}
-                  className="p-4 border border-gray-200 rounded-lg hover:bg-gray-50 cursor-pointer"
-                  onClick={() => handleTheaterSelect(theater.id.toString())}
-                >
-                  <h3 className="text-lg font-medium">{theater.name}</h3>
-                  <p className="text-gray-600">{theater.location}</p>
-                </div>
-              ))}
-            </div>
+          <div className="flex flex-wrap gap-4 text-lg text-indigo-400">
+            <span>{movie.ageRating}</span>
+            <p>-</p>
+            <span>{movie.runtime} min</span>
+            <p>-</p>
+            <span>{new Date(movie.releaseDate).toLocaleDateString()}</span>
+            <p>-</p>
+            <span>{movie.category}</span>
           </div>
-        )}
 
-        {/* Showtimes Section */}
-        {showShowtimes && theaterId && (
-          <div className="mt-8">
-            <div className="flex justify-between items-center mb-6">
-              <h2 className="text-2xl font-bold text-indigo-800">
-                Available Showtimes
+          <p className="text-lg text-gray-200 mt-4">{movie.description}</p>
+
+          <Button
+            onClick={handleShowtimesClick}
+            className="mt-6 flex items-center gap-2 bg-indigo-700! hover:bg-indigo-600! text-white py-3 px-6 rounded-lg transition-all duration-300 shadow-md hover:shadow-lg w-fit"
+          >
+            {theaterId ? "Show Showtimes" : "Select Theater"}{" "}
+            <TicketIcon className="h-5 w-5" />
+          </Button>
+
+          {/* Theater Selection */}
+          {showShowtimes && !theaterId && (
+            <div className="mt-6 bg-gray-800 p-6 rounded-lg shadow-lg shadow-indigo-950/50">
+              <h2 className="text-2xl font-extrabold text-indigo-300 mb-4 drop-shadow-lg">
+                Select Theater
               </h2>
-              {selectedTheater && (
-                <div className="bg-indigo-100 px-4 py-2 rounded-full">
-                  <span className="font-medium">{selectedTheater.name}</span>
-                  <span className="text-indigo-600 ml-2">
-                    {selectedTheater.location}
-                  </span>
-                </div>
-              )}
-            </div>
-
-            {activeShowtimes.length > 0 ? (
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                {activeShowtimes.map((showtime, index) => (
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                {theaters.map((theater) => (
                   <div
-                    key={index}
-                    className="bg-white p-4 rounded-lg shadow-md border border-gray-100"
+                    key={theater.id}
+                    className="p-4 bg-gray-700 rounded-lg hover:bg-gray-600 cursor-pointer transition-all duration-300"
+                    onClick={() => handleTheaterSelect(theater.id.toString())}
                   >
-                    <h3 className="text-lg font-medium text-indigo-700">
-                      {new Date(showtime.time).toLocaleString([], {
-                        weekday: "short",
-                        month: "short",
-                        day: "numeric",
-                        hour: "2-digit",
-                        minute: "2-digit",
-                      })}
+                    <h3 className="text-lg font-medium text-indigo-200">
+                      {theater.name}
                     </h3>
-                    <Button
-                      onClick={() =>
-                        handleSeatSelection(
-                          schedules.find((s) => s.id === showtime.scheduleId)!,
-                          showtime.time
-                        )
-                      }
-                      className="mt-3 w-full bg-indigo-600! hover:bg-indigo-700! text-white py-2 rounded transition-colors"
-                    >
-                      Select Seats
-                    </Button>
+                    <p className="text-gray-300">{theater.location}</p>
                   </div>
                 ))}
               </div>
-            ) : (
-              <div className="text-center py-8 bg-white rounded-lg shadow">
-                <p className="text-xl text-gray-600">No available showtimes</p>
-                <p className="text-gray-500 mt-2">
-                  {theaterId
-                    ? "No showtimes scheduled for this theater"
-                    : "Please select a theater"}
-                </p>
+            </div>
+          )}
+
+          {/* Showtimes Section */}
+          {showShowtimes && theaterId && (
+            <div className="mt-8">
+              <div className="flex flex-col sm:flex-row justify-between items-center mb-6 gap-4">
+                <h2 className="text-2xl font-extrabold text-indigo-300 drop-shadow-lg">
+                  Available Showtimes
+                </h2>
+                {selectedTheater && (
+                  <div className="bg-indigo-900 px-4 py-2 rounded-full">
+                    <span className="font-medium text-indigo-200">
+                      {selectedTheater.name}
+                    </span>
+                    <span className="text-indigo-400 ml-2">
+                      {selectedTheater.location}
+                    </span>
+                  </div>
+                )}
               </div>
-            )}
-          </div>
-        )}
+
+              {activeShowtimes.length > 0 ? (
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                  {activeShowtimes.map((showtime, index) => (
+                    <div
+                      key={index}
+                      className="bg-gray-800 p-4 rounded-lg shadow-lg shadow-indigo-950/50 transition-all duration-300 hover:shadow-indigo-800/70"
+                    >
+                      <h3 className="text-lg font-medium text-indigo-200">
+                        {new Date(showtime.time).toLocaleString([], {
+                          weekday: "short",
+                          month: "short",
+                          day: "numeric",
+                          hour: "2-digit",
+                          minute: "2-digit",
+                        })}
+                      </h3>
+                      <Button
+                        onClick={() =>
+                          handleSeatSelection(
+                            schedules.find(
+                              (s) => s.id === showtime.scheduleId
+                            )!,
+                            showtime.time
+                          )
+                        }
+                        className="mt-3 w-full bg-indigo-700! hover:bg-indigo-600! text-white py-2 rounded transition-all duration-300 shadow-md hover:shadow-lg"
+                      >
+                        Select Seats
+                      </Button>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <div className="text-center py-8 bg-gray-800 rounded-lg shadow-lg shadow-indigo-950/50">
+                  <p className="text-xl text-indigo-200">
+                    No available showtimes
+                  </p>
+                  <p className="text-gray-300 mt-2">
+                    {theaterId
+                      ? "No showtimes scheduled for this theater"
+                      : "Please select a theater"}
+                  </p>
+                </div>
+              )}
+            </div>
+          )}
+        </div>
       </div>
+
+      {/* Footer */}
+      <footer className="w-full bg-indigo-950 text-white py-6">
+        <div className="container mx-auto px-4 text-center">
+          <p>© {currentYear} Lion's Den Cinemas. All rights reserved.</p>
+          <div className="mt-2 space-x-4">
+            <a href="/terms" className="hover:text-indigo-300">
+              Terms
+            </a>
+            <a href="/privacy" className="hover:text-indigo-300">
+              Privacy
+            </a>
+            <a href="/contact" className="hover:text-indigo-300">
+              Contact
+            </a>
+          </div>
+        </div>
+      </footer>
     </div>
   );
 }
