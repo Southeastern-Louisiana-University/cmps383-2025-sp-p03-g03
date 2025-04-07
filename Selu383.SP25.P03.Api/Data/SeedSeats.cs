@@ -9,10 +9,9 @@ namespace Selu383.SP25.P03.Api.Data
         {
             using (var dataContext = new DataContext(serviceProvider.GetRequiredService<DbContextOptions<DataContext>>()))
             {
-                // Seed seats only if none exist
                 if (!dataContext.Seats.Any())
                 {
-                    // We'll generate seats for a sample room - Room 1 (ID = 1)
+                    // generate seats for a sample room - Room 1 (ID = 1)
                     // This is a 10 row x 20 column IMAX theater
 
                     var seats = new List<Seat>();
