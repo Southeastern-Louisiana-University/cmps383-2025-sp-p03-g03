@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useParams, useSearchParams, useNavigate } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import { Button } from "@headlessui/react";
 import { TicketIcon } from "@heroicons/react/24/outline";
 
@@ -31,6 +31,8 @@ interface Theater {
   id: number;
   name: string;
   location: string;
+  rows: number;
+  columns: number;
 }
 
 function MovieDetails() {
@@ -112,8 +114,31 @@ function MovieDetails() {
   };
 
   const handleTheaterSelect = (selectedTheaterId: string) => {
-    navigate(`?theaterId=${selectedTheaterId}`);
+    localStorage.setItem("theaterId", selectedTheaterId);
     setShowShowtimes(true);
+    // Refresh schedules for the selected theater
+    fetch(
+      `/api/MovieSchedule/GetByMovieId/${id}?theaterId=${selectedTheaterId}`
+    )
+      .then((response) => (response.ok ? response.json() : []))
+      .then((data) => setSchedules(data));
+  };
+
+  const handleSeatSelection = (showtime: MovieSchedule, time: string) => {
+    const selectedTheater = theaters.find((t) => t.id.toString() === theaterId);
+    if (!selectedTheater) return;
+
+    navigate(`/movies/${movieId}/seats`, {
+      state: {
+        showtime: {
+          id: showtime.id,
+          time: time,
+          movieId: movieId,
+        },
+        theater: selectedTheater,
+        movie: movie,
+      },
+    });
   };
 
   if (loading)
@@ -128,6 +153,7 @@ function MovieDetails() {
     .flatMap((schedule) =>
       schedule.movieTimes.map((time) => ({
         time,
+        scheduleId: schedule.id,
         theaterId: schedule.theaterId,
       }))
     );
@@ -228,15 +254,14 @@ function MovieDetails() {
                     </h3>
                     <Button
                       onClick={() =>
-                        navigate(
-                          `/checkout?movieId=${movieId}&theaterId=${
-                            showtime.theaterId
-                          }&showtime=${encodeURIComponent(showtime.time)}`
+                        handleSeatSelection(
+                          schedules.find((s) => s.id === showtime.scheduleId)!,
+                          showtime.time
                         )
                       }
                       className="mt-3 w-full bg-indigo-600! hover:bg-indigo-700! text-white py-2 rounded transition-colors"
                     >
-                      Select
+                      Select Seats
                     </Button>
                   </div>
                 ))}
