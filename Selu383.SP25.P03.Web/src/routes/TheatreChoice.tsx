@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+// import { useNavigate } from "react-router-dom";
 import { Button } from "@headlessui/react";
 
 interface Theater {
@@ -9,7 +9,7 @@ interface Theater {
 }
 
 function TheatreChoice() {
-  const navigate = useNavigate();
+  // const navigate = useNavigate();
   const [theaters, setTheaters] = useState<Theater[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedTheater, setSelectedTheater] = useState<number | null>(null);

@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useParams, useSearchParams, useNavigate } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import { Button } from "@headlessui/react";
 import { TicketIcon } from "@heroicons/react/24/outline";
 
