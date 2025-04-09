@@ -44,6 +44,7 @@ namespace Selu383.SP25.P03.Api.Data
         public DbSet<Theater> Theaters { get; set; }
         public DbSet<Ticket> Tickets { get; set; }
         public DbSet<UserTicket> UserTickets { get; set; }
+        public DbSet<RoomSeats> RoomSeats { get; set; }
 
 
         protected override void OnModelCreating(ModelBuilder builder)
