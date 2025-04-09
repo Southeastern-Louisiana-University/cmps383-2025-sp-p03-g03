@@ -39,7 +39,7 @@ function MovieDetails() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const [movie, setMovie] = useState<Movie | null>(null);
-  const [poster, setPoster] = useState<MoviePoster | null>(null);
+  const [poster, setPoster] = useState<MoviePoster[] | null>(null);
   const [theaters, setTheaters] = useState<Theater[]>([]);
   const [schedules, setSchedules] = useState<MovieSchedule[]>([]);
   const [loading, setLoading] = useState(true);
@@ -58,7 +58,7 @@ function MovieDetails() {
         const [movieResponse, posterResponse, theatersResponse] =
           await Promise.all([
             fetch(`/api/movie/${id}`),
-            fetch(`/api/movieposter/${id}`),
+              fetch(`/api/MoviePoster/GetByMovieId/${id}`),
             fetch("/api/theaters"),
           ]);
 
@@ -181,7 +181,7 @@ function MovieDetails() {
         <div className="flex-shrink-0">
           {poster && (
             <img
-              src={`data:${poster.imageType};base64,${poster.imageData}`}
+              src={`data:${poster[0].imageType};base64,${poster[0].imageData}`}
               alt={`${movie.title} poster`}
               className="w-80 h-auto rounded-lg shadow-lg shadow-indigo-950/50 transition-all duration-300 hover:shadow-indigo-800/70"
               loading="lazy"
