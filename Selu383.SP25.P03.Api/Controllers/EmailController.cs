@@ -29,8 +29,14 @@ namespace Selu383.SP25.P03.Api.Features.Emails
             {
                 sender = senderEmail,
                 to = new[] { emailRequest.RecipientEmail },
-                subject = emailRequest.Subject,
-                text_body = emailRequest.TextBody
+                subject = "Your Ticket Confirmation",
+                template_id = "ticketconfirmation",
+                template_data = new
+                {
+                    movie = emailRequest.MovieTitle,
+                    showtime = emailRequest.Showtime,
+                    seats = emailRequest.Seats 
+                }
             };
 
             var request = new HttpRequestMessage(HttpMethod.Post, "https://api.smtp2go.com/v3/email/send")

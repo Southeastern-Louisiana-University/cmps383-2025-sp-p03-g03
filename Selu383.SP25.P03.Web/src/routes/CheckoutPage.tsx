@@ -26,6 +26,18 @@ export default function Checkout() {
   const [paymentProcessing, setPaymentProcessing] = useState(false);
   const [orderComplete, setOrderComplete] = useState(false);
   const [customerEmail, setCustomerEmail] = useState("");
+  const formattedSeats = selectedSeats
+    .map((seat: Seat) => `${seat.row}${seat.seatNumber}`)
+    .join(", ");
+
+  const formattedShowtime = new Date(showtime.time).toLocaleString("en-US", {
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+    hour: "numeric",
+    minute: "2-digit",
+    hour12: true,
+  });
 
   useEffect(() => {
     if (!userId) {
@@ -93,8 +105,9 @@ export default function Checkout() {
       setPaymentProcessing(false);
       await axios.post("https://localhost:7027/api/email/send", {
         recipientEmail: customerEmail,
-        subject: "Your Ticket Confirmation",
-        textBody: `Thanks for purchasing tickets to ${movie.title}! Enjoy the show.`,
+        movieTitle: movie.title,
+        showtime: formattedShowtime,
+        seats: formattedSeats,
       });
     }
   };
