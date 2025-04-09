@@ -54,7 +54,7 @@ namespace Selu383.SP25.P03.Api.Data
                             {
 
                                 SeatTypeId = seatTypeId,
-                                RoomsId = 1,
+                                RoomsId = 5,
                                 isAvailable = true,
                                 Row = rowLetter,
                                 SeatNumber = seatNum,
@@ -83,7 +83,7 @@ namespace Selu383.SP25.P03.Api.Data
                             {
 
                                 SeatTypeId = seatTypeId,
-                                RoomsId = 14,
+                                RoomsId = 6,
                                 isAvailable = true,
                                 Row = rowLetter,
                                 SeatNumber = seatNum,
