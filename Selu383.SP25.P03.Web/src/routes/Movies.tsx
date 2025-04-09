@@ -5,7 +5,7 @@ import { Link } from "react-router-dom";
 interface Movie {
   id: number;
   title: string;
-  poster: MoviePoster | null;
+  poster: MoviePoster[] | null;
 }
 
 interface MoviePoster {
@@ -33,12 +33,12 @@ function Movies() {
           data.map(async (movie) => {
             try {
               const posterResponse = await fetch(
-                `/api/movieposter/${movie.id}`
+                `/api/MoviePoster/GetByMovieId/${movie.id}`
               );
               if (!posterResponse.ok) {
                 throw new Error(`Failed to fetch poster for movie ${movie.id}`);
               }
-              const posterData: MoviePoster = await posterResponse.json();
+              const posterData: MoviePoster[] = await posterResponse.json();
               return { ...movie, poster: posterData };
             } catch (error) {
               console.error(error);
@@ -103,8 +103,8 @@ function Movies() {
             <div className="relative w-full max-w-[250px] rounded-lg overflow-hidden shadow-lg shadow-indigo-950/50 transition-all duration-300 group-hover:shadow-xl group-hover:shadow-indigo-800/70">
               {movie.poster ? (
                 <img
-                  src={`data:${movie.poster.imageType};base64,${movie.poster.imageData}`}
-                  alt={`${movie.title} poster`}
+                  src={`data:${movie.poster[0].imageType};base64,${movie.poster[0].imageData}`}
+                  alt={`${movie.title[0]} poster`}
                   className="w-full h-auto aspect-[2/3] object-cover transition-all duration-300 group-hover:brightness-110"
                   loading="lazy"
                   onError={(
