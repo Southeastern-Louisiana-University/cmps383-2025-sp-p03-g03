@@ -8,10 +8,10 @@ namespace Selu383.SP25.P03.Api.Controllers
 
     [Route("api/[controller]")]
     [ApiController]
-    public class SeatController : GenericController<Seat, SeatDto>
+    public class RoomSeatsController : GenericController<RoomSeats, RoomSeatsDto>
     {
-        public SeatController(DataContext context, IMapper mapper) : base(context, mapper)
-        {
+        public RoomSeatsController(DataContext context, IMapper mapper) : base(context, mapper)
+        { 
         }
     }
 }
