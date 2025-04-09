@@ -83,17 +83,17 @@ export default function SeatSelection() {
 
         const data: Seat[] = await response.json();
 
-        if (data.length === 0) {
-          console.warn("No seats from API, using test data");
-          setSeats(generateTestSeats(theater.id));
-          return;
-        }
+        // if (data.length === 0) {
+        //   console.warn("No seats from API, using test data");
+        //   setSeats(generateTestSeats(theater.id));
+        //   return;
+        // }
 
         setSeats(data);
       } catch (err) {
         console.error("Error fetching seats:", err);
         setError("Failed to load seats. Using test data instead.");
-        setSeats(generateTestSeats(theater.id));
+        // setSeats(generateTestSeats(theater.id));
       } finally {
         setLoading(false);
       }
@@ -102,60 +102,60 @@ export default function SeatSelection() {
     fetchSeats();
   }, [theater?.id, showtime, movie, navigate]);
 
-  const generateTestSeats = (roomId: number): Seat[] => {
-    const seats: Seat[] = [];
-    const rows = ["A", "B", "C", "D", "E", "F", "G", "H"];
-    const seatsPerRow = roomId === 14 ? 10 : roomId === 1 ? 20 : 15;
+  // const generateTestSeats = (roomId: number): Seat[] => {
+  //   const seats: Seat[] = [];
+  //   const rows = ["A", "B", "C", "D", "E", "F", "G", "H"];
+  //   const seatsPerRow = roomId === 14 ? 10 : roomId === 1 ? 20 : 15;
 
-    rows.forEach((row, rowIndex) => {
-      for (let i = 1; i <= seatsPerRow; i++) {
-        let seatTypeId: number;
+  //   rows.forEach((row, rowIndex) => {
+  //     for (let i = 1; i <= seatsPerRow; i++) {
+  //       let seatTypeId: number;
 
-        // Seat type determination logic
-        if (roomId === 14) {
-          seatTypeId = 5; // VIP
-        } else if (roomId === 1) {
-          if (rowIndex === 0 || rowIndex === 1) {
-            seatTypeId = 5;
-          } else if (rowIndex === 2 || rowIndex === 3) {
-            seatTypeId = 2;
-          } else if (rowIndex === 4 && (i === 1 || i === seatsPerRow)) {
-            seatTypeId = 4;
-          } else if (rowIndex >= 6) {
-            seatTypeId = 3;
-          } else {
-            seatTypeId = 1;
-          }
-        } else {
-          if (rowIndex === 0) {
-            seatTypeId = 5;
-          } else if (rowIndex === 1 || rowIndex === 2) {
-            seatTypeId = 2;
-          } else if (rowIndex === 3 && (i <= 2 || i >= seatsPerRow - 1)) {
-            seatTypeId = 4;
-          } else if (rowIndex >= 5) {
-            seatTypeId = 3;
-          } else {
-            seatTypeId = 1;
-          }
-        }
+  //       // Seat type determination logic
+  //       if (roomId === 14) {
+  //         seatTypeId = 5; // VIP
+  //       } else if (roomId === 1) {
+  //         if (rowIndex === 0 || rowIndex === 1) {
+  //           seatTypeId = 5;
+  //         } else if (rowIndex === 2 || rowIndex === 3) {
+  //           seatTypeId = 2;
+  //         } else if (rowIndex === 4 && (i === 1 || i === seatsPerRow)) {
+  //           seatTypeId = 4;
+  //         } else if (rowIndex >= 6) {
+  //           seatTypeId = 3;
+  //         } else {
+  //           seatTypeId = 1;
+  //         }
+  //       } else {
+  //         if (rowIndex === 0) {
+  //           seatTypeId = 5;
+  //         } else if (rowIndex === 1 || rowIndex === 2) {
+  //           seatTypeId = 2;
+  //         } else if (rowIndex === 3 && (i <= 2 || i >= seatsPerRow - 1)) {
+  //           seatTypeId = 4;
+  //         } else if (rowIndex >= 5) {
+  //           seatTypeId = 3;
+  //         } else {
+  //           seatTypeId = 1;
+  //         }
+  //       }
 
-        seats.push({
-          id: rowIndex * seatsPerRow + i,
-          seatTypeId,
-          roomsId: roomId,
-          isAvailable: Math.random() > 0.3,
-          row,
-          seatNumber: i,
-          xPosition: i * (roomId === 14 ? 60 : 40),
-          yPosition: (rowIndex + 1) * (roomId === 14 ? 80 : 40),
-          identifier: `${row}${i.toString().padStart(2, "0")}`,
-        });
-      }
-    });
+  //       seats.push({
+  //         id: rowIndex * seatsPerRow + i,
+  //         seatTypeId,
+  //         roomsId: roomId,
+  //         isAvailable: Math.random() > 0.3,
+  //         row,
+  //         seatNumber: i,
+  //         xPosition: i * (roomId === 14 ? 60 : 40),
+  //         yPosition: (rowIndex + 1) * (roomId === 14 ? 80 : 40),
+  //         identifier: `${row}${i.toString().padStart(2, "0")}`,
+  //       });
+  //     }
+  //   });
 
-    return seats;
-  };
+  //   return seats;
+  // };
 
   const handleSeatClick = (seat: Seat) => {
     if (!seat.isAvailable) return;

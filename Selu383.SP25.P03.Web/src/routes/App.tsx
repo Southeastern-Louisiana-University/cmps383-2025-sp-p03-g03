@@ -93,17 +93,17 @@ function App() {
       {/* Main Content */}
       <main className="container mx-auto px-4 py-12 flex-1">
         <section className="text-center mb-12">
-          <h2 className="text-3xl md:text-4xl font-extrabold text-indigo-300 mb-4 drop-shadow-lg">
+          <h2 className="text-3xl! md:text-4xl! font-extrabold! text-indigo-300 mb-4! drop-shadow-lg!">
             Welcome to Lion's Den Cinemas
           </h2>
-          <p className="text-lg max-w-2xl mx-auto text-gray-200">
+          <p className="text-lg! max-w-2xl! mx-auto! text-gray-200">
             Experience movies like never before with premium reclining seats and
             Dolby Atmos Cinema Sound. Opening in New York, New Orleans, and Los
             Angeles in Early 2026.
           </p>
           <Button
             onClick={() => navigate("/movies")}
-            className="mt-6 inline-flex items-center gap-2 bg-indigo-700! hover:bg-indigo-600! text-white py-3 px-6 rounded-lg transition-all duration-300 shadow-md hover:shadow-lg"
+            className="mt-6 inline-flex items-center gap-2! bg-indigo-700! hover:bg-indigo-600! text-white py-3 px-6 rounded-lg transition-all duration-300 shadow-md hover:shadow-lg"
           >
             Get Tickets <TicketIcon className="h-5 w-5" />
           </Button>
