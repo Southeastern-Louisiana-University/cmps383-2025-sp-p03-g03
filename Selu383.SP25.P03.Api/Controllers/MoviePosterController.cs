@@ -26,6 +26,18 @@ namespace Selu383.SP25.P03.Api.Controllers
 
             return images;
         }
+
+        //GET: images so frontend <image> tag can be use it
+        [HttpGet("{id}/image")]
+        public async Task<IActionResult> GetImage(int id)
+        {
+            var poster = await _context.Set<MoviePoster>().FindAsync(id);
+            if (poster == null || poster.ImageData == null)
+            {
+                return NotFound();
+            }
+            return File(poster.ImageData, poster.ImageType ?? "image/jpeg");
+        }
     }
 
  }

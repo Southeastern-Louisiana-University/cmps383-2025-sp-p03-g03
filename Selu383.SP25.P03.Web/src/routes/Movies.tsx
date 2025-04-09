@@ -5,7 +5,6 @@ import { Link } from "react-router-dom";
 interface Movie {
   id: number;
   title: string;
-  // Add other movie properties as needed
   poster: MoviePoster | null;
 }
 
@@ -13,26 +12,23 @@ interface MoviePoster {
   imageType: string;
   imageData: string;
   name: string;
-  // Add other poster properties as needed
 }
 
 function Movies() {
-  const [movies, setMovies] = useState<Movie[]>([]); // State to store the list of movies with type annotation
+  const [movies, setMovies] = useState<Movie[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchMovies = async () => {
       try {
-        // Fetch the list of movies
         const response = await fetch(`/api/movie`);
         if (!response.ok) {
           throw new Error("Failed to fetch movies");
         }
-        const data: Omit<Movie, "poster">[] = await response.json(); // Temporary type for initial movie data
-        console.log(data); // Log the API response
+        const data: Omit<Movie, "poster">[] = await response.json();
+        console.log(data);
 
-        // Fetch the poster for each movie
         const moviesWithPosters: Movie[] = await Promise.all(
           data.map(async (movie) => {
             try {
@@ -43,10 +39,10 @@ function Movies() {
                 throw new Error(`Failed to fetch poster for movie ${movie.id}`);
               }
               const posterData: MoviePoster = await posterResponse.json();
-              return { ...movie, poster: posterData }; // Add poster data to the movie object
+              return { ...movie, poster: posterData };
             } catch (error) {
               console.error(error);
-              return { ...movie, poster: null }; // If poster fetch fails, set poster to null
+              return { ...movie, poster: null };
             }
           })
         );
@@ -65,65 +61,89 @@ function Movies() {
     fetchMovies();
   }, []);
 
+  const currentYear = new Date().getFullYear();
+
   if (loading) {
-    return <div>Loading...</div>;
+    return (
+      <div className="flex items-center justify-center min-h-screen bg-gray-900 text-white">
+        <div className="text-xl animate-pulse">Loading Movies...</div>
+      </div>
+    );
   }
 
   if (error) {
-    return <div>Error: {error}</div>;
+    return (
+      <div className="flex items-center justify-center min-h-screen bg-gray-900 text-white">
+        <div className="text-center">
+          <div className="text-2xl text-red-500 font-bold">Error</div>
+          <p className="mt-2">{error}</p>
+        </div>
+      </div>
+    );
   }
 
   return (
-    <div className="flex flex-col items-center justify-top min-h-screen bg-gray-100 text-gray-900 w-full">
-      <div className="flex-grow w-full">
-        <div className="flex justify-center items-center w-full">
-          <h1 className="text-9xl! font-bold text-indigo-700 mt-20 mb-16!">
-            NOW PLAYING
-          </h1>
-        </div>
+    <div className="flex flex-col min-h-screen bg-gray-900 text-white">
+      {/* Header */}
+      <div className="w-full bg-gradient-to-b from-indigo-950 to-gray-900 py-8! text-center">
+        <h1 className="text-4xl! sm:text-5xl! md:text-6xl! font-extrabold text-indigo-300 tracking-wide drop-shadow-lg">
+          NOW PLAYING
+        </h1>
+      </div>
 
-        {/* Grid for Movies */}
-        <div className="grid grid-cols-3 gap-15 m-20">
-          {movies.map((movie) => (
-            <Link
-              to={`/movies/${movie.id}`}
-              key={movie.id}
-              className="flex flex-col items-center gap-4 transition-transform hover:scale-110 hover:underline! underline-offset-10! text-indigo-700! cursor-pointer"
-            >
-              {/* Poster Container */}
-                  <div className="flex justify-center items-center">
-                {movie.poster ? (
-                  <img
-                    src={`data:${movie.poster.imageType};base64,${movie.poster.imageData}`}
-                    alt={movie.poster.name}
-                              className="aspect-3/5 w-full object-cover  rounded-2xl"
-                    onError={(
-                      e: React.SyntheticEvent<HTMLImageElement, Event>
-                    ) => {
-                      const target = e.target as HTMLImageElement;
-                      target.src = "path/to/fallback-image.jpg"; // Fallback image
-                    }}
-                  />
-                ) : (
-                  <div className="w-96 h-64 bg-gray-300 flex items-center justify-center rounded-2xl">
-                    <span className="text-gray-600">No Poster Available</span>
-                  </div>
-                )}
-              </div>
-              <h2 className="text-4xl font-bold text-indigo-700 text-center ">
-                {movie.title}
-              </h2>
-            </Link>
-          ))}
-        </div>
+      {/* Grid for Movies */}
+      <div className="flex-grow grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 p-6 md:p-10 lg:p-12 max-w-7xl mx-auto">
+        {movies.map((movie) => (
+          <Link
+            to={`/movies/${movie.id}`}
+            key={movie.id}
+            className="group flex flex-col items-center gap-3 transition-all duration-300 hover:scale-105"
+          >
+            {/* Poster Container */}
+            <div className="relative w-full max-w-[250px] rounded-lg overflow-hidden shadow-lg shadow-indigo-950/50 transition-all duration-300 group-hover:shadow-xl group-hover:shadow-indigo-800/70">
+              {movie.poster ? (
+                <img
+                  src={`data:${movie.poster.imageType};base64,${movie.poster.imageData}`}
+                  alt={`${movie.title} poster`}
+                  className="w-full h-auto aspect-[2/3] object-cover transition-all duration-300 group-hover:brightness-110"
+                  loading="lazy"
+                  onError={(
+                    e: React.SyntheticEvent<HTMLImageElement, Event>
+                  ) => {
+                    const target = e.target as HTMLImageElement;
+                    target.src = "path/to/fallback-image.jpg"; // Fallback image
+                  }}
+                />
+              ) : (
+                <div className="w-full h-[375px] bg-gray-800 flex items-center justify-center rounded-lg border border-indigo-700">
+                  <span className="text-indigo-300 font-medium">
+                    No Poster Available
+                  </span>
+                </div>
+              )}
+            </div>
+            <h2 className="text-lg md:text-xl font-semibold text-indigo-200 text-center transition-colors duration-300 group-hover:text-indigo-100">
+              {movie.title}
+            </h2>
+          </Link>
+        ))}
       </div>
 
       {/* Footer */}
-      <footer>
-        <div className="flex flex-row items-center justify-center min-w-screen bg-indigo-600 text-white h-full mt-16">
-          <p className="text-xl font-bold mt-8 mb-8">
-            @ 2025 Lion's Den Cinema
-          </p>
+      <footer className="w-full bg-indigo-950 text-white py-6">
+        <div className="container mx-auto px-4 text-center">
+          <p>© {currentYear} Lion's Den Cinemas. All rights reserved.</p>
+          <div className="mt-2 space-x-4">
+            <a href="/terms" className="hover:text-indigo-300">
+              Terms
+            </a>
+            <a href="/privacy" className="hover:text-indigo-300">
+              Privacy
+            </a>
+            <a href="/contact" className="hover:text-indigo-300">
+              Contact
+            </a>
+          </div>
         </div>
       </footer>
     </div>

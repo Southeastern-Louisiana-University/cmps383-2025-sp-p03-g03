@@ -14,11 +14,21 @@ import Dashboard from "./BackendClient/Components/Views/Admin/Dashboard.tsx";
 import Products from "./BackendClient/Components/Views/Admin/Products.tsx";
 import MovieDetails from "./routes/MovieDetails.tsx";
 import { AuthProvider } from "./components/authContext.tsx";
-import TheatreChoice from "./routes/TicketBuyingProcess/TheatreChoice.tsx";
-import ShowtimeChoice from "./routes/TicketBuyingProcess/ShowtimeChoice.tsx";
+import TheatreChoice from "./routes/TheatreChoice.tsx";
 import LoginPage from "./routes/LoginPage.tsx";
 import MyTickets from "./routes/MyTicketsPage.tsx";
+// Import the theater, user, and room components
+import TheaterListPage from "./BackendClient/Components/Theater/TheaterListPage.tsx";
+import TheaterFormPage from "./BackendClient/Components/Theater/TheaterForm.tsx";
+import RoomListPage from "./BackendClient/Components/Room/RoomListPage.tsx";
+import RoomFormPage from "./BackendClient/Components/Room/RoomForm.tsx";
+import SeatTypeListPage from "./BackendClient/Components/Seats/SeatTypeListPage.tsx";
+import SeatTypeForm from "./BackendClient/Components/Seats/SeatTypeForm.tsx";
 import ConcessionsPage from "./routes/ConcessionsPage.tsx";
+
+// Import new components for seat selection flow
+import SeatSelectionPage from "./routes/SeatSelectionPage.tsx";
+import CheckoutPage from "./routes/CheckoutPage.tsx";
 
 // Layout component that includes the TopBar and Outlet
 const Layout = () => {
@@ -54,16 +64,20 @@ const router = createBrowserRouter([
                 element: <MovieDetails />,
               },
               {
-                path: "theaters", // Corrected path (relative)
-                element: <TheatreChoice />,
-              },
-              {
-                path: "showtimes", // Corrected path (relative)
-                element: <ShowtimeChoice />,
+                path: "seats", // New route for seat selection
+                element: <SeatSelectionPage />,
               },
             ],
           },
         ],
+      },
+      {
+        path: "/checkout", // New route for checkout
+        element: <CheckoutPage />,
+      },
+      {
+        path: "/theaters",
+        element: <TheatreChoice />,
       },
       {
         path: "/LoginPage",
@@ -94,6 +108,60 @@ const router = createBrowserRouter([
       {
         path: "products",
         element: <Products />,
+      },
+      // Admin routes for theater management
+      {
+        path: "theaters",
+        children: [
+          {
+            index: true,
+            element: <TheaterListPage />,
+          },
+          {
+            path: "new",
+            element: <TheaterFormPage />,
+          },
+          {
+            path: ":id/edit",
+            element: <TheaterFormPage />,
+          },
+        ],
+      },
+      // Admin routes for room management
+      {
+        path: "rooms",
+        children: [
+          {
+            index: true,
+            element: <RoomListPage />,
+          },
+          {
+            path: "new",
+            element: <RoomFormPage />,
+          },
+          {
+            path: ":id/edit",
+            element: <RoomFormPage />,
+          },
+        ],
+      },
+      // Admin routes for seat type management
+      {
+        path: "seat-types",
+        children: [
+          {
+            index: true,
+            element: <SeatTypeListPage />,
+          },
+          {
+            path: "new",
+            element: <SeatTypeForm />,
+          },
+          {
+            path: ":id/edit",
+            element: <SeatTypeForm />,
+          },
+        ],
       },
     ],
   },

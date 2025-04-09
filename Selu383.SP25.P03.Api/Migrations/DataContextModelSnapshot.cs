@@ -506,6 +506,29 @@ namespace Selu383.SP25.P03.Api.Migrations
                     b.ToTable("Rooms");
                 });
 
+            modelBuilder.Entity("Selu383.SP25.P03.Api.Features.Seats.RoomSeats", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("RoomId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("SeatId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("RoomId");
+
+                    b.HasIndex("SeatId");
+
+                    b.ToTable("RoomSeats");
+                });
+
             modelBuilder.Entity("Selu383.SP25.P03.Api.Features.Seats.Seat", b =>
                 {
                     b.Property<int>("Id")
@@ -893,6 +916,25 @@ namespace Selu383.SP25.P03.Api.Migrations
                         .IsRequired();
 
                     b.Navigation("Theaters");
+                });
+
+            modelBuilder.Entity("Selu383.SP25.P03.Api.Features.Seats.RoomSeats", b =>
+                {
+                    b.HasOne("Selu383.SP25.P03.Api.Features.Rooms.Room", "Room")
+                        .WithMany()
+                        .HasForeignKey("RoomId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Selu383.SP25.P03.Api.Features.Seats.Seat", "Seat")
+                        .WithMany()
+                        .HasForeignKey("SeatId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Room");
+
+                    b.Navigation("Seat");
                 });
 
             modelBuilder.Entity("Selu383.SP25.P03.Api.Features.Theaters.Theater", b =>

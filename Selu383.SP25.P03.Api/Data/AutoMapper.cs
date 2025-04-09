@@ -3,6 +3,7 @@ using Selu383.SP25.P03.Api.Features.Cart;
 using Selu383.SP25.P03.Api.Features.Movies;
 using Selu383.SP25.P03.Api.Features.Products;
 using Selu383.SP25.P03.Api.Features.Promos;
+using Selu383.SP25.P03.Api.Features.Rooms;
 using Selu383.SP25.P03.Api.Features.Seats;
 using Selu383.SP25.P03.Api.Features.Theaters;
 using Selu383.SP25.P03.Api.Features.Tickets;
@@ -53,6 +54,10 @@ namespace Selu383.SP25.P03.Api.Data
             CreateMap<Seat, SeatDto>();
             CreateMap<SeatDto, Seat>();
 
+            //Seat
+            CreateMap<Room, RoomDto>();
+            CreateMap<RoomDto, Room>();
+
             //SeatType
             CreateMap<SeatType, SeatTypeDto>();
             CreateMap<SeatTypeDto, SeatType>();
@@ -72,6 +77,9 @@ namespace Selu383.SP25.P03.Api.Data
             //UserTickets
             CreateMap<UserTicket, UserTicketDto>();
             CreateMap<UserTicketDto, UserTicket>();
+
+            CreateMap<RoomSeats, RoomSeatsDto>();
+            CreateMap<RoomSeatsDto, RoomSeats>();
 
         }
     }
