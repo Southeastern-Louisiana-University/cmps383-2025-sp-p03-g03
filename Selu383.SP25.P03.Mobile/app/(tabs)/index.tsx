@@ -5,9 +5,12 @@ import {
   Image,
   ActivityIndicator,
   FlatList,
+  // Text,
+  Pressable,
 } from "react-native";
 import { getMovies } from "@/services/movieService";
 import { getLocalPoster } from "@/utils/getLocalPoster";
+import { useRouter } from "expo-router";
 
 type Movie = {
   id: number;
@@ -23,13 +26,12 @@ type Movie = {
 export default function Index() {
   const [movies, setMovies] = useState<Movie[]>([]);
   const [loading, setLoading] = useState(true);
+  const router = useRouter();
 
   useEffect(() => {
     getMovies()
       .then((data) => {
-        
         setMovies(data);
-      
       })
       .finally(() => setLoading(false));
   }, []);
@@ -37,7 +39,11 @@ export default function Index() {
   return (
     <View style={styles.container}>
       {loading ? (
-        <ActivityIndicator size="large" color="white" style={{ marginTop: 20 }} />
+        <ActivityIndicator
+          size="large"
+          color="#a5b4fc"
+          style={{ marginTop: 20 }}
+        />
       ) : (
         <FlatList
           data={movies}
@@ -56,19 +62,28 @@ export default function Index() {
               "duneparttwo",
               "godzillaxkongthenewempire",
               "kingdomoftheplanetoftheapes",
-              "ghostbustersfrozenempire"
+              "ghostbustersfrozenempire",
             ];
-            const formatted = item.title?.toLowerCase().replace(/[^a-z0-9]/gi, '');
+            const formatted = item.title
+              ?.toLowerCase()
+              .replace(/[^a-z0-9]/gi, "");
             const isStretched = stretchedTitles.includes(formatted ?? "");
 
             return (
-              <View style={styles.posterCard}>
+              <Pressable
+                onPress={() => router.push(`/movies/${item.id}`)}
+                style={styles.posterCard}
+              >
                 <Image
                   source={getLocalPoster(item.title)}
-                  style={isStretched ? styles.posterImageFixed : styles.posterImage}
+                  style={
+                    isStretched
+                      ? styles.posterImageFixed
+                      : styles.posterImage
+                  }
                   resizeMode="cover"
                 />
-              </View>
+              </Pressable>
             );
           }}
         />
@@ -80,8 +95,9 @@ export default function Index() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    paddingTop: 80,
+    paddingTop: 20,
     paddingHorizontal: 20,
+    backgroundColor: "#a5b4fc",
   },
   listContainer: {
     paddingBottom: 20,
