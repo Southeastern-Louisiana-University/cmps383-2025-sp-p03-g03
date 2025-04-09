@@ -105,8 +105,8 @@ namespace Selu383.SP25.P03.Api
                 await db.Database.MigrateAsync();
 
                 //SeedTheaters.Initialize(scope.ServiceProvider);
-                //await SeedRoles.Initialize(scope.ServiceProvider);
-                //await SeedUsers.Initialize(scope.ServiceProvider);
+                await SeedRoles.Initialize(scope.ServiceProvider);
+                await SeedUsers.Initialize(scope.ServiceProvider);
                 //await SeedRooms.InitializeAsync(scope.ServiceProvider);
                 //await SeedMovies.InitializeAsync(scope.ServiceProvider);
                 //await SeedMovieRoomScheduleLinks.InitializeAsync(scope.ServiceProvider);
