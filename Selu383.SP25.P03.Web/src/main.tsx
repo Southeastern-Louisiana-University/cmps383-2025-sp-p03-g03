@@ -24,6 +24,7 @@ import RoomListPage from "./BackendClient/Components/Room/RoomListPage.tsx";
 import RoomFormPage from "./BackendClient/Components/Room/RoomForm.tsx";
 import SeatTypeListPage from "./BackendClient/Components/Seats/SeatTypeListPage.tsx";
 import SeatTypeForm from "./BackendClient/Components/Seats/SeatTypeForm.tsx";
+import ConcessionsPage from "./routes/ConcessionsPage.tsx";
 
 // Import new components for seat selection flow
 import SeatSelectionPage from "./routes/SeatSelectionPage.tsx";
@@ -85,6 +86,10 @@ const router = createBrowserRouter([
       {
         path: "/MyTickets",
         element: <MyTickets />,
+      },
+      {
+        path: "/Concessions",
+        element: <ConcessionsPage />,
       },
     ],
   },

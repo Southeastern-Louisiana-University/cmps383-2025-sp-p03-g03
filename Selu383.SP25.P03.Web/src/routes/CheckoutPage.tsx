@@ -3,6 +3,7 @@ import { Button } from "@headlessui/react";
 import { ArrowLeftIcon, CheckCircleIcon } from "@heroicons/react/24/outline";
 import { useState, useEffect } from "react";
 import { useAuth } from "../components/authContext";
+import axios from "axios";
 
 interface Seat {
   id: number;
@@ -24,6 +25,19 @@ export default function Checkout() {
   const [error, setError] = useState<string | null>(null);
   const [paymentProcessing, setPaymentProcessing] = useState(false);
   const [orderComplete, setOrderComplete] = useState(false);
+  const [customerEmail, setCustomerEmail] = useState("");
+  const formattedSeats = selectedSeats
+    .map((seat: Seat) => `${seat.row}${seat.seatNumber}`)
+    .join(", ");
+
+  const formattedShowtime = new Date(showtime.time).toLocaleString("en-US", {
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+    hour: "numeric",
+    minute: "2-digit",
+    hour12: true,
+  });
 
   useEffect(() => {
     if (!userId) {
@@ -89,6 +103,12 @@ export default function Checkout() {
       setError("Payment simulation failed. Please try again.");
     } finally {
       setPaymentProcessing(false);
+      await axios.post("https://localhost:7027/api/email/send", {
+        recipientEmail: customerEmail,
+        movieTitle: movie.title,
+        showtime: formattedShowtime,
+        seats: formattedSeats,
+      });
     }
   };
 
@@ -351,6 +371,17 @@ export default function Checkout() {
                 <input
                   type="text"
                   placeholder="John Doe"
+                  className="!w-full !p-2 !bg-gray-700 !text-white !border !border-gray-600 !rounded-lg focus:!outline-none focus:!ring-2 focus:!ring-indigo-500"
+                  required
+                />
+              </div>
+              <div>
+                <label className="!block !text-gray-300 !mb-1">Email</label>
+                <input
+                  type="email"
+                  value={customerEmail}
+                  onChange={(e) => setCustomerEmail(e.target.value)}
+                  placeholder="example@gmail.com"
                   className="!w-full !p-2 !bg-gray-700 !text-white !border !border-gray-600 !rounded-lg focus:!outline-none focus:!ring-2 focus:!ring-indigo-500"
                   required
                 />

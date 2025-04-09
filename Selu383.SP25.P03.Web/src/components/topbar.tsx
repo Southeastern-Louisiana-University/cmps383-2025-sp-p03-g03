@@ -49,6 +49,11 @@ export default function TopBar() {
               My Theater
             </h2>
           </Link>
+          <Link to="/Concessions">
+            <h2 className="text-2xl text-white transition-transform hover:scale-110 hover:drop-shadow-xl hover:shadow-indigo-500/50! cursor-pointer">
+              Concessions
+            </h2>
+          </Link>
 
           {isAuthenticated ? (
             <div className="flex! items-center! space-x-4!">
