@@ -3,6 +3,7 @@ import { Button } from "@headlessui/react";
 import { ArrowLeftIcon, CheckCircleIcon } from "@heroicons/react/24/outline";
 import { useState, useEffect } from "react";
 import { useAuth } from "../components/authContext";
+import axios from "axios";
 
 interface Seat {
   id: number;
@@ -24,6 +25,7 @@ export default function Checkout() {
   const [error, setError] = useState<string | null>(null);
   const [paymentProcessing, setPaymentProcessing] = useState(false);
   const [orderComplete, setOrderComplete] = useState(false);
+  const [customerEmail, setCustomerEmail] = useState("");
 
   useEffect(() => {
     if (!userId) {
@@ -89,6 +91,11 @@ export default function Checkout() {
       setError("Payment simulation failed. Please try again.");
     } finally {
       setPaymentProcessing(false);
+      await axios.post("https://localhost:7027/api/email/send", {
+        recipientEmail: customerEmail,
+        subject: "Your Ticket Confirmation",
+        textBody: `Thanks for purchasing tickets to ${movie.title}! Enjoy the show.`,
+      });
     }
   };
 
@@ -351,6 +358,17 @@ export default function Checkout() {
                 <input
                   type="text"
                   placeholder="John Doe"
+                  className="!w-full !p-2 !bg-gray-700 !text-white !border !border-gray-600 !rounded-lg focus:!outline-none focus:!ring-2 focus:!ring-indigo-500"
+                  required
+                />
+              </div>
+              <div>
+                <label className="!block !text-gray-300 !mb-1">Email</label>
+                <input
+                  type="email"
+                  value={customerEmail}
+                  onChange={(e) => setCustomerEmail(e.target.value)}
+                  placeholder="example@gmail.com"
                   className="!w-full !p-2 !bg-gray-700 !text-white !border !border-gray-600 !rounded-lg focus:!outline-none focus:!ring-2 focus:!ring-indigo-500"
                   required
                 />

@@ -93,6 +93,8 @@ namespace Selu383.SP25.P03.Api
 
                 options.SlidingExpiration = true;
             });
+            builder.Services.AddHttpClient(); 
+
 
             var app = builder.Build();
 
