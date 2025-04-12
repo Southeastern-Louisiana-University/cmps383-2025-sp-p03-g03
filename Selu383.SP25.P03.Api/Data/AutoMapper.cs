@@ -77,9 +77,12 @@ namespace Selu383.SP25.P03.Api.Data
             //UserTickets
             CreateMap<UserTicket, UserTicketDto>();
             CreateMap<UserTicketDto, UserTicket>();
-
+            //room and seats
             CreateMap<RoomSeats, RoomSeatsDto>();
             CreateMap<RoomSeatsDto, RoomSeats>();
+            //concessions 
+            CreateMap<ProductTypes, ProductTypesDto>();
+            CreateMap<ProductTypesDto, ProductTypes>();
 
         }
     }
