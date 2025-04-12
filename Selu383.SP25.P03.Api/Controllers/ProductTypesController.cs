@@ -8,7 +8,7 @@ namespace Selu383.SP25.P03.Api.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class ProductTypesController : GenericController<ProductTypes, ProductTypesDto>
+    public class ProductTypesController : GenericController<ProductType, ProductTypeDto>
     {
         public ProductTypesController(DataContext context, IMapper mapper)
             : base(context, mapper)

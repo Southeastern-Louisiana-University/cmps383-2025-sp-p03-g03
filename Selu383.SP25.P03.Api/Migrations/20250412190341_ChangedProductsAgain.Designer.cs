@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Selu383.SP25.P03.Api.Data;
 
@@ -11,9 +12,11 @@ using Selu383.SP25.P03.Api.Data;
 namespace Selu383.SP25.P03.Api.Migrations
 {
     [DbContext(typeof(DataContext))]
-    partial class DataContextModelSnapshot : ModelSnapshot
+    [Migration("20250412190341_ChangedProductsAgain")]
+    partial class ChangedProductsAgain
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -371,7 +374,13 @@ namespace Selu383.SP25.P03.Api.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("ProductType")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<int>("ProductTypeId")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("ProductTypesId")
                         .HasColumnType("int");
 
                     b.Property<int>("TheaterId")
@@ -379,7 +388,9 @@ namespace Selu383.SP25.P03.Api.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("ProductTypeId");
+                    b.HasIndex("ProductTypesId");
+
+                    b.HasIndex("TheaterId");
 
                     b.ToTable("Products");
                 });
@@ -411,7 +422,7 @@ namespace Selu383.SP25.P03.Api.Migrations
                     b.ToTable("ProductPrices");
                 });
 
-            modelBuilder.Entity("Selu383.SP25.P03.Api.Features.Products.ProductType", b =>
+            modelBuilder.Entity("Selu383.SP25.P03.Api.Features.Products.ProductTypes", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -907,13 +918,19 @@ namespace Selu383.SP25.P03.Api.Migrations
 
             modelBuilder.Entity("Selu383.SP25.P03.Api.Features.Products.Product", b =>
                 {
-                    b.HasOne("Selu383.SP25.P03.Api.Features.Products.ProductType", "ProductType")
+                    b.HasOne("Selu383.SP25.P03.Api.Features.Products.ProductTypes", "ProductTypes")
                         .WithMany()
-                        .HasForeignKey("ProductTypeId")
+                        .HasForeignKey("ProductTypesId");
+
+                    b.HasOne("Selu383.SP25.P03.Api.Features.Theaters.Theater", "Theaters")
+                        .WithMany()
+                        .HasForeignKey("TheaterId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("ProductType");
+                    b.Navigation("ProductTypes");
+
+                    b.Navigation("Theaters");
                 });
 
             modelBuilder.Entity("Selu383.SP25.P03.Api.Features.Products.ProductPrice", b =>

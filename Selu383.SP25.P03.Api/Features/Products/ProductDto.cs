@@ -9,11 +9,11 @@ namespace Selu383.SP25.P03.Api.Features.Products
     {
         public int Id { get; set; }
         public string? Name { get; set; }
-        public int ProductTypeId { get; set; }
         public bool IsActive { get; set; }
         public int TheaterId { get; set; }
-        public Theater? Theaters { get; set; }
-        public ProductTypes? ProductTypes { get; set; }
+
+        public int ProductTypeId { get; set; }
+        public ProductType? ProductType { get; set; } // singular
     }
     public class ProductDto
     {
@@ -21,7 +21,9 @@ namespace Selu383.SP25.P03.Api.Features.Products
         public string? Name { get; set; }
         public bool IsActive { get; set; }
         public int TheaterId { get; set; }
+
         public int ProductTypeId { get; set; }
+        public string? ProductType { get; set; }
     }
     public class CartConfiguration : IEntityTypeConfiguration<Product>
     {
@@ -30,6 +32,7 @@ namespace Selu383.SP25.P03.Api.Features.Products
             builder.HasKey(e => e.Id);
             builder.Property(e => e.Name).IsRequired();
             builder.Property(e => e.IsActive).IsRequired();
+            //builder.Property(e => e.ProductTypes);
 
         }
     }

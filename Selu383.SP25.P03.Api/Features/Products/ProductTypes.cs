@@ -6,21 +6,21 @@ using Selu383.SP25.P03.Api.Features.Theaters;
 namespace Selu383.SP25.P03.Api.Features.Products
 {
     
-        public class ProductTypes : IEntity
+        public class ProductType : IEntity
         {
             public int Id { get; set; }
             public string? Name { get; set; }
             
         }
-        public class ProductTypesDto
+        public class ProductTypeDto
         {
             public int Id { get; set; }
             public string? Name { get; set; }
             
         }
-        public class ProductTypesConfiguration : IEntityTypeConfiguration<ProductTypes>
+        public class ProductTypesConfiguration : IEntityTypeConfiguration<ProductType>
         {
-            public void Configure(EntityTypeBuilder<ProductTypes> builder)
+            public void Configure(EntityTypeBuilder<ProductType> builder)
             {
                 builder.HasKey(x => x.Id);
             builder.Property(x => x.Name).IsRequired();

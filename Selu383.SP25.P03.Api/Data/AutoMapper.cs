@@ -81,8 +81,8 @@ namespace Selu383.SP25.P03.Api.Data
             CreateMap<RoomSeats, RoomSeatsDto>();
             CreateMap<RoomSeatsDto, RoomSeats>();
             //concessions 
-            CreateMap<ProductTypes, ProductTypesDto>();
-            CreateMap<ProductTypesDto, ProductTypes>();
+            CreateMap<ProductType, ProductTypeDto>();
+            CreateMap<ProductTypeDto, ProductType>();
 
         }
     }
