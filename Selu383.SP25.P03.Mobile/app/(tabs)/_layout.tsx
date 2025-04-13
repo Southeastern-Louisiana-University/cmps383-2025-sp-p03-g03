@@ -34,7 +34,8 @@ export default function TabsLayout() {
           headerStyle: {
             backgroundColor: "#fceda5"
           },
-          tabBarIcon: ({ color, focused }) => (
+          tabBarIcon: ({ color, focused }: { color: string; focused: boolean }) => (
+
             <Ionicons
               name={focused ? "home-sharp" : "home-outline"}
               color={color}
@@ -47,7 +48,8 @@ export default function TabsLayout() {
         name="buytickets"
         options={{
           headerTitle: "Buy Tickets",
-          tabBarIcon: ({ color, focused }) => (
+          tabBarIcon: ({ color, focused }: { color: string; focused: boolean }) => (
+
             <Ionicons
               name={focused ? "cart-sharp" : "cart-outline"}
               color={color}

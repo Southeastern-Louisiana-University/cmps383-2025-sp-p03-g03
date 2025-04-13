@@ -38,6 +38,16 @@ namespace Selu383.SP25.P03.Api
             // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
             builder.Services.AddOpenApi();
             builder.Services.AddRazorPages();
+           
+            builder.Services.AddCors(options =>
+            {
+                options.AddDefaultPolicy(policy =>
+                {
+                    policy.AllowAnyOrigin()
+                          .AllowAnyHeader()
+                          .AllowAnyMethod();
+                });
+            });
 
             builder.Services.AddIdentity<User, Role>()
                 .AddEntityFrameworkStores<DataContext>()
@@ -83,6 +93,8 @@ namespace Selu383.SP25.P03.Api
 
                 options.SlidingExpiration = true;
             });
+            builder.Services.AddHttpClient(); 
+
 
             var app = builder.Build();
 
@@ -92,17 +104,17 @@ namespace Selu383.SP25.P03.Api
 
                 await db.Database.MigrateAsync();
 
-                SeedTheaters.Initialize(scope.ServiceProvider);
+                //SeedTheaters.Initialize(scope.ServiceProvider);
                 await SeedRoles.Initialize(scope.ServiceProvider);
                 await SeedUsers.Initialize(scope.ServiceProvider);
-                await SeedRooms.InitializeAsync(scope.ServiceProvider);
-                await SeedMovies.InitializeAsync(scope.ServiceProvider);
-                await SeedMovieRoomScheduleLinks.InitializeAsync(scope.ServiceProvider);
-                await SeedMovieSchedule.InitializeAsync(scope.ServiceProvider);
-                await SeedProducts.InitializeAsync(scope.ServiceProvider);
-                await SeedProductPrices.InitializeAsync(scope.ServiceProvider);
-                await SeedSeats.InitializeAsync(scope.ServiceProvider);
-                await SeedSeatTypes.InitializeAsync(scope.ServiceProvider);
+                //await SeedRooms.InitializeAsync(scope.ServiceProvider);
+                //await SeedMovies.InitializeAsync(scope.ServiceProvider);
+                //await SeedMovieRoomScheduleLinks.InitializeAsync(scope.ServiceProvider);
+                //await SeedMovieSchedule.InitializeAsync(scope.ServiceProvider);
+                //await SeedProducts.InitializeAsync(scope.ServiceProvider);
+                //await SeedProductPrices.InitializeAsync(scope.ServiceProvider);
+                //await SeedSeats.InitializeAsync(scope.ServiceProvider);
+                //await SeedSeatTypes.InitializeAsync(scope.ServiceProvider);
 
             }
 
@@ -114,7 +126,7 @@ namespace Selu383.SP25.P03.Api
 
 
 
-
+            app.UseCors();
             app.UseHttpsRedirection();
             app.UseAuthentication();
             app.UseRouting()
@@ -142,21 +154,7 @@ namespace Selu383.SP25.P03.Api
             }
 
 
-            ////Configure the SPA
-            //app.UseSpa(spa =>
-            //{
-            //    //spa.Options.SourcePath = "../Selu383.SP25.P03.Web"; // Path to your Vite frontend project relative to the backend
-
-            //    if (app.Environment.IsDevelopment())
-            //    {
-            //        // Use Vite development server
-            //        spa.UseProxyToSpaDevelopmentServer("http://localhost:5173"); // Default Vite port
-            //    }
-            //    else
-            //    {
-            //        app.MapFallbackToFile("/index.html");
-            //    }
-            //});
+            
 
 
             app.Run();

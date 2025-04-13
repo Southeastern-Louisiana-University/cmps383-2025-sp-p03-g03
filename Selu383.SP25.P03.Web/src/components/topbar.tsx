@@ -15,7 +15,7 @@ export default function TopBar() {
       className="headroom-wrapper"
       pinStart={0}
     >
-      <nav className="bg-indigo-300! shadow-lg! shadow-indigo-900/50! p-2! flex! justify-between! items-center!">
+      <nav className="bg-gradient-to-r from-indigo-300! from-20%! to-indigo-700! to-50%! shadow-lg! shadow-indigo-900/50! p-2! flex! justify-between! items-center!">
         {/* Logo Section */}
         <div className="ml-4! md:ml-8! flex! space-x-8! md:space-x-16!">
           <Link to="/">
@@ -47,6 +47,11 @@ export default function TopBar() {
           <Link to="/theaters">
             <h2 className="text-lg! md:text-xl! lg:text-2xl! text-white! transition-transform! hover:scale-110! hover:drop-shadow-xl! hover:shadow-indigo-500/50! cursor-pointer!">
               My Theater
+            </h2>
+          </Link>
+          <Link to="/Concessions">
+            <h2 className="text-2xl text-white transition-transform hover:scale-110 hover:drop-shadow-xl hover:shadow-indigo-500/50! cursor-pointer">
+              Concessions
             </h2>
           </Link>
 

@@ -22,13 +22,9 @@ import TheaterListPage from "./BackendClient/Components/Theater/TheaterListPage.
 import TheaterFormPage from "./BackendClient/Components/Theater/TheaterForm.tsx";
 import RoomListPage from "./BackendClient/Components/Room/RoomListPage.tsx";
 import RoomFormPage from "./BackendClient/Components/Room/RoomForm.tsx";
-
 import SeatTypeListPage from "./BackendClient/Components/Seats/SeatTypeListPage.tsx";
 import SeatTypeForm from "./BackendClient/Components/Seats/SeatTypeForm.tsx";
-
-import MovieListPage from "./BackendClient/Components/Movies/MovieListPage.tsx";
-import MovieForm from "./BackendClient/Components/Movies/MovieForm.tsx";
-
+import ConcessionsPage from "./routes/ConcessionsPage.tsx";
 
 // Layout component that includes the TopBar and Outlet
 const Layout = () => {
@@ -41,176 +37,64 @@ const Layout = () => {
 };
 
 const router = createBrowserRouter([
-    {
-        path: "/",
-        element: <Layout />,
+  {
+    path: "/",
+    element: <Layout />,
+    children: [
+      {
+        index: true,
+        element: <App />,
+      },
+      {
+        path: "movies",
         children: [
-            {
+          {
+            index: true,
+            element: <Movies />,
+          },
+          {
+            path: ":id",
+            children: [
+              {
                 index: true,
-                element: <App />,
-            },
-            {
-                path: "movies",
-                children: [
-                    {
-                        index: true,
-                        element: <Movies />,
-                    },
-                    {
-                        path: ":id",
-                        children: [
-                            {
-                                index: true,
-                                element: <MovieDetails />,
-                            },
-                            {
-                                path: "theaters",
-                                element: <TheatreChoice />,
-                            },
-                            {
-                                //path: "showtimes",
-                                //element: <ShowtimeChoice />,
-                            },
-                        ],
-                    },
-                ],
-            },
-            {
-                path: "/LoginPage",
-                element: <LoginPage />,
-            },
-            {
-                path: "/MyTickets",
-                element: <MyTickets />,
-            },
+                element: <MovieDetails />,
+              },
+            ],
+          },
         ],
-    },
-    {
-        path: "admin",
-        element: <Admin />,
-        children: [
-            {
-                index: true,
-                element: <Navigate to="dashboard" replace />,
-            },
-            {
-                path: "dashboard",
-                element: <Dashboard />,
-            },
-            {
-                path: "products",
-                element: <Products />,
-            },
-            // Theater management routes
-            {
-                path: "theaters",
-                children: [
-                    {
-                        index: true,
-                        element: <TheaterListPage />,
-                    },
-                    {
-                        path: ":id",
-                        element: <TheaterFormPage />,
-                    },
-                    {
-                        path: "new",
-                        element: <TheaterFormPage />,
-                    },
-                    // Nested rooms routes for a specific theater
-                    {
-                        path: ":theaterId/rooms",
-                        children: [
-                            {
-                                index: true,
-                                element: <RoomListPage />,
-                            },
-                            {
-                                path: ":id",
-                                element: <RoomFormPage />,
-                            },
-                            {
-                                path: "new",
-                                element: <RoomFormPage />,
-                            },
-                        ],
-                    },
-                ],
-            },
-            // Global rooms routes
-            {
-                path: "rooms",
-                children: [
-                    {
-                        index: true,
-                        element: <RoomListPage />,
-                    },
-                    {
-                        path: ":id",
-                        element: <RoomFormPage />,
-                    },
-                    {
-                        path: "new",
-                        element: <RoomFormPage />,
-                    },
-                ],
-            },
-            // Seat type management routes
-            {
-                path: "seattypes",
-                children: [
-                    {
-                        index: true,
-                        element: <SeatTypeListPage />,
-                    },
-                    {
-                        path: ":id",
-                        element: <SeatTypeForm />,
-                    },
-                    {
-                        path: "new",
-                        element: <SeatTypeForm />,
-                    },
-                ],
-            },
-            // Seat type management routes
-            {
-                path: "Movies",
-                children: [
-                    {
-                        index: true,
-                        element: <MovieListPage />,
-                    },
-                    {
-                        path: ":id",
-                        element: <MovieForm />,
-                    },
-                    {
-                        path: "new",
-                        element: <MovieForm />,
-                    },
-                ],
-            },
-            // User management routes
-            {
-                path: "users",
-                children: [
-                    {
-                        index: true,
-                        //element: <UserListPage />,
-                    },
-                    {
-                        path: ":id",
-                       // element: <UserFormPage />,
-                    },
-                    {
-                        path: "new",
-                       // element: <UserFormPage />,
-                    },
-                ],
-            },
-        ],
-    },
+      },
+      {
+        path: "/theaters",
+        element: <TheatreChoice />,
+      },
+      {
+        path: "/LoginPage",
+        element: <LoginPage />,
+      },
+      {
+        path: "/MyTickets",
+        element: <MyTickets />,
+      },
+    ],
+  },
+  {
+    path: "admin",
+    element: <Admin />,
+    children: [
+      {
+        index: true,
+        element: <Navigate to="dashboard" replace />,
+      },
+      {
+        path: "dashboard",
+        element: <Dashboard />,
+      },
+      {
+        path: "products",
+        element: <Products />,
+      },
+    ],
+  },
 ]);
 
 const rootElement = document.getElementById("root");

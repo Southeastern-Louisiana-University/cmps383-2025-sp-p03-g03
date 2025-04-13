@@ -17,7 +17,9 @@ namespace Selu383.SP25.P03.Api.Data
                 if (!dataContext.MovieSchedules.Any())
                 {
                     // First, get all movies to create a lookup dictionary by title
-                    var movies = await dataContext.Movies.ToListAsync();
+                    var movies = await dataContext.Movies
+                        .Where(m => m.Title != null) // Filter out null titles
+                        .ToListAsync();
 
                     if (!movies.Any())
                     {
@@ -26,7 +28,7 @@ namespace Selu383.SP25.P03.Api.Data
 
                     // Create a dictionary with movie titles as keys and movie IDs as values
                     var movieDictionary = movies.ToDictionary(
-                        m => m.Title,
+                        m => m.Title!, // Assert non-null with ! since we filtered nulls
                         m => m.Id
                     );
 
