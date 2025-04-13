@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useLayoutEffect } from "react";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import {
   View,
@@ -9,44 +9,54 @@ import {
   ScrollView,
   Pressable,
 } from "react-native";
-import { getMovieById } from "@/services/movieService";
-import { getLocalPoster } from "@/utils/getLocalPoster";
-
-type Movie = {
-  id: number;
-  title: string;
-  description: string;
-  category: string;
-  runtime: number;
-  isActive: boolean;
-  ageRating: string;
-  releaseDate: string;
-};
+import DropDownPicker from "react-native-dropdown-picker";
+// import { Ionicons } from "@expo/vector-icons";
+// import { useNavigation } from "@react-navigation/native";
+import { getMovieById, getTheaters, Movie } from "@/services/movieService";
 
 export default function MovieDetails() {
   const { id } = useLocalSearchParams();
   const router = useRouter();
+  // const navigation = useNavigation();
+
   const [movie, setMovie] = useState<Movie | null>(null);
   const [loading, setLoading] = useState(true);
+
+  const [selectedTheater, setSelectedTheater] = useState<string | null>(null);
+  const [theaterOptions, setTheaterOptions] = useState<{ label: string; value: string }[]>([]);
+  const [open, setOpen] = useState(false);
+
+ 
 
   useEffect(() => {
     const movieId = Array.isArray(id) ? parseInt(id[0]) : parseInt(id ?? "0");
 
-    if (movieId) {
-      getMovieById(movieId)
-        .then(setMovie)
-        .catch((err) => {
-          console.error("Failed to load movie:", err);
-          setMovie(null);
-        })
-        .finally(() => setLoading(false));
+    async function loadData() {
+      try {
+        const movieData = await getMovieById(movieId);
+        setMovie(movieData);
+
+        const theaters = await getTheaters();
+        const dropdownItems = theaters.map((t) => ({
+          label: t.name,
+          value: t.id.toString(),
+        }));
+        setTheaterOptions(dropdownItems);
+      } catch (err) {
+        console.error("Error loading movie or theaters:", err);
+        setMovie(null);
+      } finally {
+        setLoading(false);
+      }
     }
+
+    loadData();
   }, [id]);
 
   if (loading) {
     return (
       <View style={styles.center}>
-        <ActivityIndicator size="large" />
+        <ActivityIndicator size="large" color="#a5b4fc" />
       </View>
     );
   }
@@ -59,23 +69,25 @@ export default function MovieDetails() {
     );
   }
 
-  const stretchedTitles = [
-    "duneparttwo",
-    "kingdomoftheplanetoftheapes"
-  ];
-  
+  const stretchedTitles = ["duneparttwo", "kingdomoftheplanetoftheapes"];
   const formattedTitle = movie.title?.toLowerCase().replace(/[^a-z0-9]/gi, "");
   const isStretched = stretchedTitles.includes(formattedTitle ?? "");
-  
+
+  const posterSource =
+    movie.poster && movie.poster.length > 0
+      ? {
+          uri: `data:${movie.poster[0].imageType};base64,${movie.poster[0].imageData}`,
+        }
+      : require("@/assets/images/posters/fallback.jpg");
 
   return (
     <View style={styles.container}>
       <ScrollView contentContainerStyle={styles.scrollContent}>
-      <Image
-        source={getLocalPoster(movie.title ?? "")}
-        style={isStretched ? styles.posterFixed : styles.poster}
-        resizeMode="contain"
-      />
+        <Image
+          source={posterSource}
+          style={isStretched ? styles.posterFixed : styles.poster}
+          resizeMode="contain"
+        />
 
         <Text style={styles.title}>{movie.title}</Text>
         <Text style={styles.label}>
@@ -95,22 +107,43 @@ export default function MovieDetails() {
         </Text>
         <Text style={styles.label}>Description:</Text>
         <Text style={styles.text}>{movie.description}</Text>
+
+        {/* ✅ DropDownPicker for theater selection */}
+        <View style={styles.dropdownWrapper}>
+          <Text style={styles.label}>Select a Theater:</Text>
+          <DropDownPicker
+            open={open}
+            setOpen={setOpen}
+            value={selectedTheater}
+            setValue={setSelectedTheater}
+            items={theaterOptions}
+            setItems={setTheaterOptions}
+            placeholder="Choose a theater..."
+            style={styles.dropdown}
+            dropDownContainerStyle={styles.dropdownList}
+            textStyle={{ fontSize: 14 }}
+            listMode="SCROLLVIEW"
+            zIndex={999}
+          />
+        </View>
       </ScrollView>
 
-      {/* Custom Styled Buy Tickets Button */}
-      <View style={styles.buttonWrapper}>
-        <Pressable
-          style={styles.button}
-          onPress={() =>
-            router.push({
-              pathname: "/(tabs)/buytickets",
-              params: { id: movie.id },
-            })
-          }
-        >
-          <Text style={styles.buttonText}>Buy Tickets</Text>
-        </Pressable>
-      </View>
+      {/* ✅ Only show button when a theater is selected */}
+      {selectedTheater && (
+        <View style={styles.buttonWrapper}>
+          <Pressable
+            style={styles.button}
+            onPress={() =>
+              router.push({
+                pathname: "/buytickets",
+                params: { id: movie.id, theaterId: selectedTheater },
+              })
+            }
+          >
+            <Text style={styles.buttonText}>Buy Tickets</Text>
+          </Pressable>
+        </View>
+      )}
     </View>
   );
 }
@@ -126,7 +159,7 @@ const styles = StyleSheet.create({
   },
   poster: {
     width: "100%",
-    aspectRatio: 2 / 3,
+    height: 280,
     borderRadius: 10,
     marginBottom: 20,
     alignSelf: "center",
@@ -137,7 +170,6 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     marginBottom: 20,
   },
-  
   title: {
     color: "#a5b4fc",
     fontSize: 24,
@@ -152,6 +184,22 @@ const styles = StyleSheet.create({
   text: {
     color: "#eee",
     fontSize: 16,
+  },
+  dropdownWrapper: {
+    marginTop: 24,
+    marginBottom: 16,
+    zIndex: 999,
+  },
+  dropdown: {
+    backgroundColor: "#fceda5",
+    borderColor: "#ccc",
+    borderRadius: 8,
+  },
+  dropdownList: {
+    backgroundColor: "#fceda5",
+    borderColor: "#ccc",
+    borderRadius: 8,
+    maxHeight: 200,
   },
   buttonWrapper: {
     padding: 16,

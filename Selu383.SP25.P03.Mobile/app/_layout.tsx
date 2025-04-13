@@ -8,8 +8,8 @@ import 'react-native-reanimated';
 
 import { AuthProvider } from '@/context/AuthContext';
 import { useColorScheme } from '@/hooks/useColorScheme';
+import CustomHeader from '@/components/ui/CustomHeader';
 
-// Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
 
 export default function RootLayout() {
@@ -30,16 +30,28 @@ export default function RootLayout() {
 
   return (
     <AuthProvider>
-    <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-   
-      <Stack screenOptions={{headerShown:false}}>
-        <Stack.Screen name="(tabs)" />
-        <Stack.Screen name="(auth)" /> 
-        {/* <Stack.Screen name="index" options={{headerShown:false}} /> */}
-        <Stack.Screen name="+not-found" />
-      </Stack>
-      <StatusBar style="auto" />
-    </ThemeProvider>
+      <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
+        <Stack
+          screenOptions={{
+            headerTitle: () => <CustomHeader />, // ✅ Global header
+            headerStyle: {
+              backgroundColor: '#fceda5',
+            },
+            contentStyle: {
+              backgroundColor: '#a5b4fc',
+            },
+          }}
+        >
+          <Stack.Screen name="index" />
+          <Stack.Screen name="buytickets" />
+          <Stack.Screen name="movies/[id]" />
+          <Stack.Screen name="login" options={{ headerShown: false }} />
+          <Stack.Screen name="register" options={{ headerShown: false }} />
+          <Stack.Screen name="profile" />
+          <Stack.Screen name="+not-found" />
+        </Stack>
+        <StatusBar style="auto" />
+      </ThemeProvider>
     </AuthProvider>
   );
 }
