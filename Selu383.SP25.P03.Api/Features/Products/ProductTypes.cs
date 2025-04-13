@@ -10,7 +10,7 @@ namespace Selu383.SP25.P03.Api.Features.Products
         {
             public int Id { get; set; }
             public required string Name { get; set; }
-            public Product? Products { get; set; }
+             //public Product? Products { get; set; }
             
         }
         public class ProductTypeDto
