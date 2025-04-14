@@ -52,7 +52,7 @@ function TheatreChoice() {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center min-h-screen bg-gray-900 text-white">
+      <div className="flex items-center justify-center min-h-screen bg-gradient-to-b from-indigo-950 to-gray-900 text-white">
         <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-indigo-300! mb-4"></div>
         <p className="text-indigo-300">Loading theaters...</p>
       </div>
@@ -61,7 +61,7 @@ function TheatreChoice() {
 
   if (error) {
     return (
-      <div className="flex items-center justify-center min-h-screen bg-gray-900 text-white">
+      <div className="flex items-center justify-center min-h-screen bg-gradient-to-b from-indigo-950 to-gray-900 text-white">
         <div className="text-center">
           <p className="text-red-500 text-2xl font-bold">Error</p>
           <p className="text-gray-300 mt-2">{error}</p>
@@ -77,7 +77,7 @@ function TheatreChoice() {
   }
 
   return (
-    <div className="flex flex-col min-h-screen bg-gray-900 text-white">
+    <div className="flex flex-col min-h-screen bg-gradient-to-b from-indigo-950 to-gray-900 text-white">
       <div className="max-w-6xl mx-auto p-6 flex-1">
         <Button
           onClick={() => navigate(-1)}
@@ -102,7 +102,7 @@ function TheatreChoice() {
               key={theater.id}
               className={`border rounded-lg p-6 transition-all duration-300 ${
                 selectedTheater === theater.id
-                  ? "border-indigo-500 bg-indigo-950/50 shadow-lg shadow-indigo-950/50"
+                  ? "outline-3! outline-indigo-300! bg-indigo-950/50 shadow-lg shadow-indigo-950/50"
                   : "border-gray-700 bg-gray-800 hover:shadow-md hover:shadow-indigo-950/30"
               }`}
             >

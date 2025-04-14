@@ -35,6 +35,23 @@ interface Theater {
   columns: number;
 }
 
+interface Room {
+  id: number;
+  name: string;
+  theaterId: number;
+  rows: number;
+  columns: number;
+}
+
+interface MovieRoomScheduleLink {
+  id: number;
+  theaterId: number;
+  roomId: number;
+  movieId: number;
+  movieScheduleId: number;
+  room: Room;
+}
+
 function MovieDetails() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
@@ -42,6 +59,9 @@ function MovieDetails() {
   const [poster, setPoster] = useState<MoviePoster[] | null>(null);
   const [theaters, setTheaters] = useState<Theater[]>([]);
   const [schedules, setSchedules] = useState<MovieSchedule[]>([]);
+  const [roomScheduleLinks, setRoomScheduleLinks] = useState<
+    MovieRoomScheduleLink[]
+  >([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [showShowtimes, setShowShowtimes] = useState(false);
@@ -58,7 +78,7 @@ function MovieDetails() {
         const [movieResponse, posterResponse, theatersResponse] =
           await Promise.all([
             fetch(`/api/movie/${id}`),
-              fetch(`/api/MoviePoster/GetByMovieId/${id}`),
+            fetch(`/api/MoviePoster/GetByMovieId/${id}`),
             fetch("/api/theaters"),
           ]);
 
@@ -76,12 +96,23 @@ function MovieDetails() {
         setTheaters(theatersData);
 
         if (theaterId) {
-          const scheduleResponse = await fetch(
-            `/api/MovieSchedule/GetByMovieId/${id}?theaterId=${theaterId}`
-          );
+          const [scheduleResponse, roomScheduleResponse] = await Promise.all([
+            fetch(
+              `/api/MovieSchedule/GetByMovieId/${id}?theaterId=${theaterId}`
+            ),
+            fetch(
+              `/api/MovieRoomScheduleLinks?movieId=${id}&theaterId=${theaterId}`
+            ),
+          ]);
+
           if (scheduleResponse.ok) {
             const scheduleData = await scheduleResponse.json();
             setSchedules(scheduleData);
+          }
+
+          if (roomScheduleResponse.ok) {
+            const roomScheduleData = await roomScheduleResponse.json();
+            setRoomScheduleLinks(roomScheduleData);
           }
         }
       } catch (error) {
@@ -109,17 +140,35 @@ function MovieDetails() {
     }
   };
 
-  const handleTheaterSelect = (selectedTheaterId: string) => {
+  const handleTheaterSelect = async (selectedTheaterId: string) => {
     localStorage.setItem("theaterId", selectedTheaterId);
     setShowShowtimes(true);
-    fetch(
-      `/api/MovieSchedule/GetByMovieId/${id}?theaterId=${selectedTheaterId}`
-    )
-      .then((response) => (response.ok ? response.json() : []))
-      .then((data) => setSchedules(data));
+
+    const [scheduleResponse, roomScheduleResponse] = await Promise.all([
+      fetch(
+        `/api/MovieSchedule/GetByMovieId/${id}?theaterId=${selectedTheaterId}`
+      ),
+      fetch(
+        `/api/MovieRoomScheduleLinks?movieId=${id}&theaterId=${selectedTheaterId}`
+      ),
+    ]);
+
+    if (scheduleResponse.ok) {
+      const scheduleData = await scheduleResponse.json();
+      setSchedules(scheduleData);
+    }
+
+    if (roomScheduleResponse.ok) {
+      const roomScheduleData = await roomScheduleResponse.json();
+      setRoomScheduleLinks(roomScheduleData);
+    }
   };
 
-  const handleSeatSelection = (showtime: MovieSchedule, time: string) => {
+  const handleSeatSelection = (
+    showtime: MovieSchedule,
+    time: string,
+    room: Room | null
+  ) => {
     const selectedTheater = theaters.find((t) => t.id.toString() === theaterId);
     if (!selectedTheater) return;
 
@@ -129,6 +178,8 @@ function MovieDetails() {
           id: showtime.id,
           time: time,
           movieId: movieId,
+          roomId: room?.id,
+          roomName: room?.name,
         },
         theater: selectedTheater,
         movie: movie,
@@ -169,6 +220,9 @@ function MovieDetails() {
         time,
         scheduleId: schedule.id,
         theaterId: schedule.theaterId,
+        room:
+          roomScheduleLinks.find((link) => link.movieScheduleId === schedule.id)
+            ?.room || null,
       }))
     );
 
@@ -176,14 +230,14 @@ function MovieDetails() {
 
   return (
     <div className="flex flex-col min-h-screen bg-gray-900 text-white">
-      <div className="flex flex-col md:flex-row gap-8 p-8 max-w-6xl mx-auto mt-16 flex-1">
+      <div className="flex flex-col md:flex-row gap-8 p-8 max-w-6xl mx-auto mt-16 flex-1 ">
         {/* Poster */}
         <div className="flex-shrink-0">
           {poster && (
             <img
               src={`data:${poster[0].imageType};base64,${poster[0].imageData}`}
               alt={`${movie.title} poster`}
-              className="w-80 h-auto rounded-lg shadow-lg shadow-indigo-950/50 transition-all duration-300 hover:shadow-indigo-800/70"
+              className="w-80 h-auto rounded-lg outline-3! outline-indigo-300! shadow-lg shadow-indigo-950/50 transition-all duration-300 hover:shadow-indigo-800/70"
               loading="lazy"
             />
           )}
@@ -273,13 +327,19 @@ function MovieDetails() {
                           minute: "2-digit",
                         })}
                       </h3>
+                      <p className="text-gray-300">
+                        {showtime.room
+                          ? showtime.room.name
+                          : "Room not assigned"}
+                      </p>
                       <Button
                         onClick={() =>
                           handleSeatSelection(
                             schedules.find(
                               (s) => s.id === showtime.scheduleId
                             )!,
-                            showtime.time
+                            showtime.time,
+                            showtime.room
                           )
                         }
                         className="mt-3 w-full bg-indigo-700! hover:bg-indigo-600! text-white py-2 rounded transition-all duration-300 shadow-md hover:shadow-lg"

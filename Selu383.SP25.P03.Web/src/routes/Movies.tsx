@@ -100,7 +100,7 @@ function Movies() {
             className="group flex flex-col items-center gap-3 transition-all duration-300 hover:scale-105"
           >
             {/* Poster Container */}
-            <div className="relative w-full max-w-[250px] rounded-lg overflow-hidden shadow-lg shadow-indigo-950/50 transition-all duration-300 group-hover:shadow-xl group-hover:shadow-indigo-800/70">
+            <div className="relative w-full max-w-[250px] rounded-lg overflow-hidden outline-3! outline-indigo-300! shadow-lg shadow-indigo-950/50 transition-all duration-300 group-hover:shadow-xl group-hover:shadow-indigo-800/70">
               {movie.poster ? (
                 <img
                   src={`data:${movie.poster[0].imageType};base64,${movie.poster[0].imageData}`}
