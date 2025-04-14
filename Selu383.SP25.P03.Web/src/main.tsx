@@ -24,6 +24,14 @@ import RoomListPage from "./BackendClient/Components/Room/RoomListPage.tsx";
 import RoomFormPage from "./BackendClient/Components/Room/RoomForm.tsx";
 import SeatTypeListPage from "./BackendClient/Components/Seats/SeatTypeListPage.tsx";
 import SeatTypeForm from "./BackendClient/Components/Seats/SeatTypeForm.tsx";
+
+
+import MovieListPage from "./BackendClient/Components/Movies/MovieListPage.tsx";
+import MovieForm from "./BackendClient/Components/Movies/MovieForm.tsx";
+
+import ProductListPage from "./BackendClient/Components/Products/ProductListPage.tsx";
+import ProductForm from "./BackendClient/Components/Products/ProductForm.tsx";
+
 import ConcessionsPage from "./routes/ConcessionsPage.tsx";
 
 // Layout component that includes the TopBar and Outlet
@@ -74,7 +82,11 @@ const router = createBrowserRouter([
       {
         path: "/MyTickets",
         element: <MyTickets />,
-      },
+        },
+        {
+            path: "/Concessions",
+            element: <ConcessionsPage />,
+        },
     ],
   },
     {
@@ -106,7 +118,7 @@ const router = createBrowserRouter([
                         element: <TheaterFormPage />,
                     },
                     {
-                        path: ":id/edit",
+                        path: ":id",
                         element: <TheaterFormPage />,
                     },
                 ],
@@ -124,14 +136,50 @@ const router = createBrowserRouter([
                         element: <RoomFormPage />,
                     },
                     {
-                        path: ":id/edit",
+                        path: ":id",
                         element: <RoomFormPage />,
                     },
                 ],
             },
             // Admin routes for seat type management
             {
-                path: "seat-types",
+                path: "movies",
+                children: [
+                    {
+                        index: true,
+                        element: <MovieListPage />,
+                    },
+                    {
+                        path: "new",
+                        element: <MovieForm />,
+                    },
+                    {
+                        path: ":id",
+                        element: <MovieForm />,
+                    },
+                ],
+            },
+            // Admin routes for seat type management
+            {
+                path: "products",
+                children: [
+                    {
+                        index: true,
+                        element: <ProductListPage />,
+                    },
+                    {
+                        path: ":id",
+                        element: <ProductForm />,
+                    },
+                    {
+                        path: "new",
+                        element: <ProductForm />,
+                    }
+                ],
+            },
+            // Admin routes for seat type management
+            {
+                path: "seattypes",
                 children: [
                     {
                         index: true,
@@ -142,7 +190,7 @@ const router = createBrowserRouter([
                         element: <SeatTypeForm />,
                     },
                     {
-                        path: ":id/edit",
+                        path: ":id",
                         element: <SeatTypeForm />,
                     },
                 ],

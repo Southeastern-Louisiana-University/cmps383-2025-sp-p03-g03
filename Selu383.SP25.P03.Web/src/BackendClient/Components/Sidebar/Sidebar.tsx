@@ -148,6 +148,14 @@ const Sidebar: React.FC = () => {
                                     Movies
                                 </Link>
                             </li>
+
+
+                            <li className="items-center">
+                                <Link className={getNavLinkClass("/admin/products")} to="/admin/products">
+                                    <i className={`fas fa-users mr-2 text-sm ${getIconClass("/admin/products")}`}></i>{" "}
+                                    Products
+                                </Link>
+                            </li>
                         </ul>
 
                         <hr className="my-4 md:min-w-full" />
