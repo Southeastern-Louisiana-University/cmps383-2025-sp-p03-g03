@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Selu383.SP25.P03.Api.Data;
 
@@ -11,9 +12,11 @@ using Selu383.SP25.P03.Api.Data;
 namespace Selu383.SP25.P03.Api.Migrations
 {
     [DbContext(typeof(DataContext))]
-    partial class DataContextModelSnapshot : ModelSnapshot
+    [Migration("20250413175604_AddProductImage")]
+    partial class AddProductImage
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -253,9 +256,6 @@ namespace Selu383.SP25.P03.Api.Migrations
                         .HasColumnType("bit")
                         .HasDefaultValue(true);
 
-                    b.Property<string>("PreviewURL")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<DateTime>("ReleaseDate")
                         .HasColumnType("datetime2");
 
@@ -345,21 +345,16 @@ namespace Selu383.SP25.P03.Api.Migrations
                     b.Property<bool>("IsActive")
                         .HasColumnType("bit");
 
-                    b.Property<int?>("MovieId")
+                    b.Property<int>("MovieId")
                         .HasColumnType("int");
 
                     b.PrimitiveCollection<string>("MovieTimes")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int?>("RoomId")
-                        .HasColumnType("int");
-
                     b.HasKey("Id");
 
                     b.HasIndex("MovieId");
-
-                    b.HasIndex("RoomId");
 
                     b.ToTable("MovieSchedules");
                 });
@@ -389,9 +384,16 @@ namespace Selu383.SP25.P03.Api.Migrations
                     b.Property<int>("ProductTypeId")
                         .HasColumnType("int");
 
+                    b.Property<int?>("ProductTypeId1")
+                        .HasColumnType("int");
+
                     b.HasKey("Id");
 
                     b.HasIndex("ProductTypeId");
+
+                    b.HasIndex("ProductTypeId1")
+                        .IsUnique()
+                        .HasFilter("[ProductTypeId1] IS NOT NULL");
 
                     b.ToTable("Products");
                 });
@@ -911,15 +913,10 @@ namespace Selu383.SP25.P03.Api.Migrations
                     b.HasOne("Selu383.SP25.P03.Api.Features.Movies.Movie", "Movie")
                         .WithMany()
                         .HasForeignKey("MovieId")
-                        .OnDelete(DeleteBehavior.NoAction);
-
-                    b.HasOne("Selu383.SP25.P03.Api.Features.Rooms.Room", "Room")
-                        .WithMany()
-                        .HasForeignKey("RoomId");
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
 
                     b.Navigation("Movie");
-
-                    b.Navigation("Room");
                 });
 
             modelBuilder.Entity("Selu383.SP25.P03.Api.Features.Products.Product", b =>
@@ -929,6 +926,10 @@ namespace Selu383.SP25.P03.Api.Migrations
                         .HasForeignKey("ProductTypeId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.HasOne("Selu383.SP25.P03.Api.Features.Products.ProductType", null)
+                        .WithOne("Products")
+                        .HasForeignKey("Selu383.SP25.P03.Api.Features.Products.Product", "ProductTypeId1");
 
                     b.Navigation("ProductType");
                 });
@@ -1032,6 +1033,11 @@ namespace Selu383.SP25.P03.Api.Migrations
             modelBuilder.Entity("Selu383.SP25.P03.Api.Features.Cart.Cart", b =>
                 {
                     b.Navigation("Items");
+                });
+
+            modelBuilder.Entity("Selu383.SP25.P03.Api.Features.Products.ProductType", b =>
+                {
+                    b.Navigation("Products");
                 });
 
             modelBuilder.Entity("Selu383.SP25.P03.Api.Features.Users.Role", b =>
