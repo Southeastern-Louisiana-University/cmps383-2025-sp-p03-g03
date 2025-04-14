@@ -77,24 +77,78 @@ const router = createBrowserRouter([
       },
     ],
   },
-  {
-    path: "admin",
-    element: <Admin />,
-    children: [
-      {
-        index: true,
-        element: <Navigate to="dashboard" replace />,
-      },
-      {
-        path: "dashboard",
-        element: <Dashboard />,
-      },
-      {
-        path: "products",
-        element: <Products />,
-      },
-    ],
-  },
+    {
+        path: "admin",
+        element: <Admin />,
+        children: [
+            {
+                index: true,
+                element: <Navigate to="dashboard" replace />,
+            },
+            {
+                path: "dashboard",
+                element: <Dashboard />,
+            },
+            {
+                path: "products",
+                element: <Products />,
+            },
+            // Admin routes for theater management
+            {
+                path: "theaters",
+                children: [
+                    {
+                        index: true,
+                        element: <TheaterListPage />,
+                    },
+                    {
+                        path: "new",
+                        element: <TheaterFormPage />,
+                    },
+                    {
+                        path: ":id/edit",
+                        element: <TheaterFormPage />,
+                    },
+                ],
+            },
+            // Admin routes for room management
+            {
+                path: "rooms",
+                children: [
+                    {
+                        index: true,
+                        element: <RoomListPage />,
+                    },
+                    {
+                        path: "new",
+                        element: <RoomFormPage />,
+                    },
+                    {
+                        path: ":id/edit",
+                        element: <RoomFormPage />,
+                    },
+                ],
+            },
+            // Admin routes for seat type management
+            {
+                path: "seat-types",
+                children: [
+                    {
+                        index: true,
+                        element: <SeatTypeListPage />,
+                    },
+                    {
+                        path: "new",
+                        element: <SeatTypeForm />,
+                    },
+                    {
+                        path: ":id/edit",
+                        element: <SeatTypeForm />,
+                    },
+                ],
+            },
+        ],
+    },
 ]);
 
 const rootElement = document.getElementById("root");
