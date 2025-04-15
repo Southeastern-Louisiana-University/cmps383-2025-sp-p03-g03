@@ -8,7 +8,6 @@ import {
   ScrollView,
   ActivityIndicator,
   Modal,
-  Alert,
 } from "react-native";
 import { useLocalSearchParams, useRouter, useNavigation } from "expo-router";
 import {
@@ -17,7 +16,6 @@ import {
   getTheaters,
 } from "@/services/movieService";
 import type { Movie } from "@/services/movieService";
-import { Ionicons } from "@expo/vector-icons";
 
 type MovieSchedule = {
   id: number;
@@ -41,6 +39,7 @@ export default function BuyTickets() {
   const [modalVisible, setModalVisible] = useState(false);
   const [selectedDay, setSelectedDay] = useState<string | null>(null);
   const [selectedTime, setSelectedTime] = useState<string | null>(null);
+  const [selectedFullTime, setSelectedFullTime] = useState<string | null>(null);
 
   useLayoutEffect(() => {
     navigation.setOptions({
@@ -54,16 +53,6 @@ export default function BuyTickets() {
       headerStyle: {
         backgroundColor: "#fceda5",
       },
-      // headerLeft: () => (
-      //   <TouchableOpacity onPress={() => router.back()}>
-      //     <Ionicons
-      //       name="arrow-back"
-      //       size={24}
-      //       color="#000"
-      //       style={{ marginLeft: 16 }}
-      //     />
-      //   </TouchableOpacity>
-      // ),
     });
   }, [navigation]);
 
@@ -164,6 +153,7 @@ export default function BuyTickets() {
                           onPress={() => {
                             setSelectedTime(showTime);
                             setSelectedDay(dayStr);
+                            setSelectedFullTime(time);
                             setModalVisible(true);
                           }}
                         >
@@ -179,7 +169,6 @@ export default function BuyTickets() {
         })
       )}
 
-      {/* 🎟️ Custom Modal */}
       <Modal
         visible={modalVisible}
         transparent={true}
@@ -196,10 +185,22 @@ export default function BuyTickets() {
               style={styles.confirmButton}
               onPress={() => {
                 setModalVisible(false);
-                Alert.alert("✅ Confirmed", "Your ticket is reserved!");
+
+                // Navigate to checkout with ticket data
+                router.push({
+                  pathname: "/checkout",
+                  params: {
+                    ticket: JSON.stringify({
+                      movieTitle: movie?.title,
+                      date: selectedDay,
+                      time: selectedTime,
+                      theater: selectedTheaterName,
+                    }),
+                  },
+                });
               }}
             >
-              <Text style={styles.confirmButtonText}>Confirm Ticket</Text>
+              <Text style={styles.confirmButtonText}>Confirm & Checkout</Text>
             </TouchableOpacity>
           </View>
         </View>

@@ -7,13 +7,13 @@ import { useEffect } from 'react';
 import 'react-native-reanimated';
 
 import { AuthProvider } from '@/context/AuthContext';
-import { useColorScheme } from '@/hooks/useColorScheme';
+import { useColorScheme } from '@/hooks/useColorScheme'; // custom hook
 import CustomHeader from '@/components/ui/CustomHeader';
 
 SplashScreen.preventAutoHideAsync();
 
 export default function RootLayout() {
-  const colorScheme = useColorScheme();
+  const { colorScheme } = useColorScheme(); // ✅ fixed
   const [loaded] = useFonts({
     SpaceMono: require('../assets/fonts/SpaceMono-Regular.ttf'),
   });
@@ -33,7 +33,7 @@ export default function RootLayout() {
       <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
         <Stack
           screenOptions={{
-            headerTitle: () => <CustomHeader />, // ✅ Global header
+            headerTitle: () => <CustomHeader />,
             headerStyle: {
               backgroundColor: '#fceda5',
             },
@@ -42,7 +42,7 @@ export default function RootLayout() {
             },
           }}
         >
-          <Stack.Screen name="index" />
+          <Stack.Screen name="tabs" options={{ headerShown: false }} />
           <Stack.Screen name="buytickets" />
           <Stack.Screen name="movies/[id]" />
           <Stack.Screen name="login" options={{ headerShown: false }} />
