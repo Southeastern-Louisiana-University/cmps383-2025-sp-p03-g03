@@ -62,6 +62,7 @@ function MovieDetails() {
   const [roomScheduleLinks, setRoomScheduleLinks] = useState<
     MovieRoomScheduleLink[]
   >([]);
+  const [rooms, setRooms] = useState<Room[]>([]); // New state for rooms
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [showShowtimes, setShowShowtimes] = useState(false);
@@ -96,14 +97,14 @@ function MovieDetails() {
         setTheaters(theatersData);
 
         if (theaterId) {
-          const [scheduleResponse, roomScheduleResponse] = await Promise.all([
-            fetch(
-              `/api/MovieSchedule/GetByMovieId/${id}?theaterId=${theaterId}`
-            ),
-            fetch(
-              `/api/MovieRoomScheduleLinks?movieId=${id}&theaterId=${theaterId}`
-            ),
-          ]);
+          const [scheduleResponse, roomScheduleResponse, roomsResponse] =
+            await Promise.all([
+              fetch(
+                `/api/MovieSchedule/GetByMovieId/${id}?theaterId=${theaterId}`
+              ),
+              fetch(`/api/MovieRoomScheduleLink/GetByScheduleId/${id}`),
+              fetch(`/api/Room/GetByMovieId/${theaterId}`), // Fetch rooms
+            ]);
 
           if (scheduleResponse.ok) {
             const scheduleData = await scheduleResponse.json();
@@ -113,6 +114,11 @@ function MovieDetails() {
           if (roomScheduleResponse.ok) {
             const roomScheduleData = await roomScheduleResponse.json();
             setRoomScheduleLinks(roomScheduleData);
+          }
+
+          if (roomsResponse.ok) {
+            const roomsData = await roomsResponse.json();
+            setRooms(roomsData);
           }
         }
       } catch (error) {
@@ -144,23 +150,34 @@ function MovieDetails() {
     localStorage.setItem("theaterId", selectedTheaterId);
     setShowShowtimes(true);
 
-    const [scheduleResponse, roomScheduleResponse] = await Promise.all([
-      fetch(
-        `/api/MovieSchedule/GetByMovieId/${id}?theaterId=${selectedTheaterId}`
-      ),
-      fetch(
-        `/api/MovieRoomScheduleLinks?movieId=${id}&theaterId=${selectedTheaterId}`
-      ),
-    ]);
+    try {
+      const [scheduleResponse, roomScheduleResponse, roomsResponse] =
+        await Promise.all([
+          fetch(
+            `/api/MovieSchedule/GetByMovieId/${id}?theaterId=${selectedTheaterId}`
+          ),
+          fetch(`/api/MovieRoomScheduleLink/GetByScheduleId/${id}`),
+          fetch(`/api/Room/GetByMovieId/${selectedTheaterId}`), // Fetch rooms for new theater
+        ]);
 
-    if (scheduleResponse.ok) {
-      const scheduleData = await scheduleResponse.json();
-      setSchedules(scheduleData);
-    }
+      if (scheduleResponse.ok) {
+        const scheduleData = await scheduleResponse.json();
+        setSchedules(scheduleData);
+      }
 
-    if (roomScheduleResponse.ok) {
-      const roomScheduleData = await roomScheduleResponse.json();
-      setRoomScheduleLinks(roomScheduleData);
+      if (roomScheduleResponse.ok) {
+        const roomScheduleData = await roomScheduleResponse.json();
+        setRoomScheduleLinks(roomScheduleData);
+      }
+
+      if (roomsResponse.ok) {
+        const roomsData = await roomsResponse.json();
+        setRooms(roomsData);
+      }
+    } catch (error) {
+      setError(
+        error instanceof Error ? error.message : "An unknown error occurred"
+      );
     }
   };
 
@@ -216,14 +233,20 @@ function MovieDetails() {
   const activeShowtimes = schedules
     .filter((schedule) => schedule.isActive)
     .flatMap((schedule) =>
-      schedule.movieTimes.map((time) => ({
-        time,
-        scheduleId: schedule.id,
-        theaterId: schedule.theaterId,
-        room:
-          roomScheduleLinks.find((link) => link.movieScheduleId === schedule.id)
-            ?.room || null,
-      }))
+      schedule.movieTimes.map((time) => {
+        const link = roomScheduleLinks.find(
+          (link) => link.movieScheduleId === schedule.id
+        );
+        const room = link
+          ? rooms.find((r) => r.id === link.roomId) || null
+          : null;
+        return {
+          time,
+          scheduleId: schedule.id,
+          theaterId: schedule.theaterId,
+          room,
+        };
+      })
     );
 
   const selectedTheater = theaters.find((t) => t.id.toString() === theaterId);
