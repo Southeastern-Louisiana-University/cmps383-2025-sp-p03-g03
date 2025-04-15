@@ -55,7 +55,7 @@ export const RoomService = {
     getByTheaterId: async (theaterId: number): Promise<RoomDTO[]> => {
         try {
             logger.info(`Fetching rooms for theater ${theaterId}`);
-            const response = await axios.get<RoomDTO[]>(`${API_URL}/theater/${theaterId}`);
+            const response = await axios.get<RoomDTO[]>(`${API_URL}/GetByMovieId/${theaterId}`); //Room/GetByMovieId/
             logger.success(`Retrieved ${response.data.length} rooms for theater ${theaterId}`);
             return response.data;
         } catch (error) {

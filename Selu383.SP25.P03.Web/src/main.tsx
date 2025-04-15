@@ -32,6 +32,11 @@ import MovieForm from "./BackendClient/Components/Movies/MovieForm.tsx";
 import ProductListPage from "./BackendClient/Components/Products/ProductListPage.tsx";
 import ProductForm from "./BackendClient/Components/Products/ProductForm.tsx";
 
+// Import Movie Schedule Management Components
+import MovieScheduleListPage from "./BackendClient/Components/MovieSchedule/MovieScheduleListPage.tsx";
+import MovieScheduleForm from "./BackendClient/Components/MovieSchedule/MovieScheduleForm.tsx";
+import MovieScheduleAssignments from "./BackendClient/Components/MovieSchedule/MovieScheduleAssignments.tsx";
+
 import ConcessionsPage from "./routes/ConcessionsPage.tsx";
 
 // Layout component that includes the TopBar and Outlet
@@ -192,6 +197,28 @@ const router = createBrowserRouter([
                     {
                         path: ":id",
                         element: <SeatTypeForm />,
+                    },
+                ],
+            },
+            // Movie Schedule Management Routes
+            {
+                path: "movieschedules",
+                children: [
+                    {
+                        index: true,
+                        element: <MovieScheduleListPage />,
+                    },
+                    {
+                        path: ":id",
+                        element: <MovieScheduleForm />,
+                    },
+                    {
+                        path: ":id/assignments",
+                        element: <MovieScheduleAssignments />,
+                    },
+                    {
+                        path: "new",
+                        element: <MovieScheduleForm />,
                     },
                 ],
             },
