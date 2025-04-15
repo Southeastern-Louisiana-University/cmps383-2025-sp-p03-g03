@@ -1,3 +1,5 @@
+@import "tailwindcss";
+
 html,
 body {
   max-height: 100%;
@@ -14,60 +16,6 @@ body {
   z-index: 1000 !important;
 }
 
-nav {
+/*nav {
   background-color: #fecc01;
-}
-
-/* Swiper Carousel Z-index Management */
-.swiper {
-  z-index: 10;
-  position: relative;
-}
-
-.swiper-button-next,
-.swiper-button-prev {
-  z-index: 11;
-}
-
-.swiper-pagination {
-  z-index: 11;
-}
-
-.swiper-pagination-bullet {
-  background: #4f46e5 !important; /* indigo-600 */
-}
-
-.swiper-pagination-bullet-active {
-  background: #4f46e5 !important; /* indigo-600 */
-}
-
-/* Headroom (TopBar) Animation Styles */
-.headroom-wrapper {
-  position: relative;
-  z-index: 1000;
-}
-
-.headroom {
-  transition: transform 200ms ease-in-out;
-  will-change: transform;
-}
-
-.headroom--pinned {
-  transform: translateY(0%);
-}
-
-.headroom--unpinned {
-  transform: translateY(-100%);
-}
-
-/* Content Section Styling */
-.content-section {
-  position: relative;
-  z-index: 20;
-}
-
-/* Footer Styling */
-.site-footer {
-  position: relative;
-  z-index: 20;
-}
+}*/

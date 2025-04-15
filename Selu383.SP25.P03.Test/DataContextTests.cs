@@ -122,7 +122,7 @@ public class DataContextTests
         try
         {
             IEnumerable test = Enumerable.ToList(collection);
-            return test.Cast<dynamic>().ToList();
+            return [.. test.Cast<dynamic>()];
         }
         catch (InvalidOperationException e)
         {

@@ -24,11 +24,20 @@ import RoomListPage from "./BackendClient/Components/Room/RoomListPage.tsx";
 import RoomFormPage from "./BackendClient/Components/Room/RoomForm.tsx";
 import SeatTypeListPage from "./BackendClient/Components/Seats/SeatTypeListPage.tsx";
 import SeatTypeForm from "./BackendClient/Components/Seats/SeatTypeForm.tsx";
-import ConcessionsPage from "./routes/ConcessionsPage.tsx";
 
-// Import new components for seat selection flow
-import SeatSelectionPage from "./routes/SeatSelectionPage.tsx";
-import CheckoutPage from "./routes/CheckoutPage.tsx";
+
+import MovieListPage from "./BackendClient/Components/Movies/MovieListPage.tsx";
+import MovieForm from "./BackendClient/Components/Movies/MovieForm.tsx";
+
+import ProductListPage from "./BackendClient/Components/Products/ProductListPage.tsx";
+import ProductForm from "./BackendClient/Components/Products/ProductForm.tsx";
+
+// Import Movie Schedule Management Components
+import MovieScheduleListPage from "./BackendClient/Components/MovieSchedule/MovieScheduleListPage.tsx";
+import MovieScheduleForm from "./BackendClient/Components/MovieSchedule/MovieScheduleForm.tsx";
+import MovieScheduleAssignments from "./BackendClient/Components/MovieSchedule/MovieScheduleAssignments.tsx";
+
+import ConcessionsPage from "./routes/ConcessionsPage.tsx";
 
 // Layout component that includes the TopBar and Outlet
 const Layout = () => {
@@ -63,17 +72,9 @@ const router = createBrowserRouter([
                 index: true,
                 element: <MovieDetails />,
               },
-              {
-                path: "seats", // New route for seat selection
-                element: <SeatSelectionPage />,
-              },
             ],
           },
         ],
-      },
-      {
-        path: "/checkout", // New route for checkout
-        element: <CheckoutPage />,
       },
       {
         path: "/theaters",
@@ -86,85 +87,143 @@ const router = createBrowserRouter([
       {
         path: "/MyTickets",
         element: <MyTickets />,
-      },
-      {
-        path: "/Concessions",
-        element: <ConcessionsPage />,
-      },
+        },
+        {
+            path: "/Concessions",
+            element: <ConcessionsPage />,
+        },
     ],
   },
-  {
-    path: "admin",
-    element: <Admin />,
-    children: [
-      {
-        index: true,
-        element: <Navigate to="dashboard" replace />,
-      },
-      {
-        path: "dashboard",
-        element: <Dashboard />,
-      },
-      {
-        path: "products",
-        element: <Products />,
-      },
-      // Admin routes for theater management
-      {
-        path: "theaters",
+    {
+        path: "admin",
+        element: <Admin />,
         children: [
-          {
-            index: true,
-            element: <TheaterListPage />,
-          },
-          {
-            path: "new",
-            element: <TheaterFormPage />,
-          },
-          {
-            path: ":id/edit",
-            element: <TheaterFormPage />,
-          },
+            {
+                index: true,
+                element: <Navigate to="dashboard" replace />,
+            },
+            {
+                path: "dashboard",
+                element: <Dashboard />,
+            },
+            {
+                path: "products",
+                element: <Products />,
+            },
+            // Admin routes for theater management
+            {
+                path: "theaters",
+                children: [
+                    {
+                        index: true,
+                        element: <TheaterListPage />,
+                    },
+                    {
+                        path: "new",
+                        element: <TheaterFormPage />,
+                    },
+                    {
+                        path: ":id",
+                        element: <TheaterFormPage />,
+                    },
+                ],
+            },
+            // Admin routes for room management
+            {
+                path: "rooms",
+                children: [
+                    {
+                        index: true,
+                        element: <RoomListPage />,
+                    },
+                    {
+                        path: "new",
+                        element: <RoomFormPage />,
+                    },
+                    {
+                        path: ":id",
+                        element: <RoomFormPage />,
+                    },
+                ],
+            },
+            // Admin routes for seat type management
+            {
+                path: "movies",
+                children: [
+                    {
+                        index: true,
+                        element: <MovieListPage />,
+                    },
+                    {
+                        path: "new",
+                        element: <MovieForm />,
+                    },
+                    {
+                        path: ":id",
+                        element: <MovieForm />,
+                    },
+                ],
+            },
+            // Admin routes for seat type management
+            {
+                path: "products",
+                children: [
+                    {
+                        index: true,
+                        element: <ProductListPage />,
+                    },
+                    {
+                        path: ":id",
+                        element: <ProductForm />,
+                    },
+                    {
+                        path: "new",
+                        element: <ProductForm />,
+                    }
+                ],
+            },
+            // Admin routes for seat type management
+            {
+                path: "seattypes",
+                children: [
+                    {
+                        index: true,
+                        element: <SeatTypeListPage />,
+                    },
+                    {
+                        path: "new",
+                        element: <SeatTypeForm />,
+                    },
+                    {
+                        path: ":id",
+                        element: <SeatTypeForm />,
+                    },
+                ],
+            },
+            // Movie Schedule Management Routes
+            {
+                path: "movieschedules",
+                children: [
+                    {
+                        index: true,
+                        element: <MovieScheduleListPage />,
+                    },
+                    {
+                        path: ":id",
+                        element: <MovieScheduleForm />,
+                    },
+                    {
+                        path: ":id/assignments",
+                        element: <MovieScheduleAssignments />,
+                    },
+                    {
+                        path: "new",
+                        element: <MovieScheduleForm />,
+                    },
+                ],
+            },
         ],
-      },
-      // Admin routes for room management
-      {
-        path: "rooms",
-        children: [
-          {
-            index: true,
-            element: <RoomListPage />,
-          },
-          {
-            path: "new",
-            element: <RoomFormPage />,
-          },
-          {
-            path: ":id/edit",
-            element: <RoomFormPage />,
-          },
-        ],
-      },
-      // Admin routes for seat type management
-      {
-        path: "seat-types",
-        children: [
-          {
-            index: true,
-            element: <SeatTypeListPage />,
-          },
-          {
-            path: "new",
-            element: <SeatTypeForm />,
-          },
-          {
-            path: ":id/edit",
-            element: <SeatTypeForm />,
-          },
-        ],
-      },
-    ],
-  },
+    },
 ]);
 
 const rootElement = document.getElementById("root");
