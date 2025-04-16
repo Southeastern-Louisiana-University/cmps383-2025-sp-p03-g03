@@ -181,7 +181,7 @@ function MovieDetails() {
 
             // Fetch rooms
             const roomsResponse = await fetch(
-              `/api/Room/GetByTheaterId/${theaterId}`
+              `/api/Room/GetByMovieId/${theaterId}`
             );
             if (roomsResponse.ok) {
               checkJson(roomsResponse, `/api/Room/GetByTheaterId/${theaterId}`);
