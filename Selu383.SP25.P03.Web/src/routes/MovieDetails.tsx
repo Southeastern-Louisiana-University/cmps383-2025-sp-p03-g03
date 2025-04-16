@@ -49,11 +49,11 @@ interface MovieRoomScheduleLink {
   roomId: number;
   movieId: number;
   movieScheduleId: number;
-  room: Room;
+  room: Room | null;
 }
 
 function MovieDetails() {
-  const { id } = useParams<{ id: string }>();
+  const { movieId } = useParams<{ movieId: string }>();
   const navigate = useNavigate();
   const [movie, setMovie] = useState<Movie | null>(null);
   const [poster, setPoster] = useState<MoviePoster[] | null>(null);
@@ -62,13 +62,12 @@ function MovieDetails() {
   const [roomScheduleLinks, setRoomScheduleLinks] = useState<
     MovieRoomScheduleLink[]
   >([]);
-  const [rooms, setRooms] = useState<Room[]>([]); // New state for rooms
+  const [rooms, setRooms] = useState<{ [theaterId: number]: Room[] }>({});
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [showShowtimes, setShowShowtimes] = useState(false);
 
   const theaterId = localStorage.getItem("theaterId");
-  const movieId = id;
 
   useEffect(() => {
     const fetchData = async () => {
@@ -76,20 +75,51 @@ function MovieDetails() {
         setLoading(true);
         setError(null);
 
+        if (!movieId || isNaN(parseInt(movieId))) {
+          throw new Error("Invalid movie ID in URL");
+        }
+
+        // Fetch movie, poster, and theaters
         const [movieResponse, posterResponse, theatersResponse] =
           await Promise.all([
-            fetch(`/api/movie/${id}`),
-            fetch(`/api/MoviePoster/GetByMovieId/${id}`),
+            fetch(`/api/movie/${movieId}`),
+            fetch(`/api/MoviePoster/GetByMovieId/${movieId}`),
             fetch("/api/theaters"),
           ]);
 
-        if (!movieResponse.ok) throw new Error("Movie not found");
-        if (!posterResponse.ok) throw new Error("Poster not found");
+        if (!movieResponse.ok) {
+          throw new Error(
+            `Failed to fetch movie: ${movieResponse.status} ${movieResponse.statusText}`
+          );
+        }
+        if (!posterResponse.ok) {
+          throw new Error(
+            `Failed to fetch poster: ${posterResponse.status} ${posterResponse.statusText}`
+          );
+        }
+        if (!theatersResponse.ok) {
+          throw new Error(
+            `Failed to fetch theaters: ${theatersResponse.status} ${theatersResponse.statusText}`
+          );
+        }
+
+        const checkJson = (response: Response, endpoint: string) => {
+          const contentType = response.headers.get("Content-Type");
+          if (!contentType?.includes("application/json")) {
+            throw new Error(
+              `Invalid response from ${endpoint}: Expected JSON, got ${contentType}`
+            );
+          }
+        };
+
+        checkJson(movieResponse, `/api/movie/${movieId}`);
+        checkJson(posterResponse, `/api/MoviePoster/GetByMovieId/${movieId}`);
+        checkJson(theatersResponse, "/api/theaters");
 
         const [movieData, posterData, theatersData] = await Promise.all([
           movieResponse.json(),
           posterResponse.json(),
-          theatersResponse.ok ? theatersResponse.json() : [],
+          theatersResponse.json(),
         ]);
 
         setMovie(movieData);
@@ -97,41 +127,97 @@ function MovieDetails() {
         setTheaters(theatersData);
 
         if (theaterId) {
-          const [scheduleResponse, roomScheduleResponse, roomsResponse] =
-            await Promise.all([
-              fetch(
-                `/api/MovieSchedule/GetByMovieId/${id}?theaterId=${theaterId}`
-              ),
-              fetch(`/api/MovieRoomScheduleLink/GetByScheduleId/${id}`),
-              fetch(`/api/Room/GetByMovieId/${theaterId}`), // Fetch rooms
-            ]);
+          // Fetch schedules
+          const scheduleResponse = await fetch(
+            `/api/MovieSchedule/GetByMovieId/${movieId}?theaterId=${theaterId}`
+          );
+          let scheduleData: MovieSchedule[] = [];
+          let roomScheduleData: MovieRoomScheduleLink[] = [];
+          let roomsData: Room[] = [];
 
           if (scheduleResponse.ok) {
-            const scheduleData = await scheduleResponse.json();
+            checkJson(
+              scheduleResponse,
+              `/api/MovieSchedule/GetByMovieId/${movieId}`
+            );
+            scheduleData = await scheduleResponse.json();
             setSchedules(scheduleData);
+          } else {
+            console.warn(
+              `Schedule fetch failed: ${scheduleResponse.status} ${scheduleResponse.statusText}`
+            );
           }
 
-          if (roomScheduleResponse.ok) {
-            const roomScheduleData = await roomScheduleResponse.json();
-            setRoomScheduleLinks(roomScheduleData);
+          // Fetch room schedule links
+          if (scheduleData.length > 0) {
+            const linkPromises = scheduleData.map((schedule) =>
+              fetch(`/api/MovieRoomScheduleLink/GetByScheduleId/${schedule.id}`)
+                .then((response) => {
+                  if (!response.ok) {
+                    if (response.status === 404) {
+                      return [];
+                    }
+                    throw new Error(
+                      `Failed to fetch links for schedule ${schedule.id}: ${response.status}`
+                    );
+                  }
+                  checkJson(
+                    response,
+                    `/api/MovieRoomScheduleLink/GetByScheduleId/${schedule.id}`
+                  );
+                  return response.json();
+                })
+                .catch((err) => {
+                  console.error(
+                    `Error fetching links for schedule ${schedule.id}:`,
+                    err
+                  );
+                  return [];
+                })
+            );
+
+            const linksArrays = await Promise.all(linkPromises);
+            roomScheduleData = linksArrays.flat();
+
+            // Fetch rooms
+            const roomsResponse = await fetch(
+              `/api/Room/GetByTheaterId/${theaterId}`
+            );
+            if (roomsResponse.ok) {
+              checkJson(roomsResponse, `/api/Room/GetByTheaterId/${theaterId}`);
+              roomsData = await roomsResponse.json();
+              setRooms({ [theaterId]: roomsData });
+            } else {
+              if (roomsResponse.status === 404) {
+                console.warn(`No rooms found for theater ${theaterId}`);
+                roomsData = [];
+              } else {
+                throw new Error(
+                  `Failed to fetch rooms: ${roomsResponse.status} ${roomsResponse.statusText}`
+                );
+              }
+            }
           }
 
-          if (roomsResponse.ok) {
-            const roomsData = await roomsResponse.json();
-            setRooms(roomsData);
-          }
+          // Attach room data
+          const updatedLinks = roomScheduleData.map((link) => ({
+            ...link,
+            room: roomsData.find((r) => r.id === link.roomId) || null,
+          }));
+          setRoomScheduleLinks(updatedLinks);
         }
       } catch (error) {
         setError(
           error instanceof Error ? error.message : "An unknown error occurred"
         );
+        console.error("Fetch error:", error);
       } finally {
         setLoading(false);
       }
     };
 
     fetchData();
-  }, [id, theaterId]);
+  }, [movieId, theaterId]);
 
   const handleShowtimesClick = () => {
     if (theaters.length === 0) {
@@ -151,57 +237,147 @@ function MovieDetails() {
     setShowShowtimes(true);
 
     try {
-      const [scheduleResponse, roomScheduleResponse, roomsResponse] =
-        await Promise.all([
-          fetch(
-            `/api/MovieSchedule/GetByMovieId/${id}?theaterId=${selectedTheaterId}`
-          ),
-          fetch(`/api/MovieRoomScheduleLink/GetByScheduleId/${id}`),
-          fetch(`/api/Room/GetByMovieId/${selectedTheaterId}`), // Fetch rooms for new theater
-        ]);
+      // Fetch schedules
+      const scheduleResponse = await fetch(
+        `/api/MovieSchedule/GetByMovieId/${movieId}?theaterId=${selectedTheaterId}`
+      );
+      let scheduleData: MovieSchedule[] = [];
+      let roomScheduleData: MovieRoomScheduleLink[] = [];
+      let roomsData: Room[] = [];
+
+      const checkJson = (response: Response, endpoint: string) => {
+        const contentType = response.headers.get("Content-Type");
+        if (!contentType?.includes("application/json")) {
+          throw new Error(
+            `Invalid response from ${endpoint}: Expected JSON, got ${contentType}`
+          );
+        }
+      };
 
       if (scheduleResponse.ok) {
-        const scheduleData = await scheduleResponse.json();
+        checkJson(
+          scheduleResponse,
+          `/api/MovieSchedule/GetByMovieId/${movieId}`
+        );
+        scheduleData = await scheduleResponse.json();
         setSchedules(scheduleData);
+      } else {
+        console.warn(
+          `Schedule fetch failed: ${scheduleResponse.status} ${scheduleResponse.statusText}`
+        );
       }
 
-      if (roomScheduleResponse.ok) {
-        const roomScheduleData = await roomScheduleResponse.json();
-        setRoomScheduleLinks(roomScheduleData);
+      // Fetch room schedule links
+      if (scheduleData.length > 0) {
+        const linkPromises = scheduleData.map((schedule) =>
+          fetch(`/api/MovieRoomScheduleLink/GetByScheduleId/${schedule.id}`)
+            .then((response) => {
+              if (!response.ok) {
+                if (response.status === 404) {
+                  return [];
+                }
+                throw new Error(
+                  `Failed to fetch links for schedule ${schedule.id}: ${response.status}`
+                );
+              }
+              checkJson(
+                response,
+                `/api/MovieRoomScheduleLink/GetByScheduleId/${schedule.id}`
+              );
+              return response.json();
+            })
+            .catch((err) => {
+              console.error(
+                `Error fetching links for schedule ${schedule.id}:`,
+                err
+              );
+              return [];
+            })
+        );
+
+        const linksArrays = await Promise.all(linkPromises);
+        roomScheduleData = linksArrays.flat();
+
+        // Fetch rooms
+        const roomsResponse = await fetch(
+          `/api/Room/GetByTheaterId/${selectedTheaterId}`
+        );
+        if (roomsResponse.ok) {
+          checkJson(
+            roomsResponse,
+            `/api/Room/GetByTheaterId/${selectedTheaterId}`
+          );
+          roomsData = await roomsResponse.json();
+          setRooms((prev) => ({ ...prev, [selectedTheaterId]: roomsData }));
+        } else {
+          if (roomsResponse.status === 404) {
+            console.warn(`No rooms found for theater ${selectedTheaterId}`);
+            roomsData = [];
+          } else {
+            throw new Error(
+              `Failed to fetch rooms: ${roomsResponse.status} ${roomsResponse.statusText}`
+            );
+          }
+        }
       }
 
-      if (roomsResponse.ok) {
-        const roomsData = await roomsResponse.json();
-        setRooms(roomsData);
-      }
+      // Attach room data
+      const updatedLinks = roomScheduleData.map((link) => ({
+        ...link,
+        room: roomsData.find((r) => r.id === link.roomId) || null,
+      }));
+      setRoomScheduleLinks(updatedLinks);
     } catch (error) {
       setError(
         error instanceof Error ? error.message : "An unknown error occurred"
       );
+      console.error("Theater select error:", error);
     }
   };
 
   const handleSeatSelection = (
+    event: React.MouseEvent<HTMLButtonElement>,
     showtime: MovieSchedule,
     time: string,
     room: Room | null
   ) => {
-    const selectedTheater = theaters.find((t) => t.id.toString() === theaterId);
-    if (!selectedTheater) return;
+    event.preventDefault();
+    event.stopPropagation();
 
-    navigate(`/movies/${movieId}/seats`, {
-      state: {
-        showtime: {
-          id: showtime.id,
-          time: time,
-          movieId: movieId,
-          roomId: room?.id,
-          roomName: room?.name,
+    const selectedTheater = theaters.find((t) => t.id.toString() === theaterId);
+    if (!selectedTheater) {
+      console.error("No selected theater found for theaterId:", theaterId);
+      setError("Please select a theater");
+      return;
+    }
+    if (!room || !room.id) {
+      console.error("Invalid or missing room for showtime:", showtime);
+      setError("No valid room assigned for this showtime");
+      return;
+    }
+    if (!movieId || isNaN(parseInt(movieId))) {
+      console.error("Invalid movieId:", movieId);
+      setError("Invalid movie selection");
+      return;
+    }
+    if (!movie) {
+      console.error("Movie data missing");
+      setError("Movie data not loaded");
+      return;
+    }
+
+    // Navigate to the seat selection page with all required parameters
+    navigate(
+      `/movies/${movieId}/seats/${theaterId}/${room.id}/${showtime.id}`,
+      {
+        state: {
+          time,
+          movie,
+          theater: selectedTheater,
+          room,
         },
-        theater: selectedTheater,
-        movie: movie,
-      },
-    });
+      }
+    );
   };
 
   const currentYear = new Date().getFullYear();
@@ -220,6 +396,12 @@ function MovieDetails() {
         <div className="text-center">
           <div className="text-2xl text-red-500 font-bold">Error</div>
           <p className="text-gray-300 mt-2">{error}</p>
+          <button
+            onClick={() => navigate("/movies")}
+            className="mt-4 bg-indigo-600 text-white py-2 px-4 rounded hover:bg-indigo-700"
+          >
+            Back to Movies
+          </button>
         </div>
       </div>
     );
@@ -230,6 +412,7 @@ function MovieDetails() {
       </div>
     );
 
+  // Process active showtimes
   const activeShowtimes = schedules
     .filter((schedule) => schedule.isActive)
     .flatMap((schedule) =>
@@ -237,14 +420,11 @@ function MovieDetails() {
         const link = roomScheduleLinks.find(
           (link) => link.movieScheduleId === schedule.id
         );
-        const room = link
-          ? rooms.find((r) => r.id === link.roomId) || null
-          : null;
         return {
           time,
           scheduleId: schedule.id,
           theaterId: schedule.theaterId,
-          room,
+          room: link?.room || null,
         };
       })
     );
@@ -253,49 +433,41 @@ function MovieDetails() {
 
   return (
     <div className="flex flex-col min-h-screen bg-gray-900 text-white">
-      <div className="flex flex-col md:flex-row gap-8 p-8 max-w-6xl mx-auto mt-16 flex-1 ">
-        {/* Poster */}
+      <div className="flex flex-col md:flex-row gap-8 p-8 max-w-6xl mx-auto mt-16 flex-1">
         <div className="flex-shrink-0">
-          {poster && (
+          {poster && poster.length > 0 && (
             <img
               src={`data:${poster[0].imageType};base64,${poster[0].imageData}`}
               alt={`${movie.title} poster`}
-              className="w-80 h-auto rounded-lg outline-3! outline-indigo-300! shadow-lg shadow-indigo-950/50 transition-all duration-300 hover:shadow-indigo-800/70"
+              className="w-80 h-auto rounded-lg shadow-lg shadow-indigo-950/50 transition-all duration-300 hover:shadow-indigo-800/70"
               loading="lazy"
             />
           )}
         </div>
-
-        {/* Movie Info */}
         <div className="flex flex-col gap-4 flex-grow">
           <h1 className="text-4xl font-extrabold text-indigo-300 drop-shadow-lg">
             {movie.title}
           </h1>
-
           <div className="flex flex-wrap gap-4 text-lg text-indigo-400">
             <span>{movie.ageRating}</span>
-            <p>-</p>
+            <span>-</span>
             <span>{movie.runtime} min</span>
-            <p>-</p>
+            <span>-</span>
             <span>{new Date(movie.releaseDate).toLocaleDateString()}</span>
-            <p>-</p>
+            <span>-</span>
             <span>{movie.category}</span>
           </div>
-
           <p className="text-lg text-gray-200 mt-4">{movie.description}</p>
-
           <Button
             onClick={handleShowtimesClick}
-            className="mt-6 flex items-center gap-2 bg-indigo-700! hover:bg-indigo-600! text-white py-3 px-6 rounded-lg transition-all duration-300 shadow-md hover:shadow-lg w-fit"
+            className="mt-6 flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white py-3 px-6 rounded-lg transition-all duration-300 shadow-md hover:shadow-lg w-fit"
           >
             {theaterId ? "Show Showtimes" : "Select Theater"}{" "}
             <TicketIcon className="h-5 w-5" />
           </Button>
-
-          {/* Theater Selection */}
           {showShowtimes && !theaterId && (
-            <div className="mt-6 bg-gray-800 p-6 rounded-lg shadow-lg shadow-indigo-950/50">
-              <h2 className="text-2xl font-extrabold text-indigo-300 mb-4 drop-shadow-lg">
+            <div className="mt-6 bg-gray-800 p-6 rounded-lg shadow-lg">
+              <h2 className="text-2xl font-bold text-indigo-300 mb-4">
                 Select Theater
               </h2>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -314,16 +486,14 @@ function MovieDetails() {
               </div>
             </div>
           )}
-
-          {/* Showtimes Section */}
           {showShowtimes && theaterId && (
             <div className="mt-8">
               <div className="flex flex-col sm:flex-row justify-between items-center mb-6 gap-4">
-                <h2 className="text-2xl font-extrabold text-indigo-300 drop-shadow-lg">
+                <h2 className="text-2xl font-bold text-indigo-300">
                   Available Showtimes
                 </h2>
                 {selectedTheater && (
-                  <div className="bg-indigo-900 px-4 py-2 rounded-full">
+                  <div className="bg-indigo-800 px-4 py-2 rounded-full">
                     <span className="font-medium text-indigo-200">
                       {selectedTheater.name}
                     </span>
@@ -333,13 +503,12 @@ function MovieDetails() {
                   </div>
                 )}
               </div>
-
               {activeShowtimes.length > 0 ? (
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                   {activeShowtimes.map((showtime, index) => (
                     <div
                       key={index}
-                      className="bg-gray-800 p-4 rounded-lg shadow-lg shadow-indigo-950/50 transition-all duration-300 hover:shadow-indigo-800/70"
+                      className="bg-gray-800 p-4 rounded-lg shadow-lg transition-all duration-300 hover:shadow-indigo-800/70"
                     >
                       <h3 className="text-lg font-medium text-indigo-200">
                         {new Date(showtime.time).toLocaleString([], {
@@ -356,8 +525,9 @@ function MovieDetails() {
                           : "Room not assigned"}
                       </p>
                       <Button
-                        onClick={() =>
+                        onClick={(e) =>
                           handleSeatSelection(
+                            e,
                             schedules.find(
                               (s) => s.id === showtime.scheduleId
                             )!,
@@ -365,7 +535,8 @@ function MovieDetails() {
                             showtime.room
                           )
                         }
-                        className="mt-3 w-full bg-indigo-700! hover:bg-indigo-600! text-white py-2 rounded transition-all duration-300 shadow-md hover:shadow-lg"
+                        className="mt-3 w-full bg-indigo-600 hover:bg-indigo-700 text-white py-2 rounded transition-all duration-300 shadow-md hover:shadow-lg"
+                        disabled={!showtime.room || !showtime.room.id}
                       >
                         Select Seats
                       </Button>
@@ -373,7 +544,7 @@ function MovieDetails() {
                   ))}
                 </div>
               ) : (
-                <div className="text-center py-8 bg-gray-800 rounded-lg shadow-lg shadow-indigo-950/50">
+                <div className="text-center py-8 bg-gray-800 rounded-lg shadow-lg">
                   <p className="text-xl text-indigo-200">
                     No available showtimes
                   </p>
@@ -388,8 +559,6 @@ function MovieDetails() {
           )}
         </div>
       </div>
-
-      {/* Footer */}
       <footer className="w-full bg-indigo-950 text-white py-6">
         <div className="container mx-auto px-4 text-center">
           <p>© {currentYear} Lion's Den Cinemas. All rights reserved.</p>
