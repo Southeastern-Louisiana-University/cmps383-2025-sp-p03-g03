@@ -24,27 +24,27 @@ export default function TopBar() {
         {/* Navigation Links */}
         <div className="mr-4 md:mr-8 lg:mr-24 flex space-x-4 md:space-x-8 lg:space-x-16 items-center">
           <Link to="/movies">
-            <h2 className="text-lg md:text-xl lg:text-2xl text-white transition-transform hover:scale-110 hover:drop-shadow-xl hover:shadow-indigo-500/50 cursor-pointer">
+            <h2 className="text-lg md:text-xl lg:text-2xl text-indigo-200 transition-transform hover:scale-110 hover:drop-shadow-xl hover:shadow-indigo-500/50 cursor-pointer">
               Movies
             </h2>
           </Link>
           <Link to="/MyTickets">
-            <h2 className="text-lg md:text-xl lg:text-2xl text-white transition-transform hover:scale-110 hover:drop-shadow-xl hover:shadow-indigo-500/50 cursor-pointer">
+            <h2 className="text-lg md:text-xl lg:text-2xl text-indigo-200 transition-transform hover:scale-110 hover:drop-shadow-xl hover:shadow-indigo-500/50 cursor-pointer">
               My Tickets
             </h2>
           </Link>
           <Link to="/">
-            <h2 className="text-lg md:text-xl lg:text-2xl text-white transition-transform hover:scale-110 hover:drop-shadow-xl hover:shadow-indigo-500/50 cursor-pointer">
+            <h2 className="text-lg md:text-xl lg:text-2xl text-indigo-200 transition-transform hover:scale-110 hover:drop-shadow-xl hover:shadow-indigo-500/50 cursor-pointer">
               About
             </h2>
           </Link>
           <Link to="/theaters">
-            <h2 className="text-lg md:text-xl lg:text-2xl text-white transition-transform hover:scale-110 hover:drop-shadow-xl hover:shadow-indigo-500/50 cursor-pointer">
+            <h2 className="text-lg md:text-xl lg:text-2xl text-indigo-200 transition-transform hover:scale-110 hover:drop-shadow-xl hover:shadow-indigo-500/50 cursor-pointer">
               My Theater
             </h2>
           </Link>
           <Link to="/Concessions">
-            <h2 className="text-lg md:text-xl lg:text-2xl text-white transition-transform hover:scale-110 hover:drop-shadow-xl hover:shadow-indigo-500/50 cursor-pointer">
+            <h2 className="text-lg md:text-xl lg:text-2xl text-indigo-200 transition-transform hover:scale-110 hover:drop-shadow-xl hover:shadow-indigo-500/50 cursor-pointer">
               Concessions
             </h2>
           </Link>
@@ -55,7 +55,7 @@ export default function TopBar() {
             </div>
           ) : (
             <Link to="/LoginPage">
-              <h2 className="text-lg md:text-xl lg:text-2xl text-white transition-transform hover:scale-110 hover:drop-shadow-xl hover:shadow-indigo-500/50 cursor-pointer">
+              <h2 className="text-lg md:text-xl lg:text-2xl text-indigo-200 transition-transform hover:scale-110 hover:drop-shadow-xl hover:shadow-indigo-500/50 cursor-pointer">
                 Log In/Sign Up
               </h2>
             </Link>
