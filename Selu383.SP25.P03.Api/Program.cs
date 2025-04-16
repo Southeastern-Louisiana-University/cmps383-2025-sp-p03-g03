@@ -1,3 +1,4 @@
+
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
@@ -14,13 +15,27 @@ namespace Selu383.SP25.P03.Api
             var builder = WebApplication.CreateBuilder(args);
 
             // Add services to the container.
+            // CJD 03082025
             builder.Services.AddDbContext<DataContext>(options =>
                 options.UseSqlServer(builder.Configuration.GetConnectionString("DataContext")
-                    ?? throw new InvalidOperationException("Connection string 'DataContext' not found."))
-                    .EnableDetailedErrors());
+                ?? throw new InvalidOperationException("Connection string 'DataContext' not found."))
 
+                //.ConfigureWarnings(w => w.Ignore(RelationalEventId.PendingModelChangesWarning))
+                .EnableDetailedErrors()
+                );
+
+
+            // Add mapper for generic controller
             builder.Services.AddAutoMapper(typeof(MappingProfile));
+
+            // Add SPA static files support
+            //builder.Services.AddSpaStaticFiles(configuration => {
+            //    configuration.RootPath = "wwwroot";
+            //});
+
+
             builder.Services.AddControllers();
+            // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
             builder.Services.AddOpenApi();
             builder.Services.AddRazorPages();
 
@@ -40,6 +55,7 @@ namespace Selu383.SP25.P03.Api
 
             builder.Services.Configure<IdentityOptions>(options =>
             {
+                // Password settings.
                 options.Password.RequireDigit = true;
                 options.Password.RequireLowercase = true;
                 options.Password.RequireNonAlphanumeric = true;
@@ -47,17 +63,20 @@ namespace Selu383.SP25.P03.Api
                 options.Password.RequiredLength = 6;
                 options.Password.RequiredUniqueChars = 1;
 
+                // Lockout settings.
                 options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(5);
                 options.Lockout.MaxFailedAccessAttempts = 5;
                 options.Lockout.AllowedForNewUsers = true;
 
+                // User settings.
                 options.User.AllowedUserNameCharacters =
-                    "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-._@+";
+                "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-._@+";
                 options.User.RequireUniqueEmail = false;
             });
 
             builder.Services.ConfigureApplicationCookie(options =>
             {
+                // Cookie settings
                 options.Cookie.HttpOnly = true;
                 options.ExpireTimeSpan = TimeSpan.FromMinutes(5);
                 options.Events.OnRedirectToLogin = context =>
@@ -65,44 +84,38 @@ namespace Selu383.SP25.P03.Api
                     context.Response.StatusCode = 401;
                     return Task.CompletedTask;
                 };
+
                 options.Events.OnRedirectToAccessDenied = context =>
                 {
                     context.Response.StatusCode = 403;
                     return Task.CompletedTask;
                 };
+
                 options.SlidingExpiration = true;
             });
-
             builder.Services.AddHttpClient();
+
 
             var app = builder.Build();
 
-            // Seed database
             using (var scope = app.Services.CreateScope())
             {
                 var db = scope.ServiceProvider.GetRequiredService<DataContext>();
-                try
-                {
-                    Console.WriteLine("Applying migrations...");
-                    await db.Database.MigrateAsync();
-                    Console.WriteLine("Migrations applied successfully.");
 
-                    Console.WriteLine("Starting seeding...");
-                    await SeedRoles.Initialize(scope.ServiceProvider);
-                    await SeedUsers.Initialize(scope.ServiceProvider);
-                    await SeedRooms.InitializeAsync(scope.ServiceProvider);
-                    await SeedSeatTypes.InitializeAsync(scope.ServiceProvider);
-                    await SeedSeats.InitializeAsync(scope.ServiceProvider);
-                    await SeedMovies.InitializeAsync(scope.ServiceProvider);
-                    await SeedMovieSchedule.InitializeAsync(scope.ServiceProvider);
-                    Console.WriteLine("Seeding completed successfully.");
-                }
-                catch (Exception ex)
-                {
-                    Console.WriteLine($"Seeding failed: {ex.Message}");
-                    Console.WriteLine($"Stack trace: {ex.StackTrace}");
-                    throw;
-                }
+                await db.Database.MigrateAsync();
+
+                //SeedTheaters.Initialize(scope.ServiceProvider);
+                await SeedRoles.Initialize(scope.ServiceProvider);
+                await SeedUsers.Initialize(scope.ServiceProvider);
+                //await SeedRooms.InitializeAsync(scope.ServiceProvider);
+                //await SeedMovies.InitializeAsync(scope.ServiceProvider);
+                //await SeedMovieRoomScheduleLinks.InitializeAsync(scope.ServiceProvider);
+                //await SeedMovieSchedule.InitializeAsync(scope.ServiceProvider);
+                //await SeedProducts.InitializeAsync(scope.ServiceProvider);
+                //await SeedProductPrices.InitializeAsync(scope.ServiceProvider);
+                //await SeedSeats.InitializeAsync(scope.ServiceProvider);
+                //await SeedSeatTypes.InitializeAsync(scope.ServiceProvider);
+
             }
 
             // Configure the HTTP request pipeline.
@@ -110,6 +123,8 @@ namespace Selu383.SP25.P03.Api
             {
                 app.MapOpenApi();
             }
+
+
 
             app.UseCors();
             app.UseHttpsRedirection();
@@ -119,6 +134,9 @@ namespace Selu383.SP25.P03.Api
                .UseEndpoints(x =>
                {
                    x.MapControllers();
+
+                   // Add Scalar API reference
+                   // https://localhost:7027/scalar/
                    x.MapScalarApiReference();
                });
             app.UseStaticFiles();
@@ -134,6 +152,10 @@ namespace Selu383.SP25.P03.Api
             {
                 app.MapFallbackToFile("/index.html");
             }
+
+
+
+
 
             app.Run();
         }
