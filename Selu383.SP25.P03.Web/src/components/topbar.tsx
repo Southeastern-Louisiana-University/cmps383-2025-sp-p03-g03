@@ -9,7 +9,7 @@ export default function TopBar() {
   const { isAuthenticated } = useAuth();
   return (
     <Headroom className="z-[1000] relative headroom-wrapper" pinStart={0}>
-      <nav className="bg-indigo-600 shadow-lg shadow-indigo-900/50 p-2 flex justify-between items-center relative z-50">
+      <nav className="bg-gray-900 outline-3 outline-indigo-300 shadow-lg shadow-indigo-900/50 p-2 flex justify-between items-center relative z-50">
         {/* Logo Section */}
         <div className="ml-4 md:ml-8 flex space-x-8 md:space-x-16">
           <Link to="/">
