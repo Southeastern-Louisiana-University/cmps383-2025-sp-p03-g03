@@ -13,6 +13,7 @@ import Admin from "./BackendClient/Components/Layouts/Admin.tsx";
 import Dashboard from "./BackendClient/Components/Views/Admin/Dashboard.tsx";
 import Products from "./BackendClient/Components/Views/Admin/Products.tsx";
 import MovieDetails from "./routes/MovieDetails.tsx";
+import Checkout from "./routes/CheckoutPage.tsx";
 import { AuthProvider } from "./components/authContext.tsx";
 import TheatreChoice from "./routes/TheatreChoice.tsx";
 import LoginPage from "./routes/LoginPage.tsx";
@@ -93,6 +94,10 @@ const router = createBrowserRouter([
       {
         path: "theaters",
         element: <TheatreChoice />,
+      },
+      {
+        path: "checkout",
+        element: <Checkout />,
       },
       {
         path: "LoginPage",

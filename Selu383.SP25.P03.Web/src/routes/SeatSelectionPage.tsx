@@ -38,12 +38,6 @@ interface Movie {
   description?: string;
 }
 
-interface RoomSeatsDto {
-  id: number;
-  roomId: number;
-  seatId: number;
-}
-
 export default function SeatSelection() {
   const { movieId, theaterId, roomId, scheduleId } = useParams();
   const location = useLocation();
@@ -67,57 +61,31 @@ export default function SeatSelection() {
         setError(null);
 
         console.log("Fetching seats for roomId:", roomId);
-        const seatsResponse = await fetch("/api/seat");
-        if (!seatsResponse.ok) throw new Error("Failed to fetch seats");
+        const seatsResponse = await fetch(`/api/seat/GetByRoomId/${roomId}`);
+        if (!seatsResponse.ok) {
+          const text = await seatsResponse.text();
+          console.error(`Fetch error: ${seatsResponse.status} ${text}`);
+          throw new Error(`Failed to fetch seats: ${seatsResponse.status}`);
+        }
 
-        const allSeats: Seat[] = await seatsResponse.json();
-        console.log("All seats from /api/seat:", allSeats);
-        const seatsForRoom = allSeats.filter(
-          (seat) => seat.roomsId === Number(roomId)
-        );
-        console.log("Seats for roomId", roomId, ":", seatsForRoom);
+        const seats: Seat[] = await seatsResponse.json();
+        console.log("Seats for roomId", roomId, ":", seats);
+        console.log("Seats count:", seats.length);
 
-        if (seatsForRoom.length > 0) {
-          setSeats(seatsForRoom);
+        if (seats.length > 0) {
+          setSeats(seats);
           return;
         }
 
-        const roomSeatsResponse = await fetch("/api/roomseats");
-        if (!roomSeatsResponse.ok)
-          throw new Error("Failed to fetch room seats");
-
-        const allRoomSeats: RoomSeatsDto[] = await roomSeatsResponse.json();
-        console.log("All room seats from /api/roomseats:", allRoomSeats);
-        const roomSeatRelations = allRoomSeats.filter(
-          (rs) => rs.roomId === Number(roomId)
-        );
-        console.log(
-          "Room seat relations for roomId",
-          roomId,
-          ":",
-          roomSeatRelations
-        );
-
-        if (roomSeatRelations.length > 0) {
-          const seatIds = roomSeatRelations.map((rs) => rs.seatId);
-          console.log("Seat IDs:", seatIds);
-          const matchedSeats = allSeats.filter((seat) =>
-            seatIds.includes(seat.id)
-          );
-          console.log("Matched seats:", matchedSeats);
-          setSeats(
-            matchedSeats.length > 0
-              ? matchedSeats
-              : generateTestSeats(Number(roomId))
-          );
-        } else {
-          console.log("No room seat relations found, using test seats");
-          setSeats(generateTestSeats(Number(roomId)));
-        }
+        console.warn("No seats found, using test seats");
+        setError("No seats found for this room");
+        setSeats(generateTestSeats(Number(roomId)));
       } catch (err) {
         console.error("Error loading seats:", err);
         setError(
-          "Using test data - seat assignments may not match actual theater"
+          `Failed to load seats: ${
+            err instanceof Error ? err.message : "Unknown error"
+          }. Using test data.`
         );
         setSeats(generateTestSeats(Number(roomId)));
       } finally {
@@ -140,50 +108,20 @@ export default function SeatSelection() {
         : ["A", "B", "C", "D", "E", "F"];
     const seatsPerRow =
       roomId === 59 ? 20 : roomId === 60 ? 15 : roomId === 61 ? 10 : 10;
-    const seatSpacing = 40;
-    const rowSpacing = 50;
+    const seatSpacing = 36; // Reduced from 40
+    const rowSpacing = 45; // Reduced from 50
     const centerOffset = (seatsPerRow * seatSpacing) / 2;
 
     rows.forEach((row, rowIndex) => {
       for (let i = 1; i <= seatsPerRow; i++) {
         let seatTypeId = 1; // Standard
-
-        if (roomId === 59) {
-          // Room 1
-          if (rowIndex >= 3 && rowIndex <= 6 && i >= 6 && i <= 15) {
-            seatTypeId = 2; // Premium
-          } else if (rowIndex === 9) {
-            seatTypeId = 3; // Recliner
-          } else if (rowIndex === 2 && (i <= 2 || i >= 19)) {
-            seatTypeId = 4; // Accessible
-          }
-        } else if (roomId === 60) {
-          // Room 2
-          if (rowIndex >= 3 && rowIndex <= 6 && i >= 4 && i <= 12) {
-            seatTypeId = 2; // Premium
-          } else if (rowIndex >= 8) {
-            seatTypeId = 3; // Recliner
-          } else if (rowIndex === 2 && (i <= 2 || i >= 14)) {
-            seatTypeId = 4; // Accessible
-          }
-        } else if (roomId === 61) {
-          // Room 3
-          if (rowIndex >= 2 && rowIndex <= 4 && i >= 3 && i <= 8) {
-            seatTypeId = 2; // Premium
-          } else if (rowIndex >= 6) {
-            seatTypeId = 3; // Recliner
-          } else if (rowIndex === 1 && (i <= 2 || i >= 9)) {
-            seatTypeId = 4; // Accessible
-          }
-        } else if (roomId === 62) {
-          // Room 4
-          if (rowIndex >= 2 && rowIndex <= 3 && i >= 3 && i <= 8) {
-            seatTypeId = 2; // Premium
-          } else if (rowIndex >= 4) {
-            seatTypeId = 3; // Recliner
-          } else if (rowIndex === 1 && (i <= 2 || i >= 9)) {
-            seatTypeId = 4; // Accessible
-          }
+        if (
+          (roomId === 59 && rowIndex === 2 && (i <= 2 || i >= 19)) ||
+          (roomId === 60 && rowIndex === 2 && (i <= 2 || i >= 14)) ||
+          (roomId === 61 && rowIndex === 1 && (i <= 2 || i >= 9)) ||
+          (roomId === 62 && rowIndex === 1 && (i <= 2 || i >= 9))
+        ) {
+          seatTypeId = 4; // Accessible
         }
 
         seats.push({
@@ -243,7 +181,7 @@ export default function SeatSelection() {
 
   return (
     <div className="flex flex-col min-h-screen bg-gray-900 text-white">
-      <div className="max-w-6xl mx-auto p-6 flex-1">
+      <div className="max-w-7xl mx-auto p-6 flex-1">
         <Button
           onClick={() => navigate(-1)}
           className="flex items-center gap-2 text-indigo-400 mb-6 hover:text-indigo-300 transition-colors duration-300"
@@ -300,15 +238,16 @@ export default function SeatSelection() {
           <div
             className="relative border border-gray-700 rounded-lg p-4 bg-gray-800 mx-auto shadow-lg shadow-indigo-950/50"
             style={{
-              width: "100%",
-              minHeight: "500px",
+              width: "900px",
+              maxWidth: "100%",
+              minHeight: "600px",
               overflow: "visible",
             }}
           >
             {seats.map((seat) => (
               <button
                 key={seat.id}
-                className={`absolute w-8 h-8 rounded-full flex items-center justify-center transition-all duration-300
+                className={`absolute w-7 h-7 rounded-full flex items-center justify-center text-xs transition-all duration-300
                   ${
                     !seat.isAvailable
                       ? "bg-red-600 cursor-not-allowed opacity-70"
@@ -316,17 +255,7 @@ export default function SeatSelection() {
                       ? "bg-indigo-600 text-white scale-110 shadow-md"
                       : "bg-green-600 text-white hover:bg-green-500 hover:scale-105 hover:shadow-md"
                   }
-                  ${
-                    seat.seatTypeId === 2
-                      ? "ring-2 ring-yellow-400"
-                      : seat.seatTypeId === 3
-                      ? "ring-2 ring-purple-400"
-                      : seat.seatTypeId === 4
-                      ? "ring-2 ring-blue-400"
-                      : seat.seatTypeId === 5
-                      ? "ring-2 ring-amber-400"
-                      : ""
-                  }`}
+                  ${seat.seatTypeId === 4 ? "ring-2 ring-blue-400" : ""}`}
                 style={{
                   left: `calc(50% + ${seat.xPosition}px)`,
                   top: `${seat.yPosition}px`,
@@ -336,6 +265,7 @@ export default function SeatSelection() {
                 disabled={!seat.isAvailable}
                 aria-label={`Seat ${seat.row}${seat.seatNumber}`}
               >
+                {seat.row}
                 {seat.seatNumber}
               </button>
             ))}
@@ -360,15 +290,7 @@ export default function SeatSelection() {
                       {seat.seatNumber}
                     </span>
                     <span className="text-sm text-gray-300 block mt-1">
-                      {seat.seatTypeId === 1
-                        ? "Standard"
-                        : seat.seatTypeId === 2
-                        ? "Premium"
-                        : seat.seatTypeId === 3
-                        ? "Recliner"
-                        : seat.seatTypeId === 4
-                        ? "Accessible"
-                        : "VIP"}
+                      {seat.seatTypeId === 1 ? "Standard" : "Accessible"}
                     </span>
                   </li>
                 ))}
@@ -405,20 +327,8 @@ export default function SeatSelection() {
             <span className="text-sm text-gray-300">Selected</span>
           </div>
           <div className="flex items-center gap-2">
-            <div className="w-5 h-5 bg-green-600 rounded-full ring-2 ring-yellow-400"></div>
-            <span className="text-sm text-gray-300">Premium</span>
-          </div>
-          <div className="flex items-center gap-2">
-            <div className="w-5 h-5 bg-green-600 rounded-full ring-2 ring-purple-400"></div>
-            <span className="text-sm text-gray-300">Recliner</span>
-          </div>
-          <div className="flex items-center gap-2">
             <div className="w-5 h-5 bg-green-600 rounded-full ring-2 ring-blue-400"></div>
             <span className="text-sm text-gray-300">Accessible</span>
-          </div>
-          <div className="flex items-center gap-2">
-            <div className="w-5 h-5 bg-green-600 rounded-full ring-2 ring-amber-400"></div>
-            <span className="text-sm text-gray-300">VIP</span>
           </div>
         </div>
       </div>
