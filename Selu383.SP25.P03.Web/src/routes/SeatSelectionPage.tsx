@@ -12,7 +12,6 @@ interface Seat {
   seatNumber: number;
   xPosition: number;
   yPosition: number;
-  identifier?: string;
 }
 
 interface Theater {
@@ -67,41 +66,52 @@ export default function SeatSelection() {
         setLoading(true);
         setError(null);
 
-        // Try to get seats directly first
+        console.log("Fetching seats for roomId:", roomId);
         const seatsResponse = await fetch("/api/seat");
         if (!seatsResponse.ok) throw new Error("Failed to fetch seats");
 
         const allSeats: Seat[] = await seatsResponse.json();
+        console.log("All seats from /api/seat:", allSeats);
         const seatsForRoom = allSeats.filter(
           (seat) => seat.roomsId === Number(roomId)
         );
+        console.log("Seats for roomId", roomId, ":", seatsForRoom);
 
         if (seatsForRoom.length > 0) {
           setSeats(seatsForRoom);
           return;
         }
 
-        // If no direct seats found, try through roomseats
         const roomSeatsResponse = await fetch("/api/roomseats");
         if (!roomSeatsResponse.ok)
           throw new Error("Failed to fetch room seats");
 
         const allRoomSeats: RoomSeatsDto[] = await roomSeatsResponse.json();
+        console.log("All room seats from /api/roomseats:", allRoomSeats);
         const roomSeatRelations = allRoomSeats.filter(
           (rs) => rs.roomId === Number(roomId)
+        );
+        console.log(
+          "Room seat relations for roomId",
+          roomId,
+          ":",
+          roomSeatRelations
         );
 
         if (roomSeatRelations.length > 0) {
           const seatIds = roomSeatRelations.map((rs) => rs.seatId);
+          console.log("Seat IDs:", seatIds);
           const matchedSeats = allSeats.filter((seat) =>
             seatIds.includes(seat.id)
           );
+          console.log("Matched seats:", matchedSeats);
           setSeats(
             matchedSeats.length > 0
               ? matchedSeats
               : generateTestSeats(Number(roomId))
           );
         } else {
+          console.log("No room seat relations found, using test seats");
           setSeats(generateTestSeats(Number(roomId)));
         }
       } catch (err) {
@@ -120,41 +130,59 @@ export default function SeatSelection() {
 
   const generateTestSeats = (roomId: number): Seat[] => {
     const seats: Seat[] = [];
-    const rows = ["A", "B", "C", "D", "E", "F", "G", "H"];
-    const seatsPerRow = roomId === 14 ? 10 : roomId === 1 ? 20 : 15;
+    const rows =
+      roomId === 59
+        ? ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J"]
+        : roomId === 60
+        ? ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J"]
+        : roomId === 61
+        ? ["A", "B", "C", "D", "E", "F", "G", "H"]
+        : ["A", "B", "C", "D", "E", "F"];
+    const seatsPerRow =
+      roomId === 59 ? 20 : roomId === 60 ? 15 : roomId === 61 ? 10 : 10;
     const seatSpacing = 40;
     const rowSpacing = 50;
     const centerOffset = (seatsPerRow * seatSpacing) / 2;
 
     rows.forEach((row, rowIndex) => {
       for (let i = 1; i <= seatsPerRow; i++) {
-        let seatTypeId: number;
+        let seatTypeId = 1; // Standard
 
-        if (roomId === 14) {
-          seatTypeId = 5;
-        } else if (roomId === 1) {
-          if (rowIndex === 0 || rowIndex === 1) {
-            seatTypeId = 5;
-          } else if (rowIndex === 2 || rowIndex === 3) {
-            seatTypeId = 2;
-          } else if (rowIndex === 4 && (i === 1 || i === seatsPerRow)) {
-            seatTypeId = 4;
-          } else if (rowIndex >= 6) {
-            seatTypeId = 3;
-          } else {
-            seatTypeId = 1;
+        if (roomId === 59) {
+          // Room 1
+          if (rowIndex >= 3 && rowIndex <= 6 && i >= 6 && i <= 15) {
+            seatTypeId = 2; // Premium
+          } else if (rowIndex === 9) {
+            seatTypeId = 3; // Recliner
+          } else if (rowIndex === 2 && (i <= 2 || i >= 19)) {
+            seatTypeId = 4; // Accessible
           }
-        } else {
-          if (rowIndex === 0) {
-            seatTypeId = 5;
-          } else if (rowIndex === 1 || rowIndex === 2) {
-            seatTypeId = 2;
-          } else if (rowIndex === 3 && (i <= 2 || i >= seatsPerRow - 1)) {
-            seatTypeId = 4;
-          } else if (rowIndex >= 5) {
-            seatTypeId = 3;
-          } else {
-            seatTypeId = 1;
+        } else if (roomId === 60) {
+          // Room 2
+          if (rowIndex >= 3 && rowIndex <= 6 && i >= 4 && i <= 12) {
+            seatTypeId = 2; // Premium
+          } else if (rowIndex >= 8) {
+            seatTypeId = 3; // Recliner
+          } else if (rowIndex === 2 && (i <= 2 || i >= 14)) {
+            seatTypeId = 4; // Accessible
+          }
+        } else if (roomId === 61) {
+          // Room 3
+          if (rowIndex >= 2 && rowIndex <= 4 && i >= 3 && i <= 8) {
+            seatTypeId = 2; // Premium
+          } else if (rowIndex >= 6) {
+            seatTypeId = 3; // Recliner
+          } else if (rowIndex === 1 && (i <= 2 || i >= 9)) {
+            seatTypeId = 4; // Accessible
+          }
+        } else if (roomId === 62) {
+          // Room 4
+          if (rowIndex >= 2 && rowIndex <= 3 && i >= 3 && i <= 8) {
+            seatTypeId = 2; // Premium
+          } else if (rowIndex >= 4) {
+            seatTypeId = 3; // Recliner
+          } else if (rowIndex === 1 && (i <= 2 || i >= 9)) {
+            seatTypeId = 4; // Accessible
           }
         }
 
@@ -167,7 +195,6 @@ export default function SeatSelection() {
           seatNumber: i,
           xPosition: i * seatSpacing - centerOffset,
           yPosition: rowIndex * rowSpacing + 50,
-          identifier: `${row}${i.toString().padStart(2, "0")}`,
         });
       }
     });
@@ -303,7 +330,7 @@ export default function SeatSelection() {
                 style={{
                   left: `calc(50% + ${seat.xPosition}px)`,
                   top: `${seat.yPosition}px`,
-                  transform: "translateX(-100%)",
+                  transform: "translateX(-50%)",
                 }}
                 onClick={() => handleSeatClick(seat)}
                 disabled={!seat.isAvailable}
