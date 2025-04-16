@@ -5,6 +5,7 @@ using Selu383.SP25.P03.Api.Features.Cart;
 using Selu383.SP25.P03.Api.Features.Products;
 using Microsoft.EntityFrameworkCore;
 using Selu383.SP25.P03.Api.Features.Tickets;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Selu383.SP25.P03.Api.Controllers
 {
@@ -16,7 +17,7 @@ namespace Selu383.SP25.P03.Api.Controllers
             : base(context, mapper)
         {
         }
-
+        [AllowAnonymous]
         [HttpGet]
         public override async Task<ActionResult<IEnumerable<ProductDto>>> GetAll()
         {
