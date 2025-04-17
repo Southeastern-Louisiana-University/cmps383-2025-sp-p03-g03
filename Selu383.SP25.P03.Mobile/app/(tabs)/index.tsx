@@ -5,23 +5,12 @@ import {
   Image,
   ActivityIndicator,
   FlatList,
-  // Text,
   Pressable,
+  Text,
 } from "react-native";
 import { getMovies } from "@/services/movieService";
-import { getLocalPoster } from "@/utils/getLocalPoster";
 import { useRouter } from "expo-router";
-
-type Movie = {
-  id: number;
-  title: string;
-  description: string;
-  category: string;
-  runtime: number;
-  isActive: boolean;
-  ageRating: string;
-  releaseDate: string;
-};
+import type { Movie } from "@/services/movieService"; 
 
 export default function Index() {
   const [movies, setMovies] = useState<Movie[]>([]);
@@ -32,6 +21,9 @@ export default function Index() {
     getMovies()
       .then((data) => {
         setMovies(data);
+      })
+      .catch((err) => {
+        console.error("Error fetching movies:", err);
       })
       .finally(() => setLoading(false));
   }, []);
@@ -69,17 +61,22 @@ export default function Index() {
               .replace(/[^a-z0-9]/gi, "");
             const isStretched = stretchedTitles.includes(formatted ?? "");
 
+            const posterSource =
+              item.poster && item.poster.length > 0
+                ? {
+                    uri: `data:${item.poster[0].imageType};base64,${item.poster[0].imageData}`,
+                  }
+                : require("@/assets/images/posters/fallback.jpg"); 
+
             return (
               <Pressable
                 onPress={() => router.push(`/movies/${item.id}`)}
                 style={styles.posterCard}
               >
                 <Image
-                  source={getLocalPoster(item.title)}
+                  source={posterSource}
                   style={
-                    isStretched
-                      ? styles.posterImageFixed
-                      : styles.posterImage
+                    isStretched ? styles.posterImageFixed : styles.posterImage
                   }
                   resizeMode="cover"
                 />

@@ -8,12 +8,12 @@ import 'react-native-reanimated';
 
 import { AuthProvider } from '@/context/AuthContext';
 import { useColorScheme } from '@/hooks/useColorScheme';
+import CustomHeader from '@/components/ui/CustomHeader';
 
-// Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
 
 export default function RootLayout() {
-  const colorScheme = useColorScheme();
+  const { colorScheme } = useColorScheme();
   const [loaded] = useFonts({
     SpaceMono: require('../assets/fonts/SpaceMono-Regular.ttf'),
   });
@@ -30,16 +30,25 @@ export default function RootLayout() {
 
   return (
     <AuthProvider>
-    <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-   
-      <Stack screenOptions={{headerShown:false}}>
-        <Stack.Screen name="(tabs)" />
-        <Stack.Screen name="(auth)" /> 
-        {/* <Stack.Screen name="index" options={{headerShown:false}} /> */}
-        <Stack.Screen name="+not-found" />
-      </Stack>
-      <StatusBar style="auto" />
-    </ThemeProvider>
+      <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
+        <Stack
+          screenOptions={{
+            headerTitle: () => <CustomHeader />,
+            headerStyle: {
+              backgroundColor: '#fceda5',
+            },
+            contentStyle: {
+              backgroundColor: '#a5b4fc',
+            },
+          }}
+        >
+          {/* 👇 These register the nested folders (tabs) and (auth) */}
+          <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+          <Stack.Screen name="(auth)/profile" options={{ headerShown: false }} />
+          <Stack.Screen name="+not-found" />
+        </Stack>
+        <StatusBar style="auto" />
+      </ThemeProvider>
     </AuthProvider>
   );
 }

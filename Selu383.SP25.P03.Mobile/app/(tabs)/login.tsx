@@ -1,7 +1,8 @@
 import React, { useContext, useState } from 'react';
 import { View, TextInput, Text, TouchableOpacity } from 'react-native';
 import { AuthContext } from '@/context/AuthContext';
-import { Link, useRouter } from 'expo-router';
+import { useRouter } from 'expo-router';
+
 
 export default function Login() {
   const [username, setUsername] = useState('');
@@ -9,22 +10,23 @@ export default function Login() {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const auth = useContext(AuthContext);
-  const router = useRouter()
+  const router = useRouter();
 
-  if (!auth)  {
+  if (!auth) {
     return null;
   }
-
-  
 
   const handleLogin = async () => {
     try {
       setLoading(true);
       setError('');
-      await auth.signin(username, password);
-      console.log('Login successful');
-      router.push('/profile')
-      console.log(auth)
+      const success = await auth.signin(username, password);
+      if (success) {
+        console.log('Login successful');
+        router.push('/(auth)/profile');
+      } else {
+        setError('Invalid username or password');
+      }
     } catch (e) {
       console.error('Login Failed', e);
       setError('Invalid username or password');
@@ -80,14 +82,14 @@ export default function Login() {
         </Text>
       </TouchableOpacity>
 
-      <View className="mt-4 flex-row justify-center">
-        <Text className="text-red-400">Don't have an account? </Text>
-        <Link href="/(auth)/register" asChild>
-  <TouchableOpacity>
-    <Text className="text-red-400">Register</Text>
-  </TouchableOpacity>
-</Link>
-      </View>
+      {auth.isAuthenticated && (
+        <TouchableOpacity
+          className="mt-6 px-6 py-3 bg-green-600 rounded-md"
+          onPress={() => router.push('/(auth)/profile')}
+        >
+          <Text className="text-white font-bold text-center">Go to Profile</Text>
+        </TouchableOpacity>
+      )}
     </View>
   );
 }

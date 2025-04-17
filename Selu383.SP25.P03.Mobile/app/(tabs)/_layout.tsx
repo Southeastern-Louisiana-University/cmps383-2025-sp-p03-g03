@@ -1,63 +1,41 @@
 import { Tabs } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
-import { Image, Text, View } from "react-native";
 
-function CustomHeader() {
-  return (
-    <View style={{ flexDirection: "row", alignItems: "center" }}>
-      <Image
-        source={require("../../assets/images/Lion Face.png")} 
-        style={{ width: 30, height: 30, marginRight: 10 }}
-        resizeMode="contain"
-      />
-      <Text style={{ fontSize: 18, fontWeight: "bold", color: "#000" }}>
-        Lion's Den Cinemas
-      </Text>
-    </View>
-  );
-}
-
-export default function TabsLayout() {
+export default function TabLayout() {
   return (
     <Tabs
-      screenOptions={{
+      screenOptions={({ route }) => ({
+        headerShown: false,
         tabBarActiveTintColor: "#a5b4fc",
+        tabBarInactiveTintColor: "#555",
         tabBarStyle: {
           backgroundColor: "#fceda5",
+          borderTopColor: "#a5b4fc",
         },
-      }}
+        tabBarIcon: ({ focused, color, size }) => {
+          let iconName: keyof typeof Ionicons.glyphMap;
+
+          switch (route.name) {
+            case "index":
+              iconName = focused ? "home" : "home-outline";
+              break;
+            case "concessions":
+              iconName = focused ? "fast-food" : "fast-food-outline";
+              break;
+            case "login":
+              iconName = focused ? "person-circle" : "person-circle-outline";
+              break;
+            default:
+              iconName = "ellipse";
+          }
+
+          return <Ionicons name={iconName} size={size} color={color} />;
+        },
+      })}
     >
-      <Tabs.Screen
-        name="index"
-        options={{
-          headerTitle: () => <CustomHeader />,
-          headerStyle: {
-            backgroundColor: "#fceda5"
-          },
-          tabBarIcon: ({ color, focused }: { color: string; focused: boolean }) => (
-
-            <Ionicons
-              name={focused ? "home-sharp" : "home-outline"}
-              color={color}
-              size={30}
-            />
-          ),
-        }}
-      />
-      <Tabs.Screen
-        name="buytickets"
-        options={{
-          headerTitle: "Buy Tickets",
-          tabBarIcon: ({ color, focused }: { color: string; focused: boolean }) => (
-
-            <Ionicons
-              name={focused ? "cart-sharp" : "cart-outline"}
-              color={color}
-              size={30}
-            />
-          ),
-        }}
-      />
+      <Tabs.Screen name="index" options={{ title: "Home" }} />
+      <Tabs.Screen name="concessions" options={{ title: "Concessions" }} />
+      <Tabs.Screen name="login" options={{ title: "Login" }} />
     </Tabs>
   );
 }
