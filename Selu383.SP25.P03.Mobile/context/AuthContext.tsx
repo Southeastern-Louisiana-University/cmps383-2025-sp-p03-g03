@@ -70,7 +70,8 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     setIsLoading(true);
     setError(null);
     try {
-      const response = await authServices.login({ username, password });
+        const response = await authServices.login({ userName: username, password });
+
 
       // Support for both { user, token } and just user
       const userData = response.user ?? response;
