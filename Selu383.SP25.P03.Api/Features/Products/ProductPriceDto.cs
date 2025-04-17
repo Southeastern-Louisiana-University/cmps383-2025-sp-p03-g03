@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Microsoft.EntityFrameworkCore;
 using Selu383.SP25.P03.Api.Controllers;
+using Selu383.SP25.P03.Api.Features.Theaters;
 
 namespace Selu383.SP25.P03.Api.Features.Products
 {
@@ -11,7 +12,8 @@ namespace Selu383.SP25.P03.Api.Features.Products
         public required decimal Price { get; set; }
         public required DateOnly StartDate { get; set; } = DateOnly.FromDateTime(DateTime.Now);
         public DateOnly? EndDate { get; set; }
-        public Product? Product { get; set; }
+        public required Product Product { get; set; }
+        public required Theater Theater { get; set; } 
 
     }
     public class ProductPriceDto
@@ -39,10 +41,14 @@ namespace Selu383.SP25.P03.Api.Features.Products
 
             builder.Property(e => e.EndDate);
 
-            //builder.HasOne(x => x.Product)
-            //    .WithMany()
-            //    .OnDelete(DeleteBehavior.NoAction)
-            //    .HasForeignKey(x => x.ProductId);
+            builder.HasOne(e => e.Product)
+                .WithMany()
+                .HasForeignKey(e => e.ProductId);
+
+            builder.HasOne(e => e.Theater)
+                .WithMany()
+                .HasForeignKey(e => e.ProductId); 
+
         }
     }
 }

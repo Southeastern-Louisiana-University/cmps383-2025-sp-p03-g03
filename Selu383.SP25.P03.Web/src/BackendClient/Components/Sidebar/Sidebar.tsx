@@ -3,6 +3,7 @@ import { Link, useLocation } from "react-router-dom";
 import NotificationDropdown from "../Dropdowns/NotificationDropdown";
 import UserDropdown from "../Dropdowns/UserDropdown";
 import "../BackendCSS/Backend.css"
+import "../../../routes/App.css"
 
 const Sidebar: React.FC = () => {
     const location = useLocation();
@@ -28,7 +29,7 @@ const Sidebar: React.FC = () => {
 
     return (
         <>
-            <nav className="md:left-0 md:block md:fixed md:top-0 md:bottom-0 md:overflow-y-auto md:flex-row md:flex-nowrap md:overflow-hidden shadow-xl bg-white flex flex-wrap items-center justify-between relative md:w-64 z-10 py-4 px-6">
+            <nav className="md:left-0 md:block md:fixed md:top-0 md:bottom-0 md:overflow-y-auto md:flex-row md:flex-nowrap md:overflow-hidden shadow-xl bg-indigo-300 flex flex-wrap items-center justify-between relative md:w-64 z-10 py-4 px-6">
                 <div className="md:flex-col md:items-stretch md:min-h-full md:flex-nowrap px-0 flex flex-wrap items-center justify-between w-full mx-auto">
                     <button
                         className="cursor-pointer text-black opacity-50 md:hidden px-3 py-1 text-xl leading-none bg-transparent rounded border border-solid border-transparent"
@@ -138,6 +139,21 @@ const Sidebar: React.FC = () => {
                                 <Link className={getNavLinkClass("/admin/seattypes")} to="/admin/seattypes">
                                     <i className={`fas fa-users mr-2 text-sm ${getIconClass("/admin/seattypes")}`}></i>{" "}
                                     Seat Types
+                                </Link>
+                            </li>
+
+                            <li className="items-center">
+                                <Link className={getNavLinkClass("/admin/movies")} to="/admin/movies">
+                                    <i className={`fas fa-users mr-2 text-sm ${getIconClass("/admin/movies")}`}></i>{" "}
+                                    Movies
+                                </Link>
+                            </li>
+
+
+                            <li className="items-center">
+                                <Link className={getNavLinkClass("/admin/products")} to="/admin/products">
+                                    <i className={`fas fa-users mr-2 text-sm ${getIconClass("/admin/products")}`}></i>{" "}
+                                    Products
                                 </Link>
                             </li>
                         </ul>

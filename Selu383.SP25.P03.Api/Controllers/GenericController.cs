@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Selu383.SP25.P03.Api.Controllers
 {
@@ -34,6 +35,7 @@ namespace Selu383.SP25.P03.Api.Controllers
 
         // GET: api/[controller]
         [HttpGet]
+        [Authorize(Roles = "Admin,Users")]
         public virtual async Task<ActionResult<IEnumerable<TDto>>> GetAll()
         {
             var entities = await _dbSet.AsNoTracking().ToListAsync();
@@ -42,6 +44,7 @@ namespace Selu383.SP25.P03.Api.Controllers
 
         // GET: api/[controller]/5
         [HttpGet("{id}")]
+        [Authorize(Roles = "Admin,Users")]
         public virtual async Task<ActionResult<TDto>> GetById(int id)
         {
             var entity = await _dbSet.FindAsync(id);
@@ -51,6 +54,7 @@ namespace Selu383.SP25.P03.Api.Controllers
 
         // POST: api/[controller]
         [HttpPost]
+        [Authorize(Roles = "Admin")]
         public virtual async Task<ActionResult<TDto>> Create(TDto dto)
         {
             if (dto == null) return BadRequest("Invalid data.");
@@ -84,6 +88,7 @@ namespace Selu383.SP25.P03.Api.Controllers
 
         // PUT: api/[controller]/5
         [HttpPut("{id}")]
+        [Authorize(Roles = "Admin")]
         public virtual async Task<IActionResult> Update(int id, TDto dto)
         {
             if (dto == null || id <= 0) return BadRequest("Invalid data.");
@@ -120,6 +125,7 @@ namespace Selu383.SP25.P03.Api.Controllers
 
         // DELETE: api/[controller]/5
         [HttpDelete("{id}")]
+        [Authorize(Roles = "Admin")]
         public virtual async Task<IActionResult> Delete(int id)
         {
             var entity = await _dbSet.FindAsync(id);

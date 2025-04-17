@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Microsoft.EntityFrameworkCore;
 using Selu383.SP25.P03.Api.Controllers;
+using Selu383.SP25.P03.Api.Features.Rooms;
 namespace Selu383.SP25.P03.Api.Features.Movies
 {
     public class MovieSchedule : IEntity
@@ -8,8 +9,10 @@ namespace Selu383.SP25.P03.Api.Features.Movies
         public int Id { get; set; }        
         public required DateTime[] MovieTimes { get; set; }
         public bool IsActive { get; set; }
-        public int MovieId { get; set; }
+        public int? MovieId { get; set; }
+        public int? RoomId { get; set; }
         public Movie? Movie { get; set; }
+        public Room? Room { get; set; }
 
     }
     public class MovieScheduleDto
@@ -18,6 +21,7 @@ namespace Selu383.SP25.P03.Api.Features.Movies
         public required DateTime[] MovieTimes { get; set; }
         public bool IsActive { get; set; }
         public int MovieId { get; set; }
+        public int? RoomId { get; set; }
     }
     public class MovieScheduleConfiguration : IEntityTypeConfiguration<MovieSchedule>
     {

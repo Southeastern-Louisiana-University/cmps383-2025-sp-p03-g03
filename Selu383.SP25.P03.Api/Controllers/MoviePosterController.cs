@@ -21,8 +21,10 @@ namespace Selu383.SP25.P03.Api.Controllers
         public async Task<ActionResult<IEnumerable<MoviePoster>>> GetByMovieId(int movieId)
         {
             var images = await _context.Set<MoviePoster>()
+
                 .Where(i => i.MovieId == movieId)
                 .ToListAsync();
+
 
             return images;
         }

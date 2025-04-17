@@ -46,6 +46,10 @@ namespace Selu383.SP25.P03.Api.Data
             CreateMap<Promo, PromoDto>();
             CreateMap<PromoDto, Promo>();
 
+            //ProductType
+            CreateMap<ProductType, ProductTypeDto>();
+            CreateMap<ProductTypeDto, ProductType>();
+
             //PromoSchedule
             CreateMap<PromoSchedule, PromoScheduleDto>();
             CreateMap<PromoScheduleDto, PromoSchedule>();
@@ -77,9 +81,12 @@ namespace Selu383.SP25.P03.Api.Data
             //UserTickets
             CreateMap<UserTicket, UserTicketDto>();
             CreateMap<UserTicketDto, UserTicket>();
-
+            //room and seats
             CreateMap<RoomSeats, RoomSeatsDto>();
             CreateMap<RoomSeatsDto, RoomSeats>();
+            //concessions 
+            CreateMap<ProductType, ProductTypeDto>();
+            CreateMap<ProductTypeDto, ProductType>();
 
         }
     }
