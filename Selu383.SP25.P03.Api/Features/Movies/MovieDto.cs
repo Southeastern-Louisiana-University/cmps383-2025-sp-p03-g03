@@ -14,6 +14,7 @@ namespace Selu383.SP25.P03.Api.Features.Movies
         public bool IsActive { get; set; } = true;
         public string? AgeRating { get; set; }
         public DateTime ReleaseDate { get; set; }
+        public string? PreviewURL { get; set; }
     }
     public class MovieDto
     {
@@ -25,6 +26,7 @@ namespace Selu383.SP25.P03.Api.Features.Movies
         public bool IsActive { get; set; } = true;
         public string? AgeRating { get; set; }
         public DateTime ReleaseDate { get; set; }
+        public string? PreviewURL { get; set; }
     }
     public class MovieConfiguration : IEntityTypeConfiguration<Movie>
     {

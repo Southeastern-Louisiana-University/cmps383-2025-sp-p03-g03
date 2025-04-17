@@ -1,8 +1,9 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using Selu383.SP25.P03.Api.Data;
-using Selu383.SP25.P03.Api.Features.Cart;
 using Selu383.SP25.P03.Api.Features.Rooms;
+using Microsoft.EntityFrameworkCore;
+
 
 namespace Selu383.SP25.P03.Api.Controllers
 {
@@ -15,5 +16,21 @@ namespace Selu383.SP25.P03.Api.Controllers
         {
         }
 
+        // GET: api/MasterProductImage/GetByProductId/5
+        [HttpGet("GetByMovieId/{theaterId}")]
+        public async Task<ActionResult<IEnumerable<Room>>> GetRoomByTheaterId(int theaterId)
+        {
+            var room = await _context.Set<Room>()
+                .Where(i => i.TheaterId == theaterId)
+                .ToListAsync();
+
+            return room;
+        }
+
+
+
     }
+
+
+
 }
