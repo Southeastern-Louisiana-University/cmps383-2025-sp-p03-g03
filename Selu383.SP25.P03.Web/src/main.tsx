@@ -33,6 +33,11 @@ import MovieScheduleListPage from "./BackendClient/Components/MovieSchedule/Movi
 import MovieScheduleForm from "./BackendClient/Components/MovieSchedule/MovieScheduleForm.tsx";
 import MovieScheduleAssignments from "./BackendClient/Components/MovieSchedule/MovieScheduleAssignments.tsx";
 import ConcessionsPage from "./routes/ConcessionsPage.tsx";
+import About from "./routes/About.tsx";
+import Terms from "./routes/Terms.tsx";
+import Privacy from "./routes/Privacy.tsx";
+import { Contact } from "lucide-react";
+import ContactPage from "./routes/Contact.tsx";
 
 const Layout = () => {
   return (
@@ -108,8 +113,24 @@ const router = createBrowserRouter([
         element: <MyTickets />,
       },
       {
+        path: "about",
+        element: <About />,
+      },
+      {
         path: "Concessions",
         element: <ConcessionsPage />,
+      },
+      {
+        path: "terms",
+        element: <Terms />,
+      },
+      {
+        path: "privacy",
+        element: <Privacy />,
+      },
+      {
+        path: "contact",
+        element: <ContactPage />,
       },
     ],
   },

@@ -163,7 +163,7 @@ export default function MyTickets() {
       </div>
 
       {/* Footer */}
-      <footer className="w-full bg-gradient-to-b! from-indigo-950! to-gray-900! text-white py-6">
+      <footer className="w-full bg-indigo-950 text-white py-6">
         <div className="container mx-auto px-4 text-center">
           <p>© {currentYear} Lion's Den Cinemas. All rights reserved.</p>
           <div className="mt-2 space-x-4">

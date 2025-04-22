@@ -77,7 +77,7 @@ function TheatreChoice() {
   }
 
   return (
-    <div className="flex flex-col min-h-screen bg-gradient-to-b from-indigo-950 to-gray-900 text-white">
+    <div className="flex flex-col min-h-screen bg-gray-900 text-white">
       <div className="max-w-6xl mx-auto p-6 flex-1">
         <Button
           onClick={() => navigate(-1)}

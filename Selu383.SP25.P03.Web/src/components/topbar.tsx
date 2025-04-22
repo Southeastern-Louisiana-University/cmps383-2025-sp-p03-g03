@@ -33,7 +33,7 @@ export default function TopBar() {
               My Tickets
             </h2>
           </Link>
-          <Link to="/">
+          <Link to="/about">
             <h2 className="text-lg md:text-xl lg:text-2xl text-indigo-200 transition-transform hover:scale-110 hover:drop-shadow-xl hover:shadow-indigo-500/50 cursor-pointer">
               About
             </h2>

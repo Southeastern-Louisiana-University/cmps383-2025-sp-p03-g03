@@ -65,7 +65,9 @@ export default function SeatSelection() {
         if (!seatsResponse.ok) {
           const text = await seatsResponse.text();
           console.error(`Fetch error: ${seatsResponse.status} ${text}`);
-          throw new Error(`Failed to fetch seats: ${seatsResponse.status}`);
+          throw new Error(
+            `Failed to fetch seats: ${seatsResponse.status} ${text}`
+          );
         }
 
         const seats: Seat[] = await seatsResponse.json();
@@ -108,8 +110,8 @@ export default function SeatSelection() {
         : ["A", "B", "C", "D", "E", "F"];
     const seatsPerRow =
       roomId === 59 ? 20 : roomId === 60 ? 15 : roomId === 61 ? 10 : 10;
-    const seatSpacing = 36; // Reduced from 40
-    const rowSpacing = 45; // Reduced from 50
+    const seatSpacing = 36;
+    const rowSpacing = 45;
     const centerOffset = (seatsPerRow * seatSpacing) / 2;
 
     rows.forEach((row, rowIndex) => {
@@ -234,41 +236,48 @@ export default function SeatSelection() {
           </h2>
         </div>
 
-        <div className="overflow-auto pb-6 mb-8">
+        <div className="pb-6 mb-8">
           <div
-            className="relative border border-gray-700 rounded-lg p-4 bg-gray-800 mx-auto shadow-lg shadow-indigo-950/50"
+            className="relative border border-gray-700 rounded-lg p-4 bg-gray-800 mx-auto shadow-lg shadow-indigo-950/50 flex justify-center items-center"
             style={{
               width: "900px",
               maxWidth: "100%",
-              minHeight: "600px",
-              overflow: "visible",
+              height: "600px",
             }}
           >
-            {seats.map((seat) => (
-              <button
-                key={seat.id}
-                className={`absolute w-7 h-7 rounded-full flex items-center justify-center text-xs transition-all duration-300
-                  ${
-                    !seat.isAvailable
-                      ? "bg-red-600 cursor-not-allowed opacity-70"
-                      : selectedSeats.some((s) => s.id === seat.id)
-                      ? "bg-indigo-600 text-white scale-110 shadow-md"
-                      : "bg-green-600 text-white hover:bg-green-500 hover:scale-105 hover:shadow-md"
-                  }
-                  ${seat.seatTypeId === 4 ? "ring-2 ring-blue-400" : ""}`}
-                style={{
-                  left: `calc(50% + ${seat.xPosition}px)`,
-                  top: `${seat.yPosition}px`,
-                  transform: "translateX(-50%)",
-                }}
-                onClick={() => handleSeatClick(seat)}
-                disabled={!seat.isAvailable}
-                aria-label={`Seat ${seat.row}${seat.seatNumber}`}
-              >
-                {seat.row}
-                {seat.seatNumber}
-              </button>
-            ))}
+            <div
+              className="relative"
+              style={{
+                width: "720px",
+                height: "455px",
+              }}
+            >
+              {seats.map((seat) => (
+                <button
+                  key={seat.id}
+                  className={`absolute w-7 h-7 rounded-full flex items-center justify-center text-xs transition-all duration-300
+                    ${
+                      !seat.isAvailable
+                        ? "bg-red-600 cursor-not-allowed opacity-70"
+                        : selectedSeats.some((s) => s.id === seat.id)
+                        ? "bg-green-600 text-white scale-110 shadow-md"
+                        : "bg-indigo-600 text-white hover:bg-indigo-500 hover:scale-105 hover:shadow-md"
+                    }
+                    ${seat.seatTypeId === 4 ? "ring-2 ring-blue-400" : ""}`}
+                  style={{
+                    left: `calc(50% + ${seat.xPosition}px)`,
+                    top: `calc(${seat.yPosition}px - 25%)`,
+                    transform: "translateX(-100%)",
+                  }}
+                  onClick={() => handleSeatClick(seat)}
+                  disabled={!seat.isAvailable}
+                  aria-label={`Seat ${seat.row}${seat.seatNumber}`}
+                >
+                  {seat.row}
+                  {seat.seatNumber}
+                </button>
+              ))}
+            </div>
           </div>
         </div>
 
@@ -327,7 +336,7 @@ export default function SeatSelection() {
             <span className="text-sm text-gray-300">Selected</span>
           </div>
           <div className="flex items-center gap-2">
-            <div className="w-5 h-5 bg-green-600 rounded-full ring-2 ring-blue-400"></div>
+            <div className="w-5 h-5 bg-green-600 rounded-full ring-3 ring-blue-400"></div>
             <span className="text-sm text-gray-300">Accessible</span>
           </div>
         </div>
