@@ -14,30 +14,6 @@ interface Seat {
   yPosition: number;
 }
 
-interface Theater {
-  id: number;
-  name: string;
-  location?: string;
-}
-
-interface Showtime {
-  id: number;
-  time: string;
-  movieId: number;
-  theaterId?: number;
-  roomId?: number;
-}
-
-interface Movie {
-  id: number;
-  title: string;
-  ageRating: string;
-  runtime: number;
-  releaseDate?: string;
-  category?: string;
-  description?: string;
-}
-
 export default function SeatSelection() {
   const { movieId, theaterId, roomId, scheduleId } = useParams();
   const location = useLocation();
