@@ -1,46 +1,62 @@
-import React, { useContext } from "react";
-import { View, Text, TouchableOpacity } from "react-native";
-import { AuthContext } from "@/context/AuthContext";
-import { useRouter } from "expo-router";
-import { FontAwesome } from "@expo/vector-icons";
+import React, { useContext, useEffect, useState } from 'react';
+import { View, Text, ScrollView, ActivityIndicator } from 'react-native';
+import { AuthContext } from '@/context/AuthContext';
+import QRCode from 'react-native-qrcode-svg';
 
 const ProfileScreen = () => {
-  const router = useRouter();
   const auth = useContext(AuthContext);
+  const [tickets, setTickets] = useState([]);
+  const [loading, setLoading] = useState(true);
 
-  if (!auth) return null;
+  const userId = auth?.user?.id;
 
-  const handleSignOut = async () => {
-    await auth.signout();
-    router.replace("/");
-  };
+  useEffect(() => {
+    const fetchTickets = async () => {
+      if (!userId) return;
+
+      try {
+        const res = await fetch(`https://cmps383-2025-sp25-p03-g03.azurewebsites.net/api/userticket/GetByUserId/${userId}`);
+        const data = await res.json();
+        setTickets(data);
+      } catch (error) {
+        console.error('Failed to fetch tickets', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchTickets();
+  }, [userId]);
+
+  if (loading) {
+    return (
+      <View className="flex-1 justify-center items-center bg-black">
+        <ActivityIndicator size="large" color="#a5b4fc" />
+      </View>
+    );
+  }
 
   return (
-    
-    <View className="flex-1 justify-center items-center bg-black">
-    <View className="w-4/5 bg-black bg-opacity-80 p-6 rounded-xl border border-gray-700 shadow-lg items-center">
-      {/* Profile Avatar */}
-      <View className="w-20 h-20 rounded-full bg-gray-700 border-4 border-gray-500 flex items-center justify-center shadow-md mb-4">
-        <Text className="text-3xl font-bold text-white">
-          {auth.user?.userName?.charAt(0)?.toUpperCase()}
-        </Text>
-      </View>
+    <ScrollView className="flex-1 bg-black p-4">
+      <Text className="text-white text-2xl font-bold mb-4">Welcome, {auth?.user?.userName}</Text>
 
-      {/* User Info */}
-      <Text className="text-xl font-bold text-red-500">{auth.user?.userName}</Text>
-      <Text className="text-red-400 text-sm mt-1">{auth.user?.roles?.join(", ")}</Text>
+      {tickets.length === 0 ? (
+        <Text className="text-gray-400">No tickets found.</Text>
+      ) : (
+        tickets.map((ticket: any, index) => (
+          <View key={index} className="bg-gray-800 p-4 mb-4 rounded-lg border border-gray-700">
+            <Text className="text-white font-bold">Movie: {ticket.movieTitle || 'Unknown'}</Text>
+            <Text className="text-gray-300">Date: {ticket.date}</Text>
+            <Text className="text-gray-300">Time: {ticket.time}</Text>
 
-      {/* Logout Button */}
-      <TouchableOpacity
-        onPress={handleSignOut}
-        className="mt-6 flex-row items-center bg-red-600 px-5 py-3 rounded-lg shadow-lg hover:bg-red-500"
-      >
-        <FontAwesome name="sign-out" size={20} color="white" />
-        <Text className="text-white font-semibold ml-2">Logout</Text>
-      </TouchableOpacity>
-    </View>
-  </View>
-);
+            <View className="mt-4 items-center">
+              <QRCode value={JSON.stringify(ticket)} size={150} />
+            </View>
+          </View>
+        ))
+      )}
+    </ScrollView>
+  );
 };
 
 export default ProfileScreen;

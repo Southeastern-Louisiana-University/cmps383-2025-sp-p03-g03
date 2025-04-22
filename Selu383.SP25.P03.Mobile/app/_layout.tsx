@@ -7,13 +7,13 @@ import { useEffect } from 'react';
 import 'react-native-reanimated';
 
 import { AuthProvider } from '@/context/AuthContext';
-import { useColorScheme } from '@/hooks/useColorScheme'; // custom hook
+import { useColorScheme } from '@/hooks/useColorScheme';
 import CustomHeader from '@/components/ui/CustomHeader';
 
 SplashScreen.preventAutoHideAsync();
 
 export default function RootLayout() {
-  const { colorScheme } = useColorScheme(); // ✅ fixed
+  const { colorScheme } = useColorScheme();
   const [loaded] = useFonts({
     SpaceMono: require('../assets/fonts/SpaceMono-Regular.ttf'),
   });
@@ -42,12 +42,9 @@ export default function RootLayout() {
             },
           }}
         >
-          <Stack.Screen name="tabs" options={{ headerShown: false }} />
-          <Stack.Screen name="buytickets" />
-          <Stack.Screen name="movies/[id]" />
-          <Stack.Screen name="login" options={{ headerShown: false }} />
-          <Stack.Screen name="register" options={{ headerShown: false }} />
-          <Stack.Screen name="profile" />
+          {/* 👇 These register the nested folders (tabs) and (auth) */}
+          <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+          <Stack.Screen name="(auth)/profile" options={{ headerShown: false }} />
           <Stack.Screen name="+not-found" />
         </Stack>
         <StatusBar style="auto" />

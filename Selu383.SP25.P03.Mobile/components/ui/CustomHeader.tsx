@@ -1,6 +1,6 @@
 import { View, Text, Image, Pressable, StyleSheet, Modal, TouchableOpacity } from "react-native";
 import { useRouter } from "expo-router";
-import { Ionicons, Feather } from "@expo/vector-icons";
+import { Feather } from "@expo/vector-icons";
 import { useContext, useState } from "react";
 import { AuthContext } from "@/context/AuthContext";
 import { useColorScheme } from "@/hooks/useColorScheme";
@@ -32,22 +32,14 @@ export default function CustomHeader() {
         <Text style={styles.title}>Lion's Den Cinemas</Text>
       </Pressable>
 
-      {/* Icons */}
+      {/* Settings Icon Only */}
       <View style={styles.iconRow}>
-        <Pressable
-          onPress={() => router.push(auth?.isAuthenticated ? "/profile" : "/login")}
-          style={({ pressed }) => [styles.iconButton, pressed && styles.iconPressed]}
-          hitSlop={10}
-        >
-          <Ionicons name="person-circle-outline" size={32} color="#000" />
-        </Pressable>
-
         <Pressable
           onPress={() => setModalVisible(true)}
           style={({ pressed }) => [styles.lastIconButton, pressed && styles.iconPressed]}
           hitSlop={10}
         >
-          <Feather name="settings" size={30} color="#000" />
+          <Feather name="settings" size={28} color="#000" />
         </Pressable>
       </View>
 
@@ -103,12 +95,6 @@ const styles = StyleSheet.create({
     alignItems: "center",
     paddingRight: 4,
     columnGap: 14,
-  },
-  iconButton: {
-    padding: 10,
-    marginLeft: 20,
-    borderRadius: 20,
-    marginRight: 10,
   },
   lastIconButton: {
     padding: 10,
