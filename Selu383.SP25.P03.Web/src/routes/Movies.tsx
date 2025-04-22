@@ -85,7 +85,7 @@ function Movies() {
   return (
     <div className="flex flex-col min-h-screen bg-gray-900 text-white">
       {/* Header */}
-      <div className="w-full bg-gradient-to-b from-indigo-950 to-gray-900 py-8! text-center">
+      <div className="w-full py-8! text-center">
         <h1 className="text-4xl! sm:text-5xl! md:text-6xl! font-extrabold text-indigo-300 tracking-wide drop-shadow-lg">
           NOW PLAYING
         </h1>
@@ -100,7 +100,7 @@ function Movies() {
             className="group flex flex-col items-center gap-3 transition-all duration-300 hover:scale-105"
           >
             {/* Poster Container */}
-            <div className="relative w-full max-w-[250px] rounded-lg overflow-hidden shadow-lg shadow-indigo-950/50 transition-all duration-300 group-hover:shadow-xl group-hover:shadow-indigo-800/70">
+            <div className="relative w-full max-w-[250px] rounded-lg overflow-hidden outline-3! outline-indigo-300! shadow-lg shadow-indigo-950/50 transition-all duration-300 group-hover:shadow-xl group-hover:shadow-indigo-800/70">
               {movie.poster ? (
                 <img
                   src={`data:${movie.poster[0].imageType};base64,${movie.poster[0].imageData}`}

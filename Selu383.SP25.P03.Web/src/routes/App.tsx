@@ -103,7 +103,7 @@ function App() {
           </p>
           <Button
             onClick={() => navigate("/movies")}
-            className="mt-6 inline-flex items-center gap-2! bg-indigo-700! hover:bg-indigo-600! text-white py-3 px-6 rounded-lg transition-all duration-300 shadow-md hover:shadow-lg"
+            className="mt-6 inline-flex items-center gap-2! bg-indigo-700! hover:bg-indigo-600!  text-white py-3 px-6 rounded-lg transition-all duration-300 shadow-md hover:shadow-lg"
           >
             Get Tickets <TicketIcon className="h-5 w-5" />
           </Button>
@@ -114,7 +114,7 @@ function App() {
           {locations.map((location) => (
             <div
               key={location.name}
-              className="bg-gray-800 p-6 rounded-lg shadow-lg shadow-indigo-950/50 transition-all duration-300 hover:shadow-indigo-800/70"
+              className="bg-gray-800 outline-3! outline-indigo-300! p-6 rounded-lg shadow-lg shadow-indigo-950/50 transition-all duration-300 hover:shadow-indigo-800/70"
             >
               <MapPinIcon className="h-8 w-8 mx-auto text-indigo-400 mb-2" />
               <h3 className="text-xl font-semibold text-indigo-200">
@@ -125,7 +125,7 @@ function App() {
                 onClick={() =>
                   navigate(`/locations/${location.name.toLowerCase()}`)
                 }
-                className="mt-4 text-indigo-400 hover:text-indigo-300 transition-colors duration-300"
+                className="mt-4  text-indigo-400 hover:text-indigo-300! transition-colors duration-300"
               >
                 Learn More
               </Button>
@@ -139,7 +139,7 @@ function App() {
             Why Choose Lion's Den?
           </h2>
           <div className="grid md:grid-cols-3 gap-6">
-            <div className="bg-gray-800 p-6 rounded-lg shadow-lg shadow-indigo-950/50">
+            <div className="bg-gray-800 outline-3! outline-indigo-300! p-6 rounded-lg shadow-lg shadow-indigo-950/50">
               <FilmIcon className="h-10 w-10 mx-auto text-indigo-400 mb-2" />
               <h3 className="font-semibold text-indigo-200">
                 Premium Experience
@@ -148,7 +148,7 @@ function App() {
                 Reclining seats & Dolby Atmos sound
               </p>
             </div>
-            <div className="bg-gray-800 p-6 rounded-lg shadow-lg shadow-indigo-950/50">
+            <div className="bg-gray-800 outline-3! outline-indigo-300! p-6 rounded-lg shadow-lg shadow-indigo-950/50">
               <TicketIcon className="h-10 w-10 mx-auto text-indigo-400 mb-2" />
               <h3 className="font-semibold text-indigo-200">
                 Flexible Pricing
@@ -157,7 +157,7 @@ function App() {
                 Location-specific rates & showtimes
               </p>
             </div>
-            <div className="bg-gray-800 p-6 rounded-lg shadow-lg shadow-indigo-950/50">
+            <div className="bg-gray-800 outline-3! outline-indigo-300! p-6 rounded-lg shadow-lg shadow-indigo-950/50">
               <MapPinIcon className="h-10 w-10 mx-auto text-indigo-400 mb-2" />
               <h3 className="font-semibold text-indigo-200">
                 Unique Locations

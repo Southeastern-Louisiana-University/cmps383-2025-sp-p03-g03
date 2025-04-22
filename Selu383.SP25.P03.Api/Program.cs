@@ -38,7 +38,7 @@ namespace Selu383.SP25.P03.Api
             // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
             builder.Services.AddOpenApi();
             builder.Services.AddRazorPages();
-           
+
             builder.Services.AddCors(options =>
             {
                 options.AddDefaultPolicy(policy =>
@@ -93,7 +93,7 @@ namespace Selu383.SP25.P03.Api
 
                 options.SlidingExpiration = true;
             });
-            builder.Services.AddHttpClient(); 
+            builder.Services.AddHttpClient();
 
 
             var app = builder.Build();
@@ -107,14 +107,14 @@ namespace Selu383.SP25.P03.Api
                 //SeedTheaters.Initialize(scope.ServiceProvider);
                 await SeedRoles.Initialize(scope.ServiceProvider);
                 await SeedUsers.Initialize(scope.ServiceProvider);
-                // await SeedRooms.InitializeAsync(scope.ServiceProvider);
-                // await SeedMovies.InitializeAsync(scope.ServiceProvider);
-                // await SeedMovieRoomScheduleLinks.InitializeAsync(scope.ServiceProvider);
-                // await SeedMovieSchedule.InitializeAsync(scope.ServiceProvider);
-                // await SeedProducts.InitializeAsync(scope.ServiceProvider);
-                // await SeedProductPrices.InitializeAsync(scope.ServiceProvider);
-                // await SeedSeats.InitializeAsync(scope.ServiceProvider);
-                // await SeedSeatTypes.InitializeAsync(scope.ServiceProvider);
+                //await SeedRooms.InitializeAsync(scope.ServiceProvider);
+                //await SeedMovies.InitializeAsync(scope.ServiceProvider);
+                //await SeedMovieRoomScheduleLinks.InitializeAsync(scope.ServiceProvider);
+                //await SeedMovieSchedule.InitializeAsync(scope.ServiceProvider);
+                //await SeedProducts.InitializeAsync(scope.ServiceProvider);
+                //await SeedProductPrices.InitializeAsync(scope.ServiceProvider);
+                //await SeedSeats.InitializeAsync(scope.ServiceProvider);
+                //await SeedSeatTypes.InitializeAsync(scope.ServiceProvider);
 
             }
 
@@ -154,7 +154,7 @@ namespace Selu383.SP25.P03.Api
             }
 
 
-            
+
 
 
             app.Run();

@@ -17,7 +17,7 @@ namespace Selu383.SP25.P03.Api.Controllers
         }
 
         // GET: api/MasterProductImage/GetByProductId/5
-        [HttpGet("GetByMovieId/{theaterId}")]
+        [HttpGet("GetByTheaterId/{theaterId}")]
         public async Task<ActionResult<IEnumerable<Room>>> GetRoomByTheaterId(int theaterId)
         {
             var room = await _context.Set<Room>()
