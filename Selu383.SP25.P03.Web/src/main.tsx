@@ -36,7 +36,6 @@ import ConcessionsPage from "./routes/ConcessionsPage.tsx";
 import About from "./routes/About.tsx";
 import Terms from "./routes/Terms.tsx";
 import Privacy from "./routes/Privacy.tsx";
-import { Contact } from "lucide-react";
 import ContactPage from "./routes/Contact.tsx";
 
 const Layout = () => {
