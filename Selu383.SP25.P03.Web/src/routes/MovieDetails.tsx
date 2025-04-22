@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { Button } from "@headlessui/react";
-import { TicketIcon } from "@heroicons/react/24/outline";
+import { TicketIcon, PlayCircleIcon } from "@heroicons/react/24/outline";
 
 interface Movie {
   id: number;
@@ -11,6 +11,8 @@ interface Movie {
   releaseDate: string;
   category: string;
   description: string;
+  previewURL: string | null;
+  isActive: boolean;
 }
 
 interface MoviePoster {
@@ -62,12 +64,19 @@ function MovieDetails() {
   const [roomScheduleLinks, setRoomScheduleLinks] = useState<
     MovieRoomScheduleLink[]
   >([]);
-  const [rooms, setRooms] = useState<{ [theaterId: number]: Room[] }>({});
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [showShowtimes, setShowShowtimes] = useState(false);
-
+  const [showVideo, setShowVideo] = useState(false);
   const theaterId = localStorage.getItem("theaterId");
+
+  // Extract YouTube video ID from URL
+  const getYouTubeVideoId = (url: string): string | null => {
+    const regex =
+      /(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/\s]{11})/;
+    const match = url.match(regex);
+    return match ? match[1] : null;
+  };
 
   useEffect(() => {
     const fetchData = async () => {
@@ -144,6 +153,10 @@ function MovieDetails() {
 
   const fetchTheaterData = async (selectedTheaterId: string) => {
     try {
+      if (!movieId) {
+        throw new Error("Movie ID is not defined");
+      }
+
       const scheduleResponse = await fetch(
         `/api/MovieSchedule/GetByMovieId/${movieId}?theaterId=${selectedTheaterId}`
       );
@@ -171,7 +184,9 @@ function MovieDetails() {
         scheduleData = await scheduleResponse.json();
         setSchedules(scheduleData);
       } else {
-        console.warn(`No schedules for theater ${selectedTheaterId}`);
+        console.warn(
+          `No schedules for theater ${selectedTheaterId}: ${scheduleResponse.status}`
+        );
       }
 
       if (scheduleData.length > 0) {
@@ -183,7 +198,7 @@ function MovieDetails() {
                 response,
                 `/api/MovieRoomScheduleLink/GetByScheduleId/${schedule.id}`
               );
-              return response.json();
+              return response.json() as Promise<MovieRoomScheduleLink[]>;
             })
             .catch((err) => {
               console.error(
@@ -206,7 +221,6 @@ function MovieDetails() {
             `/api/Room/GetByTheaterId/${selectedTheaterId}`
           );
           roomsData = await roomsResponse.json();
-          setRooms((prev) => ({ ...prev, [selectedTheaterId]: roomsData }));
         } else {
           console.warn(
             `No rooms for theater ${selectedTheaterId}: ${roomsResponse.status}`
@@ -221,9 +235,9 @@ function MovieDetails() {
       }));
       setRoomScheduleLinks(updatedLinks);
     } catch (error) {
-      setError(
-        error instanceof Error ? error.message : "An unknown error occurred"
-      );
+      const errorMessage =
+        error instanceof Error ? error.message : "An unknown error occurred";
+      setError(errorMessage);
       console.error("Theater data error:", error);
     }
   };
@@ -305,10 +319,10 @@ function MovieDetails() {
         </div>
       </div>
     );
-  if (!movie)
+  if (!movie || !movie.isActive)
     return (
       <div className="flex items-center justify-center min-h-screen bg-gray-900 text-white">
-        <div className="text-xl text-gray-300">Movie not found</div>
+        <div className="text-xl text-gray-300">Movie not available</div>
       </div>
     );
 
@@ -329,6 +343,7 @@ function MovieDetails() {
     );
 
   const selectedTheater = theaters.find((t) => t.id.toString() === theaterId);
+  const videoId = movie.previewURL ? getYouTubeVideoId(movie.previewURL) : null;
 
   return (
     <div className="flex flex-col min-h-screen bg-gray-900 text-white">
@@ -357,6 +372,35 @@ function MovieDetails() {
             <span>{movie.category}</span>
           </div>
           <p className="text-lg text-gray-200 mt-4">{movie.description}</p>
+          {videoId ? (
+            <>
+              <Button
+                onClick={() => setShowVideo(!showVideo)}
+                className="mt-4 flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white py-3 px-6 rounded-lg transition-all duration-300 shadow-md hover:shadow-lg w-fit"
+              >
+                {showVideo ? "Hide Trailer" : "Watch Trailer"}
+                <PlayCircleIcon className="h-5 w-5" />
+              </Button>
+              {showVideo && (
+                <div className="mt-6 bg-gray-800 p-6 rounded-lg shadow-lg shadow-indigo-950/50">
+                  <div
+                    className="relative w-full"
+                    style={{ paddingTop: "56.25%" /* 16:9 aspect ratio */ }}
+                  >
+                    <iframe
+                      className="absolute top-0 left-0 w-full h-full rounded-lg"
+                      src={`https://www.youtube.com/embed/${videoId}?modestbranding=1&rel=0`}
+                      title={`${movie.title} Trailer`}
+                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                      allowFullScreen
+                    ></iframe>
+                  </div>
+                </div>
+              )}
+            </>
+          ) : (
+            <p className="text-gray-300 mt-4">No trailer available</p>
+          )}
           <Button
             onClick={handleShowtimesClick}
             className="mt-6 flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white py-3 px-6 rounded-lg transition-all duration-300 shadow-md hover:shadow-lg w-fit"
