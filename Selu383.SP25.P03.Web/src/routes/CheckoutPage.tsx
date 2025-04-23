@@ -4,6 +4,8 @@ import { ArrowLeftIcon, CheckCircleIcon } from "@heroicons/react/24/outline";
 import { useState, useEffect } from "react";
 import { useAuth } from "../components/authContext";
 import axios from "axios";
+import { loadStripe, Stripe } from "@stripe/stripe-js";
+import { getStripePublishableKey } from '../Services/PaymentService';
 
 interface Seat {
   id: number;
@@ -29,6 +31,9 @@ export default function Checkout() {
   const formattedSeats = selectedSeats
     .map((seat: Seat) => `${seat.row}${seat.seatNumber}`)
     .join(", ");
+
+
+    const [stripeInstance, setStripeInstance] = useState<Stripe | null>(null);
 
   const formattedShowtime = new Date(showtime.time).toLocaleString("en-US", {
     year: "numeric",
@@ -100,7 +105,9 @@ export default function Checkout() {
       await new Promise((resolve) => setTimeout(resolve, 1000)); // Fake delay for realism
       setOrderComplete(true);
     } catch (err) {
-      setError("Payment simulation failed. Please try again.");
+
+        console.error(err);
+        setError("Payment simulation failed. Please try again.");
     } finally {
       setPaymentProcessing(false);
       await axios.post("https://localhost:7027/api/email/send", {
@@ -111,6 +118,56 @@ export default function Checkout() {
       });
     }
   };
+
+    useEffect(() => {
+        const initStripe = async () => {
+            try {
+                const publishableKey = await getStripePublishableKey();
+                const stripe = await loadStripe(publishableKey);
+                if (!stripe) {
+                    setError("Failed to initialize Stripe.");
+                    return;
+                }
+                setStripeInstance(stripe);
+            } catch (err) {
+                console.error("Stripe init error", err);
+                setError("Could not load Stripe.");
+            }
+        };
+
+        initStripe();
+    }, []);
+
+
+    const handleStripePayment = async () => {
+        if (!stripeInstance) {
+            setError("Stripe not initialized.");
+            return;
+        }
+
+        try {
+            const response = await axios.post("/api/stripe/create-session", {
+                amount: calculateTotal(),
+                description: `Movie: ${movie.title}, Seats: ${formattedSeats}`,
+                successUrl: `${window.location.origin}/MyTickets`,
+                cancelUrl: `${window.location.origin}/checkout`,
+            });
+
+            const sessionId = response.data.sessionId;
+
+            const result = await stripeInstance.redirectToCheckout({ sessionId });
+
+            if (result?.error) {
+                setError(result.error.message || "Stripe checkout failed.");
+            }
+        } catch (err) {
+            console.error(err);
+            setError("Stripe payment failed. Try again.");
+        }
+    };
+
+
+
 
   const currentYear = new Date().getFullYear();
 
@@ -386,6 +443,13 @@ export default function Checkout() {
                   required
                 />
               </div>
+
+                          <Button
+                              onClick={handleStripePayment}
+                              className="!w-full !bg-black !text-white !py-3 !rounded-lg !font-medium mt-4"
+                          >
+                              Pay with Apple Pay / Card
+                          </Button>
 
               <Button
                 onClick={handlePayment}
