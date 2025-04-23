@@ -37,6 +37,8 @@ import About from "./routes/About.tsx";
 import Terms from "./routes/Terms.tsx";
 import Privacy from "./routes/Privacy.tsx";
 import ContactPage from "./routes/Contact.tsx";
+import ProfilePage from "./routes/ProfilePage.tsx";
+import SignupPage from "./routes/SignupPage.tsx";
 
 const Layout = () => {
   return (
@@ -130,6 +132,14 @@ const router = createBrowserRouter([
       {
         path: "contact",
         element: <ContactPage />,
+      },
+      {
+        path: "profile",
+        element: <ProfilePage />,
+      },
+      {
+        path: "signup",
+        element: <SignupPage />,
       },
     ],
   },
