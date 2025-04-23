@@ -22,7 +22,7 @@ export default function TopBar() {
         </div>
 
         {/* Navigation Links */}
-        <div className="mr-4 md:mr-8 lg:mr-24 flex space-x-4 md:space-x-8 lg:space-x-16 items-center">
+        <div className="mr-3 md:mr-6 lg:mr-10 flex space-x-4 md:space-x-8 lg:space-x-12 items-center">
           <Link to="/movies">
             <h2 className="text-lg md:text-xl lg:text-2xl text-indigo-200 transition-transform hover:scale-110 hover:drop-shadow-xl hover:shadow-indigo-500/50 cursor-pointer">
               Movies
@@ -56,7 +56,7 @@ export default function TopBar() {
           ) : (
             <Link to="/LoginPage">
               <h2 className="text-lg md:text-xl lg:text-2xl text-indigo-200 transition-transform hover:scale-110 hover:drop-shadow-xl hover:shadow-indigo-500/50 cursor-pointer">
-                Log In/Sign Up
+                Log In
               </h2>
             </Link>
           )}

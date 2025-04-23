@@ -121,14 +121,6 @@ function App() {
                 Lion's Den Cinemas: {location.name}
               </h3>
               <p className="text-gray-300">Opening {location.opening}</p>
-              <Button
-                onClick={() =>
-                  navigate(`/locations/${location.name.toLowerCase()}`)
-                }
-                className="mt-4  text-indigo-400 hover:text-indigo-300! transition-colors duration-300"
-              >
-                Learn More
-              </Button>
             </div>
           ))}
         </section>
