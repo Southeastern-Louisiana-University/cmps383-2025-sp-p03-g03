@@ -158,12 +158,6 @@ function ProfilePage() {
             </label>
             <p className="text-gray-300 text-lg">{displayRole}</p>
           </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-300 mb-1">
-              Account Created
-            </label>
-            <p className="text-gray-300 text-lg">{displayCreatedOn}</p>
-          </div>
         </div>
         <div className="mt-6 text-center">
           <Link
