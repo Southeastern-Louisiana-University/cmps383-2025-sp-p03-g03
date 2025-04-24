@@ -239,7 +239,7 @@ export default function SeatSelection() {
                         ? "bg-green-600 text-white scale-110 shadow-md"
                         : "bg-indigo-600 text-white hover:bg-indigo-500 hover:scale-105 hover:shadow-md"
                     }
-                    ${seat.seatTypeId === 4 ? "ring-2 ring-blue-400" : ""}`}
+                    ${seat.seatTypeId === 4 ? "ring-3 ring-blue-400" : ""}`}
                   style={{
                     left: `calc(50% + ${seat.xPosition}px)`,
                     top: `calc(${seat.yPosition}px - 25%)`,
