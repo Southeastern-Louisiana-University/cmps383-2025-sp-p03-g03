@@ -28,7 +28,6 @@ namespace Selu383.SP25.P03.Api.Controllers
         }
 
         [HttpPost]
-        [Authorize]
         public async Task<ActionResult<UserDto>> CreateUser([FromBody] CreateUserDto dto)
         {
             if (dto.Roles == null || dto.Roles.Length == 0 || !dto.Roles.All(x => roles.Any(y => x == y.Name)))
@@ -55,6 +54,25 @@ namespace Selu383.SP25.P03.Api.Controllers
                 };
             }
             return BadRequest();
+        }
+
+        [HttpGet("current")]
+        [Authorize]
+        public async Task<ActionResult<UserDto>> GetCurrentUser()
+        {
+            var user = await userManager.GetUserAsync(User);
+            if (user == null)
+            {
+                return Unauthorized();
+            }
+
+            var roles = await userManager.GetRolesAsync(user);
+            return Ok(new UserDto
+            {
+                Id = user.Id,
+                UserName = user.UserName,
+                Roles = roles.ToArray()
+            });
         }
     }
 }
