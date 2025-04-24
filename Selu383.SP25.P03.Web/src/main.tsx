@@ -39,6 +39,7 @@ import Privacy from "./routes/Privacy.tsx";
 import ContactPage from "./routes/Contact.tsx";
 import ProfilePage from "./routes/ProfilePage.tsx";
 import SignupPage from "./routes/SignupPage.tsx";
+import CheckoutSuccess from "./routes/CheckoutSuccess.tsx";
 
 const Layout = () => {
   return (
@@ -104,6 +105,10 @@ const router = createBrowserRouter([
       {
         path: "checkout",
         element: <Checkout />,
+      },
+      {
+        path: "/checkout/success",
+        element: <CheckoutSuccess />,
       },
       {
         path: "LoginPage",
