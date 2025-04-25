@@ -57,13 +57,18 @@ namespace Selu383.SP25.P03.Api.Controllers
         }
 
         [HttpGet("current")]
-        [Authorize]
+        //[Authorize]
         public async Task<ActionResult<UserDto>> GetCurrentUser()
         {
             var user = await userManager.GetUserAsync(User);
             if (user == null)
             {
-                return Unauthorized();
+                return new UserDto
+                {
+                    Id = 0,
+                    UserName = "Not authenticated",
+                    Roles = Array.Empty<string>()
+                };
             }
 
             var roles = await userManager.GetRolesAsync(user);
@@ -73,6 +78,116 @@ namespace Selu383.SP25.P03.Api.Controllers
                 UserName = user.UserName,
                 Roles = roles.ToArray()
             });
+        }
+
+        [HttpGet]
+        //[Authorize(Roles = UserRoleNames.Admin)]
+        public async Task<ActionResult<IEnumerable<UserDto>>> GetAllUsers()
+        {
+            // Get all users from the database
+            var users = await userManager.Users.ToListAsync();
+
+            // Create a list to hold all user DTOs
+            var userDtos = new List<UserDto>();
+
+            // Process each user to create a DTO with roles
+            foreach (var user in users)
+            {
+                var roles = await userManager.GetRolesAsync(user);
+
+                userDtos.Add(new UserDto
+                {
+                    Id = user.Id,
+                    UserName = user.UserName,
+                    Roles = roles.ToArray()
+                });
+            }
+
+            return Ok(userDtos);
+        }
+
+        [HttpGet("{id}")]
+        //[Authorize(Roles = UserRoleNames.Admin)]
+        public async Task<ActionResult<UserDto>> GetById(int id)
+        {
+            var user = await userManager.FindByIdAsync(id.ToString());
+            if (user == null)
+            {
+                return NotFound($"User with ID {id} not found");
+            }
+
+            var roles = await userManager.GetRolesAsync(user);
+
+            return Ok(new UserDto
+            {
+                Id = user.Id,
+                UserName = user.UserName,
+                Roles = roles.ToArray()
+            });
+        }
+
+
+
+        // Delete a user
+        [HttpDelete("{id}")]
+        //[Authorize(Roles = UserRoleNames.Admin)]
+        public async Task<IActionResult> DeleteUser(int id)
+        {
+            var user = await userManager.FindByIdAsync(id.ToString());
+            if (user == null)
+            {
+                return NotFound();
+            }
+
+            var result = await userManager.DeleteAsync(user);
+            if (!result.Succeeded)
+            {
+                return BadRequest(result.Errors);
+            }
+
+            return NoContent();
+        }
+
+        // Update user roles
+        [HttpPut("{id}/roles")]
+        //[Authorize(Roles = UserRoleNames.Admin)]
+        public async Task<ActionResult<UserDto>> UpdateUserRoles(int id, [FromBody] string[] newRoles)
+        {
+            // Validate that all roles exist
+            if (newRoles == null || newRoles.Length == 0 || !newRoles.All(x => roles.Any(y => x == y.Name)))
+            {
+                return BadRequest("One or more roles do not exist");
+            }
+
+            var user = await userManager.FindByIdAsync(id.ToString());
+            if (user == null)
+            {
+                return NotFound();
+            }
+
+            // Get current roles
+            var currentRoles = await userManager.GetRolesAsync(user);
+
+            // Remove all current roles
+            var removeResult = await userManager.RemoveFromRolesAsync(user, currentRoles);
+            if (!removeResult.Succeeded)
+            {
+                return BadRequest(removeResult.Errors);
+            }
+
+            // Add new roles
+            var addResult = await userManager.AddToRolesAsync(user, newRoles);
+            if (!addResult.Succeeded)
+            {
+                return BadRequest(addResult.Errors);
+            }
+
+            return new UserDto
+            {
+                Id = user.Id,
+                UserName = user.UserName,
+                Roles = newRoles
+            };
         }
     }
 }

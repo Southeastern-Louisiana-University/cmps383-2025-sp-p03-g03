@@ -32,6 +32,10 @@ import ProductForm from "./BackendClient/Components/Products/ProductForm.tsx";
 import MovieScheduleListPage from "./BackendClient/Components/MovieSchedule/MovieScheduleListPage.tsx";
 import MovieScheduleForm from "./BackendClient/Components/MovieSchedule/MovieScheduleForm.tsx";
 import MovieScheduleAssignments from "./BackendClient/Components/MovieSchedule/MovieScheduleAssignments.tsx";
+import UserListPage from "./BackendClient/Components/Users/UserListPage.tsx";
+import UserForm from "./BackendClient/Components/Users/UserForm.tsx";
+
+
 import ConcessionsPage from "./routes/ConcessionsPage.tsx";
 import About from "./routes/About.tsx";
 import Terms from "./routes/Terms.tsx";
@@ -181,7 +185,24 @@ const router = createBrowserRouter([
             element: <TheaterFormPage />,
           },
         ],
-      },
+        }, 
+        {
+            path: "users",
+            children: [
+                {
+                    index: true,
+                    element: <UserListPage />,
+                },
+                {
+                    path: "new",
+                    element: <UserForm />,
+                },
+                {
+                    path: ":id",
+                    element: <UserForm />,
+                },
+            ],
+        },
       {
         path: "rooms",
         children: [

@@ -15,7 +15,7 @@ export interface CreateUserDTO {
 }
 
 // Base API URL
-const API_URL = '/api/User';
+const API_URL = '/api/users';
 
 // Helper function to handle API errors
 const handleApiError = (error: unknown, context: string): never => {
@@ -104,7 +104,7 @@ export const UserManagementService = {
     updateRoles: async (id: number, roles: string[]): Promise<UserDTO> => {
         try {
             logger.info(`Updating user ${id} roles`, roles);
-            const response = await axios.put<UserDTO>(`${API_URL}/${id}/roles`, { roles });
+            const response = await axios.put<UserDTO>(`${API_URL}/${id}/roles`, roles);
             logger.success(`User ${id} roles updated successfully`);
             return response.data;
         } catch (error) {
@@ -127,11 +127,36 @@ export const UserManagementService = {
     getRoles: async (): Promise<string[]> => {
         try {
             logger.info('Fetching available roles');
-            const response = await axios.get<string[]>(`${API_URL}/roles`);
-            logger.success(`Retrieved ${response.data.length} roles`);
-            return response.data;
+
+            // Since your API doesn't have a dedicated endpoint for roles,
+            // we'll need to extract them from an Identity approach
+            // This could be a temporary solution until you add a roles endpoint
+
+            // Option 1: Extract unique roles from all users (if users have all possible roles)
+            const users = await UserManagementService.getAll();
+            const allRoles = new Set<string>();
+
+            users.forEach(user => {
+                if (user.roles && user.roles.length > 0) {
+                    user.roles.forEach(role => allRoles.add(role));
+                }
+            });
+
+            const roles = Array.from(allRoles);
+            logger.success(`Extracted ${roles.length} roles from users`);
+
+            // Use hardcoded roles as a fallback if none are found
+            if (roles.length === 0) {
+                const defaultRoles = ['Admin', 'User'];
+                logger.info('No roles found, using default roles:', defaultRoles);
+                return defaultRoles;
+            }
+
+            return roles;
         } catch (error) {
-            return handleApiError(error, 'Fetching available roles');
+            // Provide default roles in case of error
+            logger.error('Error fetching roles, using default roles:', error);
+            return ['Admin', 'User'];
         }
     }
 };

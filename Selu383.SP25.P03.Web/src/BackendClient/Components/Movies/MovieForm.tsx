@@ -5,9 +5,8 @@ import {
     MoviePosterService,
     MovieDTO
 } from '../../../Services/MovieService';
-import { Upload, Image, Trash2, Clock, Calendar } from 'lucide-react';
-//import "../../../index.css";
-import "../BackendCSS/Backend.css";
+import { Upload, Image, Trash2, Clock, Calendar, Link as LinkIcon } from 'lucide-react';
+import "../../../index.css";
 
 const MovieFormPage: React.FC = () => {
     const { id: urlId } = useParams<{ id: string }>();
@@ -24,7 +23,9 @@ const MovieFormPage: React.FC = () => {
         runtime: 90,
         isActive: true,
         ageRating: '',
-        releaseDate: new Date()
+        releaseDate: new Date(),
+        previewURL: '',
+        bannerURL: ''
     });
 
     const [isLoading, setIsLoading] = useState(true);
@@ -177,8 +178,6 @@ const MovieFormPage: React.FC = () => {
             setIsDeleting(true);
             setError(null);
 
-            console.warn(currentPosterId)
-
             await MoviePosterService.delete(currentPosterId);
 
             // Clear poster data
@@ -195,7 +194,6 @@ const MovieFormPage: React.FC = () => {
             setIsDeleting(false);
         }
     };
-
 
     // Handle removing the poster preview
     const handleRemovePosterPreview = () => {
@@ -302,7 +300,7 @@ const MovieFormPage: React.FC = () => {
             <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded m-4">
                 <p>{error}</p>
                 <button
-                    className="mt-4 bg-blue-500 text-white px-4 py-2 rounded"
+                    className="mt-4 bg-summit text-white px-4 py-2 rounded"
                     onClick={() => navigate('/admin/movies')}
                 >
                     Return to Movies List
@@ -321,7 +319,7 @@ const MovieFormPage: React.FC = () => {
                     {!isNewMovie && !isEditMode && (
                         <button
                             onClick={() => setIsEditMode(true)}
-                            className="bg-blue-500 text-white px-4 py-2 rounded"
+                            className="bg-emerald-500 text-white px-4 py-2 rounded"
                         >
                             Edit Movie
                         </button>
@@ -475,6 +473,55 @@ const MovieFormPage: React.FC = () => {
                         />
                     </div>
 
+                    {/* URLs Section */}
+                    <div className="space-y-4 pt-4 border-t border-gray-200">
+                        <h2 className="text-lg font-medium">URLs</h2>
+
+                        {/* Preview URL */}
+                        <div>
+                            <label htmlFor="previewURL" className="block text-sm font-medium">
+                                Preview URL
+                            </label>
+                            <div className="relative">
+                                <LinkIcon className="absolute top-3 left-2 h-4 w-4 text-gray-400" />
+                                <input
+                                    type="url"
+                                    id="previewURL"
+                                    name="previewURL"
+                                    value={movie.previewURL || ''}
+                                    onChange={handleInputChange}
+                                    placeholder="https://example.com/preview"
+                                    className="mt-1 block w-full pl-8 border border-gray-300 rounded-md shadow-sm p-2"
+                                />
+                            </div>
+                            <p className="mt-1 text-xs text-gray-500">
+                                URL for the movie trailer or preview video
+                            </p>
+                        </div>
+
+                        {/* Banner URL */}
+                        <div>
+                            <label htmlFor="bannerURL" className="block text-sm font-medium">
+                                Banner URL
+                            </label>
+                            <div className="relative">
+                                <LinkIcon className="absolute top-3 left-2 h-4 w-4 text-gray-400" />
+                                <input
+                                    type="url"
+                                    id="bannerURL"
+                                    name="bannerURL"
+                                    value={movie.bannerURL || ''}
+                                    onChange={handleInputChange}
+                                    placeholder="https://example.com/banner"
+                                    className="mt-1 block w-full pl-8 border border-gray-300 rounded-md shadow-sm p-2"
+                                />
+                            </div>
+                            <p className="mt-1 text-xs text-gray-500">
+                                URL for the movie banner image
+                            </p>
+                        </div>
+                    </div>
+
                     {/* Movie Poster Upload */}
                     <div className="mt-6 p-4 border border-gray-200 rounded-md">
                         <h2 className="text-lg font-medium mb-3">Movie Poster</h2>
@@ -508,6 +555,7 @@ const MovieFormPage: React.FC = () => {
                                             <div className="absolute top-2 right-2 ">
                                                     {currentPosterId && (
                                                         <button
+                                                            type="button"
                                                             onClick={handleDeleteCurrentPoster}
                                                             disabled={isDeleting}
                                                             className="inline-flex items-center px-3 py-1 border border-red-300 shadow-sm text-sm leading-4 font-medium rounded-md text-red-700 bg-white hover:bg-red-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
@@ -605,14 +653,14 @@ const MovieFormPage: React.FC = () => {
                                     setIsEditMode(false);
                                 }
                             }}
-                            className="bg-gray-300 text-gray-800 px-4 py-2 rounded"
+                            className="bg-emerald-600 text-white px-4 py-2 rounded"
                             disabled={isSaving}
                         >
                             {isNewMovie ? 'Cancel' : 'Back to View'}
                         </button>
                         <button
                             type="submit"
-                            className="bg-blue-600 text-white px-4 py-2 rounded"
+                            className="bg-summit text-white px-4 py-2 rounded"
                             disabled={isSaving}
                         >
                             {isSaving ? 'Saving...' : isNewMovie ? 'Create Movie' : 'Save Changes'}
@@ -668,63 +716,104 @@ const MovieFormPage: React.FC = () => {
                         </div>
                     </div>
 
-                    {/* Movie Poster */}
-                        <div className="bg-gray-50 p-4 rounded-lg shadow-sm">
-                            <div className="flex justify-between items-center mb-3">
-                                <h2 className="text-lg font-medium">Movie Poster</h2>
-                                {currentPosterId && (
-                                    <button
-                                        onClick={handleDeleteCurrentPoster}
-                                        disabled={isDeleting}
-                                        className="inline-flex items-center px-3 py-1 border border-red-300 shadow-sm text-sm leading-4 font-medium rounded-md text-red-700 bg-white hover:bg-red-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
+                    {/* URLs Section */}
+                    <div className="bg-gray-50 p-4 rounded-lg shadow-sm">
+                        <h2 className="text-lg font-medium mb-3">URLs</h2>
+
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                <h3 className="text-sm text-gray-500">Preview URL</h3>
+                                {movie.previewURL ? (
+                                    <a 
+                                        href={movie.previewURL} 
+                                        target="_blank" 
+                                        rel="noopener noreferrer"
+                                        className="text-blue-600 hover:underline flex items-center"
                                     >
-                                        <Trash2 className="h-4 w-4 mr-1" />
-                                        {isDeleting ? 'Deleting...' : 'Delete Poster'}
-                                    </button>
+                                        <LinkIcon className="h-4 w-4 mr-1" />
+                                        {movie.previewURL}
+                                    </a>
+                                ) : (
+                                    <p className="text-gray-400 italic">Not specified</p>
                                 )}
                             </div>
 
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                <div>
-                                    {currentPoster ? (
-                                        <div className="border rounded-md p-2 h-60 flex items-center justify-center bg-gray-50">
-                                            <img
-                                                src={currentPoster}
-                                                alt="Movie poster"
-                                                className="object-contain h-full w-full"
-                                            />
-                                        </div>
-                                    ) : (
-                                        <div className="border rounded-md p-2 h-60 flex items-center justify-center bg-gray-50">
-                                            <div className="text-center text-gray-500">
-                                                <Image className="h-12 w-12 mx-auto mb-2" />
-                                                <p>No poster available</p>
-                                            </div>
-                                        </div>
-                                    )}
-                                </div>
-
-                                <div>
-                                    <div>
-                                        <h3 className="text-sm text-gray-500">Poster Name</h3>
-                                        <p>{posterName || <span className="text-gray-400 italic">Not specified</span>}</p>
-                                    </div>
-
-                                    {posterDescription && (
-                                        <div className="mt-4">
-                                            <h3 className="text-sm text-gray-500">Poster Description</h3>
-                                            <p>{posterDescription}</p>
-                                        </div>
-                                    )}
-                                </div>
+                            <div>
+                                <h3 className="text-sm text-gray-500">Banner URL</h3>
+                                {movie.bannerURL ? (
+                                    <a 
+                                        href={movie.bannerURL} 
+                                        target="_blank" 
+                                        rel="noopener noreferrer"
+                                        className="text-blue-600 hover:underline flex items-center"
+                                    >
+                                        <LinkIcon className="h-4 w-4 mr-1" />
+                                        {movie.bannerURL}
+                                    </a>
+                                ) : (
+                                    <p className="text-gray-400 italic">Not specified</p>
+                                )}
                             </div>
                         </div>
+                    </div>
+
+                    {/* Movie Poster */}
+                    <div className="bg-gray-50 p-4 rounded-lg shadow-sm">
+                        <div className="flex justify-between items-center mb-3">
+                            <h2 className="text-lg font-medium">Movie Poster</h2>
+                            {currentPosterId && (
+                                <button
+                                    onClick={handleDeleteCurrentPoster}
+                                    disabled={isDeleting}
+                                    className="inline-flex items-center px-3 py-1 border border-red-300 shadow-sm text-sm leading-4 font-medium rounded-md text-red-700 bg-white hover:bg-red-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
+                                >
+                                    <Trash2 className="h-4 w-4 mr-1" />
+                                    {isDeleting ? 'Deleting...' : 'Delete Poster'}
+                                </button>
+                            )}
+                        </div>
+
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div>
+                                {currentPoster ? (
+                                    <div className="border rounded-md p-2 h-60 flex items-center justify-center bg-gray-50">
+                                        <img
+                                            src={currentPoster}
+                                            alt="Movie poster"
+                                            className="object-contain h-full w-full"
+                                        />
+                                    </div>
+                                ) : (
+                                    <div className="border rounded-md p-2 h-60 flex items-center justify-center bg-gray-50">
+                                        <div className="text-center text-gray-500">
+                                            <Image className="h-12 w-12 mx-auto mb-2" />
+                                            <p>No poster available</p>
+                                        </div>
+                                    </div>
+                                )}
+                            </div>
+
+                            <div>
+                                <div>
+                                    <h3 className="text-sm text-gray-500">Poster Name</h3>
+                                    <p>{posterName || <span className="text-gray-400 italic">Not specified</span>}</p>
+                                </div>
+
+                                {posterDescription && (
+                                    <div className="mt-4">
+                                        <h3 className="text-sm text-gray-500">Poster Description</h3>
+                                        <p>{posterDescription}</p>
+                                    </div>
+                                )}
+                            </div>
+                        </div>
+                    </div>
 
                     {/* Back button */}
                     <div className="flex justify-end mt-6">
                         <button
                             onClick={() => navigate('/admin/movies')}
-                            className="bg-blue-600 text-white px-4 py-2 rounded"
+                            className="bg-summit text-white px-4 py-2 rounded"
                         >
                             Back to Movies
                         </button>

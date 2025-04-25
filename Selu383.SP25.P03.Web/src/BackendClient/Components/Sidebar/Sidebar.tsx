@@ -157,32 +157,40 @@ const Sidebar: React.FC = () => {
                             </li>
 
                             <li className="items-center">
+                                <Link className={getNavLinkClass("/admin/users")} to="/admin/users">
+                                    <i className={`fas fa-user-friends mr-2 text-sm ${getIconClass("/admin/users")}`}></i>{" "}
+                                    Users
+                                </Link>
+                            </li>
+                        </ul>
+
+                        <hr className="my-4 md:min-w-full" />
+                        <h6 className="md:min-w-full text-blueGray-500 text-xs uppercase font-bold block pt-1 pb-4 no-underline">
+                            eCommerce
+                        </h6>
+                        <ul className="md:flex-col md:min-w-full flex flex-col list-none md:mb-4">
+                            <li className="items-center">
+                                <Link className={getNavLinkClass("/admin/customers")} to="/admin/customers">
+                                    <i className={`fas fa-user-friends mr-2 text-sm ${getIconClass("/admin/customers")}`}></i>{" "}
+                                    Customers
+                                </Link>
+                            </li>
+
+
+                            <li className="items-center">
                                 <Link className={getNavLinkClass("/admin/products")} to="/admin/products">
                                     <i className={`fas fa-users mr-2 text-sm ${getIconClass("/admin/products")}`}></i>{" "}
                                     Products
                                 </Link>
                             </li>
+
+                            <li className="items-center">
+                                <Link className={getNavLinkClass("/admin/orders")} to="/admin/orders">
+                                    <i className={`fas fa-clipboard-list mr-2 text-sm ${getIconClass("/admin/orders")}`}></i>{" "}
+                                    Orders
+                                </Link>
+                            </li>
                         </ul>
-
-                        {/*<hr className="my-4 md:min-w-full" />*/}
-                        {/*<h6 className="md:min-w-full text-blueGray-500 text-xs uppercase font-bold block pt-1 pb-4 no-underline">*/}
-                        {/*    eCommerce*/}
-                        {/*</h6>*/}
-                        {/*<ul className="md:flex-col md:min-w-full flex flex-col list-none md:mb-4">*/}
-                        {/*    <li className="items-center">*/}
-                        {/*        <Link className={getNavLinkClass("/admin/customers")} to="/admin/customers">*/}
-                        {/*            <i className={`fas fa-user-friends mr-2 text-sm ${getIconClass("/admin/customers")}`}></i>{" "}*/}
-                        {/*            Customers*/}
-                        {/*        </Link>*/}
-                        {/*    </li>*/}
-
-                        {/*    <li className="items-center">*/}
-                        {/*        <Link className={getNavLinkClass("/admin/orders")} to="/admin/orders">*/}
-                        {/*            <i className={`fas fa-clipboard-list mr-2 text-sm ${getIconClass("/admin/orders")}`}></i>{" "}*/}
-                        {/*            Orders*/}
-                        {/*        </Link>*/}
-                        {/*    </li>*/}
-                        {/*</ul>*/}
 
                         {/*<hr className="my-4 md:min-w-full" />*/}
                         {/*<h6 className="md:min-w-full text-blueGray-500 text-xs uppercase font-bold block pt-1 pb-4 no-underline">*/}
