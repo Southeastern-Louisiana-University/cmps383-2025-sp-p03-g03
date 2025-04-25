@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Selu383.SP25.P03.Api.Data;
 using Selu383.SP25.P03.Api.Features.Movies;
+using Microsoft.EntityFrameworkCore;
 
 namespace Selu383.SP25.P03.Api.Controllers
 {
@@ -23,6 +24,18 @@ namespace Selu383.SP25.P03.Api.Controllers
         public override Task<ActionResult<MovieDto>> GetById(int id)
         {
             return base.GetById(id);
+        }
+        
+        [HttpGet]
+        [Route("Active")]
+        [AllowAnonymous]
+        public async Task<ActionResult<IEnumerable<Movie>>> GetActiveMovies()
+        {
+            var activeMovies = await _context.Set<Movie>()
+                .Where(ut => ut.IsActive == true)
+                .ToListAsync();
+
+            return activeMovies;
         }
     }
 }

@@ -1,8 +1,11 @@
+
 import React, { useState, useEffect } from 'react';
 import { RoomService, RoomDTO } from '../../../Services/RoomService';
 import { TheaterService, TheaterDTO } from '../../../Services/TheaterService';
+import { SeatService, SeatTypeService, SeatTypeDTO } from '../../../Services/SeatService';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import "../BackendCSS/Backend.css";
+import axios from 'axios';
 
 const RoomFormPage: React.FC = () => {
     const { id: roomId, theaterId } = useParams<{ id: string, theaterId: string }>();
@@ -27,11 +30,16 @@ const RoomFormPage: React.FC = () => {
 
     const [theater, setTheater] = useState<TheaterDTO | null>(null);
     const [theaters, setTheaters] = useState<TheaterDTO[]>([]);
+    const [seatTypes, setSeatTypes] = useState<SeatTypeDTO[]>([]);
+    const [defaultSeatTypeId, setDefaultSeatTypeId] = useState<number>(1);
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
     const [isSaving, setIsSaving] = useState(false);
+    const [isGeneratingSeats, setIsGeneratingSeats] = useState(false);
     const [successMessage, setSuccessMessage] = useState<string | null>(null);
     const [isEditMode, setIsEditMode] = useState(isNewRoom);
+    const [originalRows, setOriginalRows] = useState(0);
+    const [originalColumns, setOriginalColumns] = useState(0);
 
     // Helper function to calculate number of seats
     const calculateNumOfSeats = (rows: number, columns: number) => {
@@ -44,6 +52,18 @@ const RoomFormPage: React.FC = () => {
             try {
                 setIsLoading(true);
                 setError(null);
+
+                // Load seat types
+                try {
+                    const seatTypesData = await SeatTypeService.getAll();
+                    setSeatTypes(seatTypesData);
+                    if (seatTypesData.length > 0) {
+                        setDefaultSeatTypeId(seatTypesData[0].id);
+                    }
+                } catch (err) {
+                    console.error('Error loading seat types:', err);
+                    // Don't fail completely if seat types can't be loaded
+                }
 
                 // If a theater ID was provided, load that theater's details
                 if (theaterIdNum) {
@@ -72,6 +92,8 @@ const RoomFormPage: React.FC = () => {
                 if (!isNewRoom) {
                     const roomData = await RoomService.getById(roomIdNum);
                     setRoom(roomData);
+                    setOriginalRows(roomData.rows);
+                    setOriginalColumns(roomData.columns);
 
                     // If room has a theater ID and we don't already have theater data
                     if (roomData.theaterId && !theaterIdNum) {
@@ -141,6 +163,20 @@ const RoomFormPage: React.FC = () => {
         setRoom(prev => ({ ...prev, [name]: value }));
     };
 
+    // Generate seats for a room
+    const generateSeats = async (roomId: number, rows: number, columns: number): Promise<boolean> => {
+        try {
+            setIsGeneratingSeats(true);
+            await SeatService.generateSeatsForRoom(roomId, rows, columns, defaultSeatTypeId);
+            return true;
+        } catch (error) {
+            console.error('Error generating seats:', error);
+            return false;
+        } finally {
+            setIsGeneratingSeats(false);
+        }
+    };
+
     // Handle form submission
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -157,21 +193,56 @@ const RoomFormPage: React.FC = () => {
                 return;
             }
 
+            // Create a properly formatted room object for API
+            const roomToSubmit: RoomDTO = {
+                id: room.id, // Always include id (will be 0 for new rooms)
+                name: room.name || "",
+                numOfSeats: room.numOfSeats,
+                rows: room.rows,
+                columns: room.columns,
+                screenType: room.screenType || "",
+                audio: room.audio || "",
+                isActive: room.isActive,
+                isPremium: room.isPremium,
+                timeToClean: room.timeToClean,
+                theaterId: room.theaterId
+            };
+
+            // Log for debugging
+            console.log('Submitting room data:', roomToSubmit);
+
             let result;
+            let shouldGenerateSeats = false;
+
             if (isNewRoom) {
                 // Create new room
-                result = await RoomService.create(room);
+                result = await RoomService.create(roomToSubmit);
+                shouldGenerateSeats = true;
                 setSuccessMessage('Room created successfully!');
             } else {
                 // Update existing room
-                result = await RoomService.update(roomIdNum, room);
+                result = await RoomService.update(roomIdNum, roomToSubmit);
+                // Only generate seats if rows or columns have changed
+                shouldGenerateSeats = (room.rows !== originalRows || room.columns !== originalColumns);
                 setSuccessMessage('Room updated successfully!');
                 setIsEditMode(false);
             }
 
             // If we've created a new room, update our state with the returned data
-            if (isNewRoom && result) {
-                setRoom(result);
+            if (result) {
+                const updatedRoom = result;
+                setRoom(updatedRoom);
+
+                // Generate seats if needed
+                if (shouldGenerateSeats) {
+                    setSuccessMessage(prev => prev + ' Generating seats...');
+                    const seatsGenerated = await generateSeats(updatedRoom.id, updatedRoom.rows, updatedRoom.columns);
+                    if (seatsGenerated) {
+                        setSuccessMessage(prev => prev + ' Seats generated successfully!');
+                    } else {
+                        setSuccessMessage(prev => prev + ' Failed to generate seats. Please check the room configuration.');
+                    }
+                }
             }
 
             // Redirect back to appropriate list after a delay
@@ -183,9 +254,23 @@ const RoomFormPage: React.FC = () => {
                 }
             }, 2000);
 
-        } catch (err) {
-            setError(isNewRoom ? 'Failed to create room.' : 'Failed to update room.');
-            console.error('Error saving room:', err);
+        } catch (error: unknown) {
+            // Enhanced error handling with proper typing
+            if (axios.isAxiosError(error)) {
+                if (error.response) {
+                    console.error('API Error Response:', error.response.data);
+                    setError(`Failed to ${isNewRoom ? 'create' : 'update'} room. Server returned: ${error.response.status} ${error.response.statusText}`);
+                } else if (error.request) {
+                    console.error('No response received:', error.request);
+                    setError(`Failed to ${isNewRoom ? 'create' : 'update'} room. No response received from server.`);
+                } else {
+                    console.error('Error setting up request:', error.message);
+                    setError(`Failed to ${isNewRoom ? 'create' : 'update'} room. Error setting up request.`);
+                }
+            } else {
+                setError(isNewRoom ? 'Failed to create room.' : 'Failed to update room.');
+                console.error('Error saving room:', error);
+            }
         } finally {
             setIsSaving(false);
         }
@@ -341,6 +426,11 @@ const RoomFormPage: React.FC = () => {
                                     min="1"
                                     required
                                 />
+                                {!isNewRoom && originalRows !== room.rows && (
+                                    <p className="text-xs text-amber-600 mt-1">
+                                        Changing this will regenerate all seats
+                                    </p>
+                                )}
                             </div>
 
                             <div>
@@ -357,6 +447,11 @@ const RoomFormPage: React.FC = () => {
                                     min="1"
                                     required
                                 />
+                                {!isNewRoom && originalColumns !== room.columns && (
+                                    <p className="text-xs text-amber-600 mt-1">
+                                        Changing this will regenerate all seats
+                                    </p>
+                                )}
                             </div>
 
                             <div>
@@ -446,6 +541,42 @@ const RoomFormPage: React.FC = () => {
                         </div>
                     </div>
 
+                    {/* Seat Generation Note */}
+                    {!isNewRoom && (originalRows !== room.rows || originalColumns !== room.columns) && (
+                        <div className="bg-blue-50 p-4 rounded-lg shadow-sm">
+                            <h3 className="text-md font-medium text-blue-800 mb-2">Seat Configuration Change</h3>
+                            <p className="text-sm">
+                                You've changed the room dimensions from {originalRows}x{originalColumns} to {room.rows}x{room.columns}.
+                                When you save, all existing seats for this room will be deleted and new ones will be generated.
+                            </p>
+                        </div>
+                    )}
+
+                    {/* Seat Type Selection */}
+                    <div className="space-y-4">
+                        <h2 className="text-lg font-medium">Seat Configuration</h2>
+
+                        <div>
+                            <label htmlFor="defaultSeatTypeId" className="block text-sm font-medium">
+                                Default Seat Type
+                            </label>
+                            <select
+                                id="defaultSeatTypeId"
+                                value={defaultSeatTypeId}
+                                onChange={(e) => setDefaultSeatTypeId(parseInt(e.target.value))}
+                                className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
+                            >
+                                {seatTypes.map(type => (
+                                    <option key={type.id} value={type.id}>{type.seatTypes}</option>
+                                ))}
+                            </select>
+                            <p className="text-xs text-gray-500 mt-1">
+                                This seat type will be used for all seats when they are created initially.
+                                You can change individual seat types after creation.
+                            </p>
+                        </div>
+                    </div>
+
                     {/* Form Buttons */}
                     <div className="flex justify-end space-x-4 pt-4">
                         <button
@@ -462,16 +593,18 @@ const RoomFormPage: React.FC = () => {
                                 }
                             }}
                             className="bg-emerald-600 text-white px-4 py-2 rounded"
-                            disabled={isSaving}
+                            disabled={isSaving || isGeneratingSeats}
                         >
                             {isNewRoom ? 'Cancel' : 'Back to View'}
                         </button>
                         <button
                             type="submit"
                             className="bg-summit text-white px-4 py-2 rounded"
-                            disabled={isSaving}
+                            disabled={isSaving || isGeneratingSeats}
                         >
-                            {isSaving ? 'Saving...' : isNewRoom ? 'Create Room' : 'Save Changes'}
+                            {isSaving ? 'Saving...' :
+                                isGeneratingSeats ? 'Generating Seats...' :
+                                    isNewRoom ? 'Create Room' : 'Save Changes'}
                         </button>
                     </div>
                 </form>
@@ -545,6 +678,26 @@ const RoomFormPage: React.FC = () => {
                         <div>
                             <h3 className="text-sm text-gray-500">Cleaning Time</h3>
                             <p>{room.timeToClean} minutes</p>
+                        </div>
+                    </div>
+
+                    {/* Seat Management Section */}
+                    <div className="bg-gray-50 p-4 rounded-lg shadow-sm">
+                        <h2 className="text-lg font-medium mb-3">Seat Management</h2>
+
+                        <div className="flex justify-between items-center">
+                            <div>
+                                <p className="text-sm text-gray-700">
+                                    This room has {room.numOfSeats} seats in a {room.rows}x{room.columns} configuration.
+                                </p>
+                            </div>
+
+                            <button
+                                onClick={() => navigate(`/admin/rooms/${room.id}/seats`)}
+                                className="bg-blue-600 text-white px-3 py-1 rounded text-sm"
+                            >
+                                Manage Seats
+                            </button>
                         </div>
                     </div>
 

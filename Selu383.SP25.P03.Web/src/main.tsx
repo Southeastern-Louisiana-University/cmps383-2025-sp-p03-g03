@@ -32,11 +32,18 @@ import ProductForm from "./BackendClient/Components/Products/ProductForm.tsx";
 import MovieScheduleListPage from "./BackendClient/Components/MovieSchedule/MovieScheduleListPage.tsx";
 import MovieScheduleForm from "./BackendClient/Components/MovieSchedule/MovieScheduleForm.tsx";
 import MovieScheduleAssignments from "./BackendClient/Components/MovieSchedule/MovieScheduleAssignments.tsx";
+import UserListPage from "./BackendClient/Components/Users/UserListPage.tsx";
+import UserForm from "./BackendClient/Components/Users/UserForm.tsx";
+import SeatManagement from "./BackendClient/Components/Seats/SeatManagement.tsx";
+
 import ConcessionsPage from "./routes/ConcessionsPage.tsx";
 import About from "./routes/About.tsx";
 import Terms from "./routes/Terms.tsx";
 import Privacy from "./routes/Privacy.tsx";
 import ContactPage from "./routes/Contact.tsx";
+import ProfilePage from "./routes/ProfilePage.tsx";
+import SignupPage from "./routes/SignupPage.tsx";
+import CheckoutSuccess from "./routes/CheckoutSuccess.tsx";
 
 const Layout = () => {
   return (
@@ -104,6 +111,10 @@ const router = createBrowserRouter([
         element: <Checkout />,
       },
       {
+        path: "/checkout/success",
+        element: <CheckoutSuccess />,
+      },
+      {
         path: "LoginPage",
         element: <LoginPage />,
       },
@@ -130,6 +141,14 @@ const router = createBrowserRouter([
       {
         path: "contact",
         element: <ContactPage />,
+      },
+      {
+        path: "profile",
+        element: <ProfilePage />,
+      },
+      {
+        path: "signup",
+        element: <SignupPage />,
       },
     ],
   },
@@ -166,24 +185,45 @@ const router = createBrowserRouter([
             element: <TheaterFormPage />,
           },
         ],
-      },
-      {
-        path: "rooms",
-        children: [
-          {
-            index: true,
-            element: <RoomListPage />,
-          },
-          {
-            path: "new",
-            element: <RoomFormPage />,
-          },
-          {
-            path: ":id",
-            element: <RoomFormPage />,
-          },
-        ],
-      },
+        }, 
+        {
+            path: "users",
+            children: [
+                {
+                    index: true,
+                    element: <UserListPage />,
+                },
+                {
+                    path: "new",
+                    element: <UserForm />,
+                },
+                {
+                    path: ":id",
+                    element: <UserForm />,
+                },
+            ],
+        },
+        {
+            path: "rooms",
+            children: [
+                {
+                    index: true,
+                    element: <RoomListPage />,
+                },
+                {
+                    path: "new",
+                    element: <RoomFormPage />,
+                },
+                {
+                    path: ":id",
+                    element: <RoomFormPage />,
+                },
+                {
+                    path: ":roomId/seats",
+                    element: <SeatManagement />,
+                },
+            ],
+        },
       {
         path: "movies",
         children: [
