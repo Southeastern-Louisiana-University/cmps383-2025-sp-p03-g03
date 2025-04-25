@@ -1,6 +1,6 @@
 import { useLocation, useNavigate } from "react-router-dom";
 import { Button } from "@headlessui/react";
-import { ArrowLeftIcon, CheckCircleIcon } from "@heroicons/react/24/outline";
+import { ArrowLeftIcon } from "@heroicons/react/24/outline";
 import { useState, useEffect } from "react";
 import { useAuth } from "../components/authContext";
 import axios from "axios";
