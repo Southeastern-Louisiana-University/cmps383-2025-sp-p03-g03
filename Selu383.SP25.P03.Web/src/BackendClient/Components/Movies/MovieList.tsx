@@ -193,7 +193,7 @@ const MovieList: React.FC<MovieListProps> = ({ movies = [] }) => {
                                     </td>
                                     <td className="px-6 py-4 text-sm font-medium">
                                         <Link
-                                            to={`/admin/movies/${movie.id}/edit`}
+                                            to={`/admin/movies/${movie.id}`}
                                             className="text-blue-600 hover:text-blue-900"
                                         >
                                             <Edit className="h-5 w-5" />

@@ -106,19 +106,19 @@ const Sidebar: React.FC = () => {
                                 </Link>
                             </li>
 
-                            <li className="items-center">
-                                <Link className={getNavLinkClass("/admin/products")} to="/admin/products">
-                                    <i className={`fas fa-shopping-bag mr-2 text-sm ${getIconClass("/admin/products")}`}></i>{" "}
-                                    Products
-                                </Link>
-                            </li>
+                            {/*<li className="items-center">*/}
+                            {/*    <Link className={getNavLinkClass("/admin/products")} to="/admin/products">*/}
+                            {/*        <i className={`fas fa-shopping-bag mr-2 text-sm ${getIconClass("/admin/products")}`}></i>{" "}*/}
+                            {/*        Products*/}
+                            {/*    </Link>*/}
+                            {/*</li>*/}
 
-                            <li className="items-center">
-                                <Link className={getNavLinkClass("/admin/settings")} to="/admin/settings">
-                                    <i className={`fas fa-tools mr-2 text-sm ${getIconClass("/admin/settings")}`}></i>{" "}
-                                    Settings
-                                </Link>
-                            </li>
+                            {/*<li className="items-center">*/}
+                            {/*    <Link className={getNavLinkClass("/admin/settings")} to="/admin/settings">*/}
+                            {/*        <i className={`fas fa-tools mr-2 text-sm ${getIconClass("/admin/settings")}`}></i>{" "}*/}
+                            {/*        Settings*/}
+                            {/*    </Link>*/}
+                            {/*</li>*/}
 
                             <li className="items-center">
                                 <Link className={getNavLinkClass("/admin/theaters")} to="/admin/theaters">
@@ -149,11 +149,17 @@ const Sidebar: React.FC = () => {
                                 </Link>
                             </li>
 
+                            <li className="items-center">
+                                <Link className={getNavLinkClass("/admin/movieschedules")} to="/admin/movieschedules">
+                                    <i className={`fas fa-users mr-2 text-sm ${getIconClass("/admin/movieschedules")}`}></i>{" "}
+                                    Movie Schedules
+                                </Link>
+                            </li>
 
                             <li className="items-center">
-                                <Link className={getNavLinkClass("/admin/products")} to="/admin/products">
-                                    <i className={`fas fa-users mr-2 text-sm ${getIconClass("/admin/products")}`}></i>{" "}
-                                    Products
+                                <Link className={getNavLinkClass("/admin/users")} to="/admin/users">
+                                    <i className={`fas fa-user-friends mr-2 text-sm ${getIconClass("/admin/users")}`}></i>{" "}
+                                    Users
                                 </Link>
                             </li>
                         </ul>
@@ -170,6 +176,14 @@ const Sidebar: React.FC = () => {
                                 </Link>
                             </li>
 
+
+                            <li className="items-center">
+                                <Link className={getNavLinkClass("/admin/products")} to="/admin/products">
+                                    <i className={`fas fa-users mr-2 text-sm ${getIconClass("/admin/products")}`}></i>{" "}
+                                    Products
+                                </Link>
+                            </li>
+
                             <li className="items-center">
                                 <Link className={getNavLinkClass("/admin/orders")} to="/admin/orders">
                                     <i className={`fas fa-clipboard-list mr-2 text-sm ${getIconClass("/admin/orders")}`}></i>{" "}
@@ -178,53 +192,53 @@ const Sidebar: React.FC = () => {
                             </li>
                         </ul>
 
-                        <hr className="my-4 md:min-w-full" />
-                        <h6 className="md:min-w-full text-blueGray-500 text-xs uppercase font-bold block pt-1 pb-4 no-underline">
-                            Auth Layout Pages
-                        </h6>
+                        {/*<hr className="my-4 md:min-w-full" />*/}
+                        {/*<h6 className="md:min-w-full text-blueGray-500 text-xs uppercase font-bold block pt-1 pb-4 no-underline">*/}
+                        {/*    Auth Layout Pages*/}
+                        {/*</h6>*/}
 
-                        <ul className="md:flex-col md:min-w-full flex flex-col list-none md:mb-4">
-                            <li className="items-center">
-                                <Link className={getNavLinkClass("/auth/login")} to="/auth/login">
-                                    <i className={`fas fa-fingerprint mr-2 text-sm ${getIconClass("/auth/login")}`}></i>{" "}
-                                    Login
-                                </Link>
-                            </li>
+                        {/*<ul className="md:flex-col md:min-w-full flex flex-col list-none md:mb-4">*/}
+                        {/*    <li className="items-center">*/}
+                        {/*        <Link className={getNavLinkClass("/auth/login")} to="/auth/login">*/}
+                        {/*            <i className={`fas fa-fingerprint mr-2 text-sm ${getIconClass("/auth/login")}`}></i>{" "}*/}
+                        {/*            Login*/}
+                        {/*        </Link>*/}
+                        {/*    </li>*/}
 
-                            <li className="items-center">
-                                <Link className={getNavLinkClass("/auth/register")} to="/auth/register">
-                                    <i className={`fas fa-clipboard-list mr-2 text-sm ${getIconClass("/auth/register")}`}></i>{" "}
-                                    Register
-                                </Link>
-                            </li>
-                        </ul>
+                        {/*    <li className="items-center">*/}
+                        {/*        <Link className={getNavLinkClass("/auth/register")} to="/auth/register">*/}
+                        {/*            <i className={`fas fa-clipboard-list mr-2 text-sm ${getIconClass("/auth/register")}`}></i>{" "}*/}
+                        {/*            Register*/}
+                        {/*        </Link>*/}
+                        {/*    </li>*/}
+                        {/*</ul>*/}
 
-                        <hr className="my-4 md:min-w-full" />
-                        <h6 className="md:min-w-full text-blueGray-500 text-xs uppercase font-bold block pt-1 pb-4 no-underline">
-                            No Layout Pages
-                        </h6>
+                        {/*<hr className="my-4 md:min-w-full" />*/}
+                        {/*<h6 className="md:min-w-full text-blueGray-500 text-xs uppercase font-bold block pt-1 pb-4 no-underline">*/}
+                        {/*    No Layout Pages*/}
+                        {/*</h6>*/}
 
-                        <ul className="md:flex-col md:min-w-full flex flex-col list-none md:mb-4">
-                            <li className="items-center">
-                                <Link
-                                    className={getNavLinkClass("/landing")}
-                                    to="/landing"
-                                >
-                                    <i className={`fas fa-newspaper mr-2 text-sm ${getIconClass("/landing")}`}></i>{" "}
-                                    Landing Page
-                                </Link>
-                            </li>
+                        {/*<ul className="md:flex-col md:min-w-full flex flex-col list-none md:mb-4">*/}
+                        {/*    <li className="items-center">*/}
+                        {/*        <Link*/}
+                        {/*            className={getNavLinkClass("/landing")}*/}
+                        {/*            to="/landing"*/}
+                        {/*        >*/}
+                        {/*            <i className={`fas fa-newspaper mr-2 text-sm ${getIconClass("/landing")}`}></i>{" "}*/}
+                        {/*            Landing Page*/}
+                        {/*        </Link>*/}
+                        {/*    </li>*/}
 
-                            <li className="items-center">
-                                <Link
-                                    className={getNavLinkClass("/profile")}
-                                    to="/profile"
-                                >
-                                    <i className={`fas fa-user-circle mr-2 text-sm ${getIconClass("/profile")}`}></i>{" "}
-                                    Profile Page
-                                </Link>
-                            </li>
-                        </ul>
+                        {/*    <li className="items-center">*/}
+                        {/*        <Link*/}
+                        {/*            className={getNavLinkClass("/profile")}*/}
+                        {/*            to="/profile"*/}
+                        {/*        >*/}
+                        {/*            <i className={`fas fa-user-circle mr-2 text-sm ${getIconClass("/profile")}`}></i>{" "}*/}
+                        {/*            Profile Page*/}
+                        {/*        </Link>*/}
+                        {/*    </li>*/}
+                        {/*</ul>*/}
                     </div>
                 </div>
             </nav>
