@@ -92,7 +92,7 @@ function MovieDetails() {
           await Promise.all([
             fetch(`/api/movie/${movieId}`),
             fetch(`/api/MoviePoster/GetByMovieId/${movieId}`),
-            fetch("/api/theaters"),
+            fetch("/api/theaters/Active"),
           ]);
 
         if (!movieResponse.ok)
@@ -376,7 +376,7 @@ function MovieDetails() {
             <>
               <Button
                 onClick={() => setShowVideo(!showVideo)}
-                className="mt-4 flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white py-3 px-6 rounded-lg transition-all duration-300 shadow-md hover:shadow-lg w-fit"
+                className="mt-4 flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white py-3 px-6 rounded-lg transition-all duration-300 shadow-md hover:shadow-lg cursor-pointer w-fit"
               >
                 {showVideo ? "Hide Trailer" : "Watch Trailer"}
                 <PlayCircleIcon className="h-5 w-5" />
@@ -403,7 +403,7 @@ function MovieDetails() {
           )}
           <Button
             onClick={handleShowtimesClick}
-            className="mt-6 flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white py-3 px-6 rounded-lg transition-all duration-300 shadow-md hover:shadow-lg w-fit"
+            className="mt-6 flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white py-3 px-6 rounded-lg transition-all duration-300 shadow-md hover:shadow-lg cursor-pointer w-fit"
           >
             {theaterId ? "Show Showtimes" : "Select Theater"}
             <TicketIcon className="h-5 w-5" />
@@ -478,7 +478,7 @@ function MovieDetails() {
                             showtime.room
                           )
                         }
-                        className="mt-3 w-full bg-indigo-600 hover:bg-indigo-700 text-white py-2 rounded transition-all duration-300 shadow-md hover:shadow-lg"
+                        className="mt-3 w-full bg-indigo-600 hover:bg-indigo-700 text-white py-2 rounded transition-all duration-300 shadow-md hover:shadow-lg cursor-pointer"
                         disabled={!showtime.room || !showtime.room.id}
                       >
                         Select Seats

@@ -29,7 +29,7 @@ function TheatreChoice() {
     const fetchTheaters = async () => {
       try {
         setLoading(true);
-        const response = await fetch("/api/theaters");
+        const response = await fetch("/api/theaters/active");
         if (!response.ok) throw new Error("Failed to load theaters");
         const data = await response.json();
         setTheaters(data);
@@ -67,7 +67,7 @@ function TheatreChoice() {
           <p className="text-gray-300 mt-2">{error}</p>
           <Button
             onClick={() => window.location.reload()}
-            className="mt-4 bg-indigo-700! hover:bg-indigo-600! text-white py-2 px-4 rounded-lg transition-colors duration-300"
+            className="mt-4 bg-indigo-700! hover:bg-indigo-600! text-white py-2 px-4 rounded-lg transition-colors duration-300 cursor-pointer"
           >
             Try Again
           </Button>
@@ -81,7 +81,7 @@ function TheatreChoice() {
       <div className="max-w-6xl mx-auto p-6 flex-1">
         <Button
           onClick={() => navigate(-1)}
-          className="flex items-center gap-2 text-indigo-400! mb-6 hover:text-indigo-300! transition-colors duration-300"
+          className="flex items-center gap-2 text-indigo-400! mb-6 hover:text-indigo-300! transition-colors duration-300 cursor-pointer"
         >
           <ArrowLeftIcon className="h-5 w-5" />
           Back
@@ -122,7 +122,7 @@ function TheatreChoice() {
               ) : (
                 <Button
                   onClick={() => handleTheaterSelect(theater.id)}
-                  className="mt-4 w-full bg-indigo-700! hover:bg-indigo-600! text-white! py-2 px-4 rounded-lg! transition-colors! duration-300 flex items-center justify-center gap-2"
+                  className="mt-4 w-full bg-indigo-700! hover:bg-indigo-600! text-white! py-2 px-4 rounded-lg! transition-colors! duration-300 flex items-center justify-center gap-2 cursor-pointer"
                 >
                   <TicketIcon className="h-5 w-5" />
                   Select Theater

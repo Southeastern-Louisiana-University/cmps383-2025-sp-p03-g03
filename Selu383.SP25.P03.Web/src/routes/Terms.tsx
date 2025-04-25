@@ -152,7 +152,7 @@ function Terms() {
           </p>
           <Button
             onClick={() => navigate("/contact")}
-            className="inline-flex items-center gap-2 bg-indigo-700 hover:bg-indigo-600 text-white py-3 px-6 rounded-lg transition-all duration-300 shadow-md hover:shadow-lg"
+            className="inline-flex items-center gap-2 bg-indigo-700 hover:bg-indigo-600 text-white py-3 px-6 rounded-lg transition-all duration-300 shadow-md hover:shadow-lg cursor-pointer"
           >
             Contact Us <EnvelopeIcon className="h-5 w-5" />
           </Button>

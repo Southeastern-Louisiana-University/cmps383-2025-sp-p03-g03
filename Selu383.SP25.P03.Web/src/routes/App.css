@@ -16,6 +16,10 @@ body {
   z-index: 1000 !important;
 }
 
+.bg-summit {
+    --tw-bg-opacity: 1;
+    background-color: rgba(29, 54, 101, var(--tw-bg-opacity));
+}
 /*nav {
   background-color: #fecc01;
 }*/

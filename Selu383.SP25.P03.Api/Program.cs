@@ -4,7 +4,9 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
 using Scalar.AspNetCore;
 using Selu383.SP25.P03.Api.Data;
+using Selu383.SP25.P03.Api.Features;
 using Selu383.SP25.P03.Api.Features.Users;
+using Stripe;
 
 namespace Selu383.SP25.P03.Api
 {
@@ -94,6 +96,11 @@ namespace Selu383.SP25.P03.Api
                 options.SlidingExpiration = true;
             });
             builder.Services.AddHttpClient();
+
+            // Add stripe for apple pay
+            builder.Services.Configure<StripeSettings>(builder.Configuration.GetSection("Stripe"));
+            StripeConfiguration.ApiKey = builder.Configuration["Stripe:SecretKey"];
+
 
 
             var app = builder.Build();

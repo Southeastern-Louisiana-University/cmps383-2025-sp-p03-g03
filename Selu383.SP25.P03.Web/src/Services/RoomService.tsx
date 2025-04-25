@@ -55,7 +55,8 @@ export const RoomService = {
     getByTheaterId: async (theaterId: number): Promise<RoomDTO[]> => {
         try {
             logger.info(`Fetching rooms for theater ${theaterId}`);
-            const response = await axios.get<RoomDTO[]>(`${API_URL}/GetByMovieId/${theaterId}`); //Room/GetByMovieId/
+            // Fixed endpoint to match controller
+            const response = await axios.get<RoomDTO[]>(`${API_URL}/GetByTheaterId/${theaterId}`);
             logger.success(`Retrieved ${response.data.length} rooms for theater ${theaterId}`);
             return response.data;
         } catch (error) {
@@ -76,13 +77,24 @@ export const RoomService = {
     },
 
     // Create a new room
-    create: async (room: Omit<RoomDTO, 'id'>): Promise<RoomDTO> => {
+    create: async (room: RoomDTO): Promise<RoomDTO> => {
         try {
             logger.info('Creating new room', room);
+
+            // Log the payload being sent
+            console.log('Sending to API:', room);
+
             const response = await axios.post<RoomDTO>(API_URL, room);
             logger.success('Room created successfully', response.data);
             return response.data;
         } catch (error) {
+            if (axios.isAxiosError(error) && error.response) {
+                logger.error(
+                    `Creating room failed with status ${error.response.status}`,
+                    error.response.data
+                );
+                console.error('API Error Response:', error.response.data);
+            }
             return handleApiError(error, 'Creating new room');
         }
     },

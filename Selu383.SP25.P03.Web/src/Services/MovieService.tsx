@@ -10,6 +10,8 @@ export interface MovieDTO {
     isActive: boolean;
     ageRating: string;
     releaseDate: Date;
+    bannerURL: string;
+    previewURL: string;
     poster?: MoviePosterDTO;
 }
 
