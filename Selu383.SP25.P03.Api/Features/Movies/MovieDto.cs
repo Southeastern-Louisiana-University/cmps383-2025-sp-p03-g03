@@ -15,6 +15,7 @@ namespace Selu383.SP25.P03.Api.Features.Movies
         public string? AgeRating { get; set; }
         public DateTime ReleaseDate { get; set; }
         public string? PreviewURL { get; set; }
+        public string? BannerURL { get; set; }
     }
     public class MovieDto
     {
@@ -27,6 +28,7 @@ namespace Selu383.SP25.P03.Api.Features.Movies
         public string? AgeRating { get; set; }
         public DateTime ReleaseDate { get; set; }
         public string? PreviewURL { get; set; }
+        public string? BannerURL { get; set; }
     }
     public class MovieConfiguration : IEntityTypeConfiguration<Movie>
     {
@@ -37,6 +39,8 @@ namespace Selu383.SP25.P03.Api.Features.Movies
             builder.Property(x => x.Description).IsRequired();
             builder.Property(x => x.Category).IsRequired();
             builder.Property(x => x.Runtime).IsRequired();
+            builder.Property(x => x.PreviewURL).IsRequired(false);
+            builder.Property(x => x.BannerURL).IsRequired(false);
             builder.Property(x => x.IsActive)
                 .HasDefaultValue(true)
                 .IsRequired();

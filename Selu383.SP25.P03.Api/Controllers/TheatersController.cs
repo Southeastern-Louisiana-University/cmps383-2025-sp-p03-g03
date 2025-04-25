@@ -5,6 +5,8 @@ using Microsoft.EntityFrameworkCore;
 using Selu383.SP25.P03.Api.Data;
 using Selu383.SP25.P03.Api.Features.Theaters;
 using Selu383.SP25.P03.Api.Features.Users;
+using Stripe;
+using System;
 
 namespace Selu383.SP25.P03.Api.Controllers
 {
@@ -29,6 +31,13 @@ namespace Selu383.SP25.P03.Api.Controllers
         public IQueryable<TheaterDto> GetAllTheaters()
         {
             return GetTheaterDtos(theaters);
+        }
+
+        [HttpGet]
+        [Route("Active")]
+        public IQueryable<TheaterDto> GetActiveTheaters()
+        {
+            return GetTheaterDtos(theaters.Where(x => x.Active == true)); 
         }
 
         [HttpGet]
@@ -57,8 +66,14 @@ namespace Selu383.SP25.P03.Api.Controllers
             {
                 Name = dto.Name,
                 Address1 = dto.Address1,
+                Address2 = dto.Address2,
+                City = dto.City,
+                State = dto.State,
+                Zip = dto.Zip,
+                Phone1 = dto.Phone1,
+                Phone2 = dto.Phone2,
+                Active = dto.Active,
                 ManagerId = dto.ManagerId,
-                Active = dto.Active
 
             };
             theaters.Add(theater);
@@ -72,7 +87,7 @@ namespace Selu383.SP25.P03.Api.Controllers
 
         [HttpPut]
         [Route("{id}")]
-        [Authorize]
+        //[Authorize]
         public async Task<ActionResult<TheaterDto>> UpdateTheater(int id, TheaterDto dto)
         {
             if (IsInvalid(dto))
@@ -98,9 +113,17 @@ namespace Selu383.SP25.P03.Api.Controllers
                 return NotFound();
             }
 
+            theater.Id = dto.Id;
             theater.Name = dto.Name;
             theater.Address1 = dto.Address1;
+            theater.Address2 = dto.Address2;
+            theater.City = dto.City;
+            theater.State = dto.State;
+            theater.Zip = dto.Zip;
+            theater.Phone1 = dto.Phone1;
+            theater.Phone2 = dto.Phone2;
             theater.Active = dto.Active;
+            theater.ManagerId = dto.ManagerId;
 
             if (User.IsInRole(UserRoleNames.Admin))
             {
@@ -151,6 +174,12 @@ namespace Selu383.SP25.P03.Api.Controllers
                     Id = x.Id,
                     Name = x.Name,
                     Address1 = x.Address1,
+                    Address2 = x.Address2,
+                    City = x.City,
+                    State = x.State,
+                    Zip = x.Zip,
+                    Phone1 = x.Phone1,
+                    Phone2 = x.Phone2,
                     Active = x.Active,
                     ManagerId = x.ManagerId
                 });

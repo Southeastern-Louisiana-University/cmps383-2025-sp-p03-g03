@@ -92,7 +92,7 @@ function MovieDetails() {
           await Promise.all([
             fetch(`/api/movie/${movieId}`),
             fetch(`/api/MoviePoster/GetByMovieId/${movieId}`),
-            fetch("/api/theaters"),
+            fetch("/api/theaters/Active"),
           ]);
 
         if (!movieResponse.ok)
