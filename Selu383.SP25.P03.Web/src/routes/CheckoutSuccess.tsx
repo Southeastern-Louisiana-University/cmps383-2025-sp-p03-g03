@@ -21,13 +21,13 @@ export default function CheckoutSuccess() {
         <div className="!flex !flex-col sm:!flex-row !gap-4 !justify-center">
           <Button
             onClick={() => navigate("/MyTickets")}
-            className="!bg-indigo-700 hover:!bg-indigo-600 !text-white !px-6 !py-3 !rounded-lg !transition-all !duration-300 !shadow-md hover:!shadow-lg"
+            className="!bg-indigo-700 hover:!bg-indigo-600 !text-white !px-6 !py-3 !rounded-lg !transition-all !duration-300 !shadow-md hover:!shadow-lg cursor-pointer"
           >
             View Tickets
           </Button>
           <Button
             onClick={() => navigate("/")}
-            className="!bg-gray-700 !border !border-indigo-600 !text-indigo-300 hover:!bg-gray-600 !px-6 !py-3 !rounded-lg !transition-all !duration-300"
+            className="!bg-gray-700 !border !border-indigo-600 !text-indigo-300 hover:!bg-gray-600 !px-6 !py-3 !rounded-lg !transition-all !duration-300 cursor-pointer"
           >
             Back to Home
           </Button>

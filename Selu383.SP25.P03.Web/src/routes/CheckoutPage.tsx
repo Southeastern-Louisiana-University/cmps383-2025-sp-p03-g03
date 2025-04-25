@@ -220,7 +220,7 @@ export default function Checkout() {
       <div className="!max-w-4xl !mx-auto !p-6 !flex-1">
         <Button
           onClick={() => navigate(-1)}
-          className="!flex !items-center !gap-2 !text-indigo-400 !mb-6 hover:!text-indigo-300 !transition-colors !duration-300"
+          className="!flex !items-center !gap-2 !text-indigo-400 !mb-6 hover:!text-indigo-300 !transition-colors !duration-300 cursor-pointer"
         >
           <ArrowLeftIcon className="!h-5 !w-5" />
           Back to Seat Selection
@@ -362,7 +362,7 @@ export default function Checkout() {
 
               <Button
                 onClick={handleStripePayment}
-                className="!w-full !bg-black !text-white !py-3 !rounded-lg !font-medium mt-4"
+                className="!w-full !bg-black !text-white !py-3 !rounded-lg !font-medium mt-4 cursor-pointer"
               >
                 Pay with Apple Pay / Card
               </Button>
@@ -370,7 +370,7 @@ export default function Checkout() {
               <Button
                 onClick={handlePayment}
                 disabled={paymentProcessing}
-                className="!w-full !bg-indigo-700 hover:!bg-indigo-600 !text-white !py-3 !rounded-lg !font-medium !mt-4 !transition-all !duration-300 !shadow-md hover:!shadow-lg disabled:!opacity-50 disabled:!cursor-not-allowed"
+                className="!w-full !bg-indigo-700 hover:!bg-indigo-600 !text-white !py-3 !rounded-lg !font-medium !mt-4 !transition-all !duration-300 !shadow-md hover:!shadow-lg cursor-pointer disabled:!opacity-50 disabled:!cursor-not-allowed"
               >
                 {paymentProcessing ? "Processing..." : "Complete Purchase"}
               </Button>
