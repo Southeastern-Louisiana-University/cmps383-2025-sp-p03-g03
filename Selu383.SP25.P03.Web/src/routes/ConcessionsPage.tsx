@@ -7,6 +7,12 @@ type Product = {
   theaterId: number;
   productTypeId: number;
   productTypeName: string;
+  imageData: string | null;
+  imageType: string | null;
+  productType: {
+    id: number;
+    name: string;
+  };
 };
 
 export default function ConcessionsPage() {
@@ -23,7 +29,7 @@ export default function ConcessionsPage() {
     })
       .then(async (response) => {
         if (!response.ok) {
-          throw new Error("Failed fetching concessions");
+          throw new Error("error fetching concessions");
         }
         const data: Product[] = await response.json();
         setProducts(data);
@@ -33,13 +39,16 @@ export default function ConcessionsPage() {
       });
   }, []);
 
-  const groupedProducts = products.reduce<Record<string, Product[]>>(
-    (acc, product) => {
-      if (!acc[product.productTypeName]) {
-        acc[product.productTypeName] = [];
+  const groupedConcessions = products.reduce<Record<string, Product[]>>(
+    (groups, product) => {
+      const typeName = product.productType.name || "Other";
+
+      if (!groups[typeName]) {
+        groups[typeName] = [];
       }
-      acc[product.productTypeName].push(product);
-      return acc;
+
+      groups[typeName].push(product);
+      return groups;
     },
     {}
   );
@@ -53,32 +62,40 @@ export default function ConcessionsPage() {
   };
 
   return (
-    <div className="px-4 py-6">
-      <h1 className="text-2xl font-bold mb-6 text-center">Menu</h1>
-      <div className="max-w-6xl mx-auto grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
-        {Object.entries(groupedProducts).map(([typeName, grouped]) => (
-          <div key={typeName} className="mb-10">
-            <h2 className="text-xl font-bold mb-4">{typeName}</h2>
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
-              {grouped.map((product) => (
+    <div className="flex flex-col min-h-screen bg-gray-900 text-white">
+      <h1 className="text-center text-4xl sm:text-5xl md:text-6xl font-extrabold text-indigo-300 tracking-wide drop-shadow-lg">
+        Menu
+      </h1>
+      <div className="max-w-7xl mx-auto">
+        {Object.entries(groupedConcessions).map(([typeName, items]) => (
+          <div key={typeName} className="mb-12">
+            <h2 className="text-2xl font-semibold mb-6">{typeName}</h2>
+            <div className="grid gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
+              {items.map((product) => (
                 <div
                   key={product.id}
-                  className="border rounded-xl shadow-md overflow-hidden bg-white flex flex-col"
+                  className="bg-white rounded-xl shadow-md overflow-hidden flex flex-col p-4 hover:shadow-lg transition"
                 >
-                  <img
-                    src="https://via.placeholder.com/300x200"
-                    alt={product.name}
-                    className="w-full h-48 object-cover"
-                  />
-                  <div className="p-4 flex-grow">
-                    <h2 className="text-lg font-semibold">{product.name}</h2>
-                    <p className="text-gray-600 mt-1 mb-3">$4.99</p>
+                  <div className="h-48 w-full flex items-center justify-center overflow-hidden mb-4">
+                    <img
+                      src={
+                        product.imageData
+                          ? `data:${product.imageType};base64,${product.imageData}`
+                          : "No Image Found"
+                      }
+                      alt={product.name}
+                      className="object-contain h-full w-full"
+                    />
                   </div>
-                  <div className="p-4 pt-0">
-                    <button onClick={() => handleAddToCart(product)}>
-                      Add to Cart
-                    </button>
-                  </div>
+                  <h3 className="text-lg font-bold text-center mb-4 text-gray-900">
+                    {product.name}
+                  </h3>
+                  <button
+                    onClick={() => handleAddToCart(product)}
+                    className="mt-auto bg-indigo-500 text-white px-4 py-2 rounded-md hover:bg-indigo-400 transition w-full"
+                  >
+                    Add to Cart
+                  </button>
                 </div>
               ))}
             </div>

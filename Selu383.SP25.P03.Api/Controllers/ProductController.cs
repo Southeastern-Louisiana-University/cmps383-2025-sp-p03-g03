@@ -6,6 +6,7 @@ using Selu383.SP25.P03.Api.Features.Products;
 using Microsoft.EntityFrameworkCore;
 using Selu383.SP25.P03.Api.Features.Tickets;
 using Microsoft.AspNetCore.Authorization;
+using Selu383.SP25.P03.Api.Features.Movies;
 
 namespace Selu383.SP25.P03.Api.Controllers
 {
@@ -41,6 +42,7 @@ namespace Selu383.SP25.P03.Api.Controllers
 
             return Ok(products);
         }
+        
 
 
     }
