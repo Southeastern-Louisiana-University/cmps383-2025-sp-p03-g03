@@ -34,7 +34,7 @@ import MovieScheduleForm from "./BackendClient/Components/MovieSchedule/MovieSch
 import MovieScheduleAssignments from "./BackendClient/Components/MovieSchedule/MovieScheduleAssignments.tsx";
 import UserListPage from "./BackendClient/Components/Users/UserListPage.tsx";
 import UserForm from "./BackendClient/Components/Users/UserForm.tsx";
-
+import SeatManagement from "./BackendClient/Components/Seats/SeatManagement.tsx";
 
 import ConcessionsPage from "./routes/ConcessionsPage.tsx";
 import About from "./routes/About.tsx";
@@ -203,23 +203,27 @@ const router = createBrowserRouter([
                 },
             ],
         },
-      {
-        path: "rooms",
-        children: [
-          {
-            index: true,
-            element: <RoomListPage />,
-          },
-          {
-            path: "new",
-            element: <RoomFormPage />,
-          },
-          {
-            path: ":id",
-            element: <RoomFormPage />,
-          },
-        ],
-      },
+        {
+            path: "rooms",
+            children: [
+                {
+                    index: true,
+                    element: <RoomListPage />,
+                },
+                {
+                    path: "new",
+                    element: <RoomFormPage />,
+                },
+                {
+                    path: ":id",
+                    element: <RoomFormPage />,
+                },
+                {
+                    path: ":roomId/seats",
+                    element: <SeatManagement />,
+                },
+            ],
+        },
       {
         path: "movies",
         children: [
