@@ -1,9 +1,11 @@
 import { useLocation, useNavigate } from "react-router-dom";
 import { Button } from "@headlessui/react";
-import { ArrowLeftIcon, CheckCircleIcon } from "@heroicons/react/24/outline";
+import { ArrowLeftIcon } from "@heroicons/react/24/outline";
 import { useState, useEffect } from "react";
 import { useAuth } from "../components/authContext";
 import axios from "axios";
+import { loadStripe, Stripe } from "@stripe/stripe-js";
+import { getStripePublishableKey } from "../Services/PaymentService";
 
 interface Seat {
   id: number;
@@ -29,6 +31,8 @@ export default function Checkout() {
   const formattedSeats = selectedSeats
     .map((seat: Seat) => `${seat.row}${seat.seatNumber}`)
     .join(", ");
+
+  const [stripeInstance, setStripeInstance] = useState<Stripe | null>(null);
 
   const formattedShowtime = new Date(showtime.time).toLocaleString("en-US", {
     year: "numeric",
@@ -100,6 +104,7 @@ export default function Checkout() {
       await new Promise((resolve) => setTimeout(resolve, 1000)); // Fake delay for realism
       setOrderComplete(true);
     } catch (err) {
+      console.error(err);
       setError("Payment simulation failed. Please try again.");
     } finally {
       setPaymentProcessing(false);
@@ -109,6 +114,64 @@ export default function Checkout() {
         showtime: formattedShowtime,
         seats: formattedSeats,
       });
+    }
+  };
+
+  useEffect(() => {
+    const initStripe = async () => {
+      try {
+        const publishableKey = await getStripePublishableKey();
+        const stripe = await loadStripe(publishableKey);
+        if (!stripe) {
+          setError("Failed to initialize Stripe.");
+          return;
+        }
+        setStripeInstance(stripe);
+      } catch (err) {
+        console.error("Stripe init error", err);
+        setError("Could not load Stripe.");
+      }
+    };
+
+    initStripe();
+  }, []);
+
+  const handleStripePayment = async () => {
+    if (!stripeInstance) {
+      setError("Stripe not initialized.");
+      return;
+    }
+
+    setPaymentProcessing(true);
+
+    try {
+      const response = await axios.post("/api/stripe/create-session", {
+        amount: calculateTotal(),
+        description: `Movie: ${movie.title}, Seats: ${formattedSeats}`,
+        successUrl: `${window.location.origin}/checkout/success`,
+        cancelUrl: `${window.location.origin}/checkout`,
+        customerEmail: customerEmail,
+        metadata: {
+          movieTitle: movie.title,
+          showtime: formattedShowtime,
+          seats: formattedSeats,
+          theaterName: theater.name,
+          total: calculateTotal(),
+          userId: userId,
+        },
+      });
+
+      const sessionId = response.data.sessionId;
+      const result = await stripeInstance.redirectToCheckout({ sessionId });
+
+      if (result?.error) {
+        setError(result.error.message || "Stripe checkout failed.");
+        setPaymentProcessing(false);
+      }
+    } catch (err) {
+      console.error(err);
+      setError("Stripe payment failed. Try again.");
+      setPaymentProcessing(false);
     }
   };
 
@@ -149,97 +212,7 @@ export default function Checkout() {
   }
 
   if (orderComplete) {
-    return (
-      <div className="!flex !flex-col !min-h-screen !bg-gray-900 !text-white">
-        <div className="!max-w-2xl !mx-auto !p-6 !text-center !flex-1 !flex !flex-col !justify-center">
-          <CheckCircleIcon className="!h-20 !w-20 !text-green-500 !mx-auto !mb-6" />
-          <h1 className="!text-3xl !font-extrabold !text-indigo-300 !mb-4 !drop-shadow-lg">
-            Order Complete!
-          </h1>
-          <p className="!text-xl !text-gray-300 !mb-8">
-            Your tickets for{" "}
-            <span className="!font-bold !text-indigo-200">{movie.title}</span>{" "}
-            have been purchased.
-          </p>
-
-          <div className="!bg-gray-800 !rounded-xl !shadow-lg !shadow-indigo-950/50 !p-6 !mb-8 !text-left">
-            <h2 className="!text-xl !font-extrabold !text-indigo-300 !mb-4 !drop-shadow-lg">
-              Order Summary
-            </h2>
-            <div className="!space-y-4">
-              <div className="!flex !justify-between">
-                <span className="!text-gray-300">Movie:</span>
-                <span className="!font-medium !text-indigo-200">
-                  {movie.title}
-                </span>
-              </div>
-              <div className="!flex !justify-between">
-                <span className="!text-gray-300">Theater:</span>
-                <span className="!font-medium !text-indigo-200">
-                  {theater.name}
-                </span>
-              </div>
-              <div className="!flex !justify-between">
-                <span className="!text-gray-300">Showtime:</span>
-                <span className="!font-medium !text-indigo-200">
-                  {new Date(showtime.time).toLocaleString()}
-                </span>
-              </div>
-              <div className="!border-t !border-gray-700 !pt-4">
-                {selectedSeats.map((seat: Seat) => (
-                  <div
-                    key={seat.id}
-                    className="!flex !justify-between !mb-2 !text-gray-300"
-                  >
-                    <span>
-                      Seat {seat.row}
-                      {seat.seatNumber} ({getSeatType(seat.seatTypeId)})
-                    </span>
-                    <span>${getSeatPrice(seat.seatTypeId)}</span>
-                  </div>
-                ))}
-              </div>
-              <div className="!flex !justify-between !border-t !border-gray-700 !pt-4 !font-bold !text-lg !text-indigo-200">
-                <span>Total:</span>
-                <span>${calculateTotal()}</span>
-              </div>
-            </div>
-          </div>
-
-          <div className="!flex !flex-col sm:!flex-row !gap-4 !justify-center">
-            <Button
-              onClick={() => navigate("/MyTickets")}
-              className="!bg-indigo-700 hover:!bg-indigo-600 !text-white !px-6 !py-3 !rounded-lg !transition-all !duration-300 !shadow-md hover:!shadow-lg"
-            >
-              View Tickets
-            </Button>
-            <Button
-              onClick={() => navigate("/")}
-              className="!bg-gray-700 !border !border-indigo-600 !text-indigo-300 hover:!bg-gray-600 !px-6 !py-3 !rounded-lg !transition-all !duration-300"
-            >
-              Back to Home
-            </Button>
-          </div>
-        </div>
-
-        <footer className="!w-full !bg-indigo-950 !text-white !py-6">
-          <div className="!container !mx-auto !px-4 !text-center">
-            <p>© {currentYear} Lion's Den Cinemas. All rights reserved.</p>
-            <div className="!mt-2 !space-x-4">
-              <a href="/terms" className="hover:!text-indigo-300">
-                Terms
-              </a>
-              <a href="/privacy" className="hover:!text-indigo-300">
-                Privacy
-              </a>
-              <a href="/contact" className="hover:!text-indigo-300">
-                Contact
-              </a>
-            </div>
-          </div>
-        </footer>
-      </div>
-    );
+    navigate("/checkout/success");
   }
 
   return (
@@ -247,7 +220,7 @@ export default function Checkout() {
       <div className="!max-w-4xl !mx-auto !p-6 !flex-1">
         <Button
           onClick={() => navigate(-1)}
-          className="!flex !items-center !gap-2 !text-indigo-400 !mb-6 hover:!text-indigo-300 !transition-colors !duration-300"
+          className="!flex !items-center !gap-2 !text-indigo-400 !mb-6 hover:!text-indigo-300 !transition-colors !duration-300 cursor-pointer"
         >
           <ArrowLeftIcon className="!h-5 !w-5" />
           Back to Seat Selection
@@ -388,9 +361,16 @@ export default function Checkout() {
               </div>
 
               <Button
+                onClick={handleStripePayment}
+                className="!w-full !bg-black !text-white !py-3 !rounded-lg !font-medium mt-4 cursor-pointer"
+              >
+                Pay with Apple Pay / Card
+              </Button>
+
+              <Button
                 onClick={handlePayment}
                 disabled={paymentProcessing}
-                className="!w-full !bg-indigo-700 hover:!bg-indigo-600 !text-white !py-3 !rounded-lg !font-medium !mt-4 !transition-all !duration-300 !shadow-md hover:!shadow-lg disabled:!opacity-50 disabled:!cursor-not-allowed"
+                className="!w-full !bg-indigo-700 hover:!bg-indigo-600 !text-white !py-3 !rounded-lg !font-medium !mt-4 !transition-all !duration-300 !shadow-md hover:!shadow-lg cursor-pointer disabled:!opacity-50 disabled:!cursor-not-allowed"
               >
                 {paymentProcessing ? "Processing..." : "Complete Purchase"}
               </Button>

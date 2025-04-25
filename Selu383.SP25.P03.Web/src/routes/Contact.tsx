@@ -83,7 +83,7 @@ function ContactPage() {
               </div>
               <Button
                 type="submit"
-                className="w-full bg-indigo-700 hover:bg-indigo-600 text-white py-3 rounded-lg font-medium flex items-center justify-center gap-2 transition-all duration-300 shadow-md hover:shadow-lg"
+                className="w-full bg-indigo-700 hover:bg-indigo-600 text-white py-3 rounded-lg font-medium flex items-center justify-center gap-2 transition-all duration-300 shadow-md hover:shadow-lg cursor-pointer"
               >
                 Send Message <EnvelopeIcon className="h-5 w-5" />
               </Button>
@@ -173,7 +173,7 @@ function ContactPage() {
           </p>
           <Button
             onClick={() => navigate("/movies")}
-            className="inline-flex items-center gap-2 bg-indigo-700 hover:bg-indigo-600 text-white py-3 px-6 rounded-lg transition-all duration-300 shadow-md hover:shadow-lg"
+            className="inline-flex items-center gap-2 bg-indigo-700 hover:bg-indigo-600 text-white py-3 px-6 rounded-lg transition-all duration-300 shadow-md hover:shadow-lg cursor-pointer"
           >
             Get Tickets <TicketIcon className="h-5 w-5" />
           </Button>

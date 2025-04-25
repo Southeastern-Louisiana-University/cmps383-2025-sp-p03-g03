@@ -43,8 +43,8 @@ export default function RootLayout() {
           }}
         >
           {/* 👇 These register the nested folders (tabs) and (auth) */}
-          <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-          <Stack.Screen name="(auth)/profile" options={{ headerShown: false }} />
+          <Stack.Screen name="(tabs)" options={{ headerShown: true }} />
+          <Stack.Screen name="(auth)" options={{ headerShown: false }} />
           <Stack.Screen name="+not-found" />
         </Stack>
         <StatusBar style="auto" />

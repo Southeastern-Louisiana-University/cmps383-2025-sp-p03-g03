@@ -22,6 +22,7 @@ type MovieSchedule = {
   movieId: number;
   isActive: boolean;
   movieTimes: string[];
+  roomId: number; // Make sure this field is included
 };
 
 export default function BuyTickets() {
@@ -40,6 +41,8 @@ export default function BuyTickets() {
   const [selectedDay, setSelectedDay] = useState<string | null>(null);
   const [selectedTime, setSelectedTime] = useState<string | null>(null);
   const [selectedFullTime, setSelectedFullTime] = useState<string | null>(null);
+  const [selectedScheduleId, setSelectedScheduleId] = useState<number | null>(null);
+  const [selectedRoomId, setSelectedRoomId] = useState<number | null>(null);
 
   useLayoutEffect(() => {
     navigation.setOptions({
@@ -67,9 +70,7 @@ export default function BuyTickets() {
 
         if (theaterId) {
           const theaters = await getTheaters();
-          const theater = theaters.find(
-            (t) => t.id.toString() === theaterId.toString()
-          );
+          const theater = theaters.find((t) => t.id.toString() === theaterId.toString());
           if (theater) {
             setSelectedTheaterName(theater.name);
           }
@@ -109,9 +110,7 @@ export default function BuyTickets() {
 
   const posterSource =
     movie.poster && movie.poster.length > 0
-      ? {
-          uri: `data:${movie.poster[0].imageType};base64,${movie.poster[0].imageData}`,
-        }
+      ? { uri: `data:${movie.poster[0].imageType};base64,${movie.poster[0].imageData}` }
       : require("@/assets/images/posters/fallback.jpg");
 
   return (
@@ -154,6 +153,8 @@ export default function BuyTickets() {
                             setSelectedTime(showTime);
                             setSelectedDay(dayStr);
                             setSelectedFullTime(time);
+                            setSelectedScheduleId(sched.id);
+                            setSelectedRoomId(sched.roomId);
                             setModalVisible(true);
                           }}
                         >
@@ -185,22 +186,21 @@ export default function BuyTickets() {
               style={styles.confirmButton}
               onPress={() => {
                 setModalVisible(false);
-
-                // Navigate to checkout with ticket data
+                // ✅ Navigate to selectseats.tsx with all the params
                 router.push({
-                  pathname: "/checkout",
+                  pathname: "/selectseats",
                   params: {
-                    ticket: JSON.stringify({
-                      movieTitle: movie?.title,
-                      date: selectedDay,
-                      time: selectedTime,
-                      theater: selectedTheaterName,
-                    }),
+                    movieId: movieId.toString(),
+                    scheduleId: selectedScheduleId?.toString() || "",
+                    roomId: selectedRoomId?.toString() || "",
+                    theaterName: selectedTheaterName || "",
+                    movieTitle: movie.title,
+                    time: selectedFullTime || "",
                   },
                 });
               }}
             >
-              <Text style={styles.confirmButtonText}>Confirm & Checkout</Text>
+              <Text style={styles.confirmButtonText}>Select Seats</Text>
             </TouchableOpacity>
           </View>
         </View>

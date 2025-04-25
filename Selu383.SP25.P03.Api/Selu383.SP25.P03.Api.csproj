@@ -24,6 +24,7 @@
     </PackageReference>
     <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="9.0.3" />
     <PackageReference Include="Scalar.AspNetCore" Version="2.0.30" />
+    <PackageReference Include="Stripe.net" Version="48.0.2" />
   </ItemGroup>
 
   <ItemGroup>

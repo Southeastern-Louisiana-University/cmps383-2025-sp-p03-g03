@@ -231,7 +231,7 @@ export default function SeatSelection() {
               {seats.map((seat) => (
                 <button
                   key={seat.id}
-                  className={`absolute w-7 h-7 rounded-full flex items-center justify-center text-xs transition-all duration-300
+                  className={`absolute w-7 h-7 rounded-full flex items-center justify-center text-xs transition-all duration-300 cursor-pointer
                     ${
                       !seat.isAvailable
                         ? "bg-red-600 cursor-not-allowed opacity-70"
@@ -239,7 +239,7 @@ export default function SeatSelection() {
                         ? "bg-green-600 text-white scale-110 shadow-md"
                         : "bg-indigo-600 text-white hover:bg-indigo-500 hover:scale-105 hover:shadow-md"
                     }
-                    ${seat.seatTypeId === 4 ? "ring-2 ring-blue-400" : ""}`}
+                    ${seat.seatTypeId === 4 ? "ring-3 ring-blue-400" : ""}`}
                   style={{
                     left: `calc(50% + ${seat.xPosition}px)`,
                     top: `calc(${seat.yPosition}px - 25%)`,
@@ -282,7 +282,7 @@ export default function SeatSelection() {
               </ul>
               <Button
                 onClick={handleCheckout}
-                className="w-full bg-indigo-700 hover:bg-indigo-600 text-white py-3 rounded-lg font-medium flex items-center justify-center gap-2 transition-all duration-300 shadow-md hover:shadow-lg"
+                className="w-full bg-indigo-700 hover:bg-indigo-600 text-white py-3 rounded-lg font-medium flex items-center justify-center gap-2 transition-all duration-300 shadow-md hover:shadow-lg cursor-pointer"
               >
                 Proceed to Checkout
                 <TicketIcon className="h-5 w-5" />
@@ -298,7 +298,7 @@ export default function SeatSelection() {
           )}
         </div>
 
-        <div className="flex flex-wrap justify-center gap-4 md:gap-6">
+        <div className="flex flex-wrap justify-center gap-4 md:gap-6 ">
           <div className="flex items-center gap-2">
             <div className="w-5 h-5 bg-green-600 rounded-full"></div>
             <span className="text-sm text-gray-300">Available</span>

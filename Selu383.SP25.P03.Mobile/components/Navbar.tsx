@@ -23,9 +23,9 @@ const Navbar: React.FC<NavbarProps> = ({ onSearch }) => {
   
   const handleNavigateToLogin = () => {
     if(auth?.isAuthenticated){
-      router.push('/(auth)/profile');
+      router.push("/profile");
     } else {
-      (router as any).navigate('/(auth)/login');
+      (router as any).navigate('/(tabs)/login');
     } 
   };
 
