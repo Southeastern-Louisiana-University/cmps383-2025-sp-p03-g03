@@ -106,7 +106,7 @@ function LoginPage() {
 
           <button
             type="submit"
-            className="w-full! bg-indigo-700! hover:bg-indigo-600! text-white! font-bold! py-3! px-4! rounded-md! transition-all! duration-300! transform! hover:scale-105! shadow-md! hover:shadow-lg!"
+            className="w-full! bg-indigo-700! hover:bg-indigo-600! text-white! font-bold! py-3! px-4! rounded-md! transition-all! duration-300! transform! hover:scale-105! shadow-md! hover:shadow-lg! cursor-pointer"
           >
             Login
           </button>
@@ -117,7 +117,7 @@ function LoginPage() {
             Don't have an account?{" "}
             <button
               onClick={() => navigate("/signup")}
-              className="text-indigo-400! hover:text-indigo-300! font-medium! transition-colors! duration-300!"
+              className="text-indigo-400! hover:text-indigo-300! font-medium! transition-colors! duration-300! cursor-pointer"
             >
               Sign up here
             </button>

@@ -6,9 +6,11 @@ using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Selu383.SP25.P03.Api.Controllers
 {
+    [AllowAnonymous]
     [Route("api/[controller]")]
     [ApiController]
     public class SeatController : GenericController<Seat, SeatDto>
@@ -18,6 +20,7 @@ namespace Selu383.SP25.P03.Api.Controllers
         }
 
         // GET: api/Seat/GetByRoomId/5
+        [AllowAnonymous]
         [HttpGet("GetByRoomId/{roomId}")]
         public async Task<ActionResult<IEnumerable<Seat>>> GetByRoomId(int roomId)
         {

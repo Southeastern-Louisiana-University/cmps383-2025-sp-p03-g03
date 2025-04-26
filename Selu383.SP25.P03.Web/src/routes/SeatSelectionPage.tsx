@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { useParams, useNavigate, useLocation } from "react-router-dom";
 import { Button } from "@headlessui/react";
 import { ArrowLeftIcon, TicketIcon } from "@heroicons/react/24/outline";
+import { SeatService, SeatTypeService } from "../Services/SeatService";
 
 interface Seat {
   id: number;
@@ -10,8 +11,11 @@ interface Seat {
   isAvailable: boolean;
   row: string;
   seatNumber: number;
-  xPosition: number;
-  yPosition: number;
+}
+
+interface SeatType {
+  id: number;
+  seatTypes: string;
 }
 
 export default function SeatSelection() {
@@ -21,9 +25,16 @@ export default function SeatSelection() {
   const { time, movie, theater, room } = location.state || {};
 
   const [seats, setSeats] = useState<Seat[]>([]);
+  const [seatTypes, setSeatTypes] = useState<SeatType[]>([]);
   const [selectedSeats, setSelectedSeats] = useState<Seat[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [seatTypeColors] = useState<Record<number, string>>({
+    1: "bg-indigo-600",
+    2: "bg-purple-600",
+    3: "bg-amber-600",
+    4: "bg-green-600 ring-3 ring-blue-400",
+  });
 
   useEffect(() => {
     if (!movieId || !theaterId || !roomId || !scheduleId || !movie) {
@@ -31,91 +42,93 @@ export default function SeatSelection() {
       return;
     }
 
-    const fetchSeats = async () => {
+    const fetchData = async () => {
       try {
         setLoading(true);
         setError(null);
 
-        console.log("Fetching seats for roomId:", roomId);
-        const seatsResponse = await fetch(`/api/seat/GetByRoomId/${roomId}`);
-        if (!seatsResponse.ok) {
-          const text = await seatsResponse.text();
-          console.error(`Fetch error: ${seatsResponse.status} ${text}`);
-          throw new Error(
-            `Failed to fetch seats: ${seatsResponse.status} ${text}`
-          );
+        const [types, seatsData] = await Promise.all([
+          SeatTypeService.getAll(),
+          SeatService.getByRoomId(Number(roomId)),
+        ]);
+
+        setSeatTypes(types);
+        setSeats(seatsData);
+
+        if (seatsData.length === 0) {
+          setError("No seats found for this room");
         }
-
-        const seats: Seat[] = await seatsResponse.json();
-        console.log("Seats for roomId", roomId, ":", seats);
-        console.log("Seats count:", seats.length);
-
-        if (seats.length > 0) {
-          setSeats(seats);
-          return;
-        }
-
-        console.warn("No seats found, using test seats");
-        setError("No seats found for this room");
-        setSeats(generateTestSeats(Number(roomId)));
       } catch (err) {
-        console.error("Error loading seats:", err);
+        console.error("Error loading data:", err);
         setError(
-          `Failed to load seats: ${
+          `Failed to load seat data: ${
             err instanceof Error ? err.message : "Unknown error"
-          }. Using test data.`
+          }`
         );
-        setSeats(generateTestSeats(Number(roomId)));
       } finally {
         setLoading(false);
       }
     };
 
-    fetchSeats();
+    fetchData();
   }, [movieId, theaterId, roomId, scheduleId, movie, navigate]);
 
-  const generateTestSeats = (roomId: number): Seat[] => {
-    const seats: Seat[] = [];
-    const rows =
-      roomId === 59
-        ? ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J"]
-        : roomId === 60
-        ? ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J"]
-        : roomId === 61
-        ? ["A", "B", "C", "D", "E", "F", "G", "H"]
-        : ["A", "B", "C", "D", "E", "F"];
-    const seatsPerRow =
-      roomId === 59 ? 20 : roomId === 60 ? 15 : roomId === 61 ? 10 : 10;
-    const seatSpacing = 36;
-    const rowSpacing = 45;
-    const centerOffset = (seatsPerRow * seatSpacing) / 2;
+  const calculateSeatLayout = () => {
+    if (seats.length === 0) return null;
 
-    rows.forEach((row, rowIndex) => {
-      for (let i = 1; i <= seatsPerRow; i++) {
-        let seatTypeId = 1; // Standard
-        if (
-          (roomId === 59 && rowIndex === 2 && (i <= 2 || i >= 19)) ||
-          (roomId === 60 && rowIndex === 2 && (i <= 2 || i >= 14)) ||
-          (roomId === 61 && rowIndex === 1 && (i <= 2 || i >= 9)) ||
-          (roomId === 62 && rowIndex === 1 && (i <= 2 || i >= 9))
-        ) {
-          seatTypeId = 4; // Accessible
-        }
+    const BASE_SEAT_COUNT = 100;
+    const BASE_CONTAINER_WIDTH = 800;
+    const BASE_SEAT_SIZE = 24;
+    const BASE_GAP_SIZE = 8;
+    const BASE_PADDING = 40;
 
-        seats.push({
-          id: rowIndex * seatsPerRow + i,
-          seatTypeId,
-          roomsId: roomId,
-          isAvailable: Math.random() > 0.3,
-          row,
-          seatNumber: i,
-          xPosition: i * seatSpacing - centerOffset,
-          yPosition: rowIndex * rowSpacing + 50,
-        });
-      }
-    });
+    const uniqueRows = [...new Set(seats.map((seat) => seat.row))].sort(
+      (a, b) => a.localeCompare(b, undefined, { numeric: true })
+    );
 
-    return seats;
+    const seatsByRow = uniqueRows.map((row) =>
+      seats
+        .filter((seat) => seat.row === row)
+        .sort((a, b) => a.seatNumber - b.seatNumber)
+    );
+
+    const maxSeatsPerRow = Math.max(...seatsByRow.map((row) => row.length));
+    const totalSeats = seats.length;
+
+    const scaleFactor = Math.max(
+      1,
+      Math.pow(totalSeats / BASE_SEAT_COUNT, 1 / 3)
+    );
+
+    const seatSize = Math.min(36, BASE_SEAT_SIZE * scaleFactor);
+    const gapSize = Math.min(12, BASE_GAP_SIZE * scaleFactor);
+    const padding = Math.min(60, BASE_PADDING * scaleFactor);
+
+    const gridWidth = maxSeatsPerRow * (seatSize + gapSize) - gapSize;
+    const gridHeight = uniqueRows.length * (seatSize + gapSize) - gapSize;
+
+    const containerWidth = Math.min(
+      window.innerWidth * 0.95,
+      Math.max(BASE_CONTAINER_WIDTH, gridWidth + padding * 2)
+    );
+    const containerHeight = gridHeight + padding * 2;
+
+    const availableWidth = containerWidth - padding * 2;
+    const startX = padding + Math.max(0, (availableWidth - gridWidth) / 2);
+    const startY = padding;
+
+    return {
+      containerWidth,
+      containerHeight,
+      seatSize,
+      gapSize,
+      startX,
+      startY,
+      uniqueRows,
+      seatsByRow,
+      padding,
+      scaleFactor,
+    };
   };
 
   const handleSeatClick = (seat: Seat) => {
@@ -126,6 +139,11 @@ export default function SeatSelection() {
         ? prev.filter((s) => s.id !== seat.id)
         : [...prev, seat]
     );
+  };
+
+  const getSeatTypeName = (seatTypeId: number): string => {
+    const type = seatTypes.find((t) => t.id === seatTypeId);
+    return type ? type.seatTypes : "Standard";
   };
 
   const handleCheckout = () => {
@@ -157,9 +175,11 @@ export default function SeatSelection() {
     );
   }
 
+  const layout = calculateSeatLayout();
+
   return (
     <div className="flex flex-col min-h-screen bg-gray-900 text-white">
-      <div className="max-w-7xl mx-auto p-6 flex-1">
+      <div className="max-w-[95vw] mx-auto p-6 flex-1 w-full">
         <Button
           onClick={() => navigate(-1)}
           className="flex items-center gap-2 text-indigo-400 mb-6 hover:text-indigo-300 transition-colors duration-300"
@@ -174,8 +194,7 @@ export default function SeatSelection() {
               <p className="font-bold">Notice:</p>
               <p>{error}</p>
               <p className="text-sm mt-2">
-                You can still proceed with test data, but some features may be
-                limited.
+                Please try again later or contact support.
               </p>
             </div>
             <button
@@ -206,114 +225,145 @@ export default function SeatSelection() {
           </p>
         </div>
 
-        <div className="bg-gradient-to-t from-indigo-950 to-gray-800 text-white text-center py-6 mb-8 rounded-lg shadow-lg shadow-indigo-950/50">
-          <h2 className="text-xl font-bold text-indigo-200 drop-shadow-md">
-            SCREEN
-          </h2>
-        </div>
-
-        <div className="pb-6 mb-8">
+        {layout && (
           <div
-            className="relative border border-gray-700 rounded-lg p-4 bg-gray-800 mx-auto shadow-lg shadow-indigo-950/50 flex justify-center items-center"
+            className="bg-gradient-to-t from-indigo-950 to-gray-800 text-white text-center py-6 mb-8 rounded-lg shadow-lg shadow-indigo-950/50 mx-auto"
             style={{
-              width: "900px",
-              maxWidth: "100%",
-              height: "600px",
+              width: `${layout.containerWidth}px`,
+              maxWidth: "95vw",
             }}
           >
-            <div
-              className="relative"
-              style={{
-                width: "720px",
-                height: "455px",
-              }}
-            >
-              {seats.map((seat) => (
-                <button
-                  key={seat.id}
-                  className={`absolute w-7 h-7 rounded-full flex items-center justify-center text-xs transition-all duration-300 cursor-pointer
-                    ${
-                      !seat.isAvailable
-                        ? "bg-red-600 cursor-not-allowed opacity-70"
-                        : selectedSeats.some((s) => s.id === seat.id)
-                        ? "bg-green-600 text-white scale-110 shadow-md"
-                        : "bg-indigo-600 text-white hover:bg-indigo-500 hover:scale-105 hover:shadow-md"
-                    }
-                    ${seat.seatTypeId === 4 ? "ring-3 ring-blue-400" : ""}`}
-                  style={{
-                    left: `calc(50% + ${seat.xPosition}px)`,
-                    top: `calc(${seat.yPosition}px - 25%)`,
-                    transform: "translateX(-100%)",
-                  }}
-                  onClick={() => handleSeatClick(seat)}
-                  disabled={!seat.isAvailable}
-                  aria-label={`Seat ${seat.row}${seat.seatNumber}`}
-                >
-                  {seat.row}
-                  {seat.seatNumber}
-                </button>
-              ))}
-            </div>
+            <h2 className="text-xl font-bold text-indigo-200 drop-shadow-md">
+              SCREEN
+            </h2>
           </div>
-        </div>
+        )}
 
-        <div className="bg-gray-800 rounded-xl p-6 mb-8 shadow-lg shadow-indigo-950/50">
-          <h2 className="text-xl font-extrabold text-indigo-300 mb-4 drop-shadow-lg">
-            Your Selection ({selectedSeats.length})
-          </h2>
-
-          {selectedSeats.length > 0 ? (
-            <>
-              <ul className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 mb-6">
-                {selectedSeats.map((seat) => (
-                  <li
-                    key={seat.id}
-                    className="bg-gray-700 p-3 rounded-lg shadow-xs"
-                  >
-                    <span className="font-medium text-indigo-200">
-                      {seat.row}
-                      {seat.seatNumber}
-                    </span>
-                    <span className="text-sm text-gray-300 block mt-1">
-                      {seat.seatTypeId === 1 ? "Standard" : "Accessible"}
-                    </span>
-                  </li>
-                ))}
-              </ul>
-              <Button
-                onClick={handleCheckout}
-                className="w-full bg-indigo-700 hover:bg-indigo-600 text-white py-3 rounded-lg font-medium flex items-center justify-center gap-2 transition-all duration-300 shadow-md hover:shadow-lg cursor-pointer"
+        {!layout ? (
+          <div className="text-center py-12">
+            <p className="text-indigo-300">No seating information available</p>
+          </div>
+        ) : (
+          <>
+            <div className="pb-6 mb-8 flex justify-center overflow-auto">
+              <div
+                className="relative border border-gray-700 rounded-lg bg-gray-800 shadow-lg shadow-indigo-950/50 mx-auto"
+                style={{
+                  width: `${layout.containerWidth}px`,
+                  height: `${layout.containerHeight}px`,
+                  minWidth: "800px",
+                  minHeight: "500px",
+                }}
               >
-                Proceed to Checkout
-                <TicketIcon className="h-5 w-5" />
-              </Button>
-            </>
-          ) : (
-            <div className="text-center py-4">
-              <p className="text-gray-300">Select seats to continue</p>
-              <p className="text-sm text-gray-400 mt-1">
-                Click on available seats (green) to select them
-              </p>
+                {layout.uniqueRows.map((row, rowIndex) => (
+                  <div
+                    key={row}
+                    className="absolute w-full"
+                    style={{
+                      top: `${
+                        layout.startY +
+                        rowIndex * (layout.seatSize + layout.gapSize)
+                      }px`,
+                      height: `${layout.seatSize}px`,
+                    }}
+                  >
+                    {layout.seatsByRow[rowIndex].map((seat) => (
+                      <button
+                        key={seat.id}
+                        className={`absolute rounded-full flex items-center justify-center transition-all duration-300 cursor-pointer
+                          ${
+                            !seat.isAvailable
+                              ? "bg-red-600 cursor-not-allowed opacity-70"
+                              : selectedSeats.some((s) => s.id === seat.id)
+                              ? "bg-green-600 text-white scale-110 shadow-md"
+                              : seatTypeColors[seat.seatTypeId] ||
+                                "bg-indigo-600"
+                          }
+                          text-white hover:scale-105 hover:shadow-md`}
+                        style={{
+                          width: `${layout.seatSize}px`,
+                          height: `${layout.seatSize}px`,
+                          left: `${
+                            layout.startX +
+                            (seat.seatNumber - 1) *
+                              (layout.seatSize + layout.gapSize)
+                          }px`,
+                          fontSize: `${Math.max(10, layout.seatSize * 0.4)}px`,
+                        }}
+                        onClick={() => handleSeatClick(seat)}
+                        disabled={!seat.isAvailable}
+                        aria-label={`Seat ${seat.row}${seat.seatNumber}`}
+                      >
+                        {seat.row}
+                        {seat.seatNumber}
+                      </button>
+                    ))}
+                  </div>
+                ))}
+              </div>
             </div>
-          )}
-        </div>
 
-        <div className="flex flex-wrap justify-center gap-4 md:gap-6 ">
-          <div className="flex items-center gap-2">
-            <div className="w-5 h-5 bg-green-600 rounded-full"></div>
-            <span className="text-sm text-gray-300">Available</span>
-          </div>
+            <div className="bg-gray-800 rounded-xl p-6 mb-8 shadow-lg shadow-indigo-950/50">
+              <h2 className="text-xl font-extrabold text-indigo-300 mb-4 drop-shadow-lg">
+                Your Selection ({selectedSeats.length})
+              </h2>
+
+              {selectedSeats.length > 0 ? (
+                <>
+                  <ul className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 mb-6">
+                    {selectedSeats.map((seat) => (
+                      <li
+                        key={seat.id}
+                        className="bg-gray-700 p-3 rounded-lg shadow-xs"
+                      >
+                        <span className="font-medium text-indigo-200">
+                          {seat.row}
+                          {seat.seatNumber}
+                        </span>
+                        <span className="text-sm text-gray-300 block mt-1">
+                          {getSeatTypeName(seat.seatTypeId)}
+                        </span>
+                      </li>
+                    ))}
+                  </ul>
+                  <Button
+                    onClick={handleCheckout}
+                    className="w-full bg-indigo-700 hover:bg-indigo-600 text-white py-3 rounded-lg font-medium flex items-center justify-center gap-2 transition-all duration-300 shadow-md hover:shadow-lg cursor-pointer"
+                  >
+                    Proceed to Checkout
+                    <TicketIcon className="h-5 w-5" />
+                  </Button>
+                </>
+              ) : (
+                <div className="text-center py-4">
+                  <p className="text-gray-300">Select seats to continue</p>
+                  <p className="text-sm text-gray-400 mt-1">
+                    Click on available seats to select them
+                  </p>
+                </div>
+              )}
+            </div>
+          </>
+        )}
+
+        <div className="flex flex-wrap justify-center gap-4 md:gap-6">
+          {seatTypes.map((type) => (
+            <div key={type.id} className="flex items-center gap-2">
+              <div
+                className={`w-5 h-5 rounded-full ${
+                  seatTypeColors[type.id] || "bg-gray-600"
+                }`}
+              ></div>
+              <span className="text-sm text-gray-300">{type.seatTypes}</span>
+            </div>
+          ))}
           <div className="flex items-center gap-2">
             <div className="w-5 h-5 bg-red-600 rounded-full"></div>
             <span className="text-sm text-gray-300">Reserved</span>
           </div>
           <div className="flex items-center gap-2">
-            <div className="w-5 h-5 bg-indigo-600 rounded-full"></div>
+            <div className="w-5 h-5 bg-green-600 rounded-full"></div>
             <span className="text-sm text-gray-300">Selected</span>
-          </div>
-          <div className="flex items-center gap-2">
-            <div className="w-5 h-5 bg-green-600 rounded-full ring-3 ring-blue-400"></div>
-            <span className="text-sm text-gray-300">Accessible</span>
           </div>
         </div>
       </div>
