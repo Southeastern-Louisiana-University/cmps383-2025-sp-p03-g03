@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Selu383.SP25.P03.Api.Data;
@@ -14,6 +15,7 @@ namespace Selu383.SP25.P03.Api.Controllers
             : base(context, mapper)
         {
         }
+        [AllowAnonymous]
         [HttpGet("GetByUserId/{userId}")]
         public async Task<ActionResult<IEnumerable<UserTicket>>> GetByUserId(int userId)
         {

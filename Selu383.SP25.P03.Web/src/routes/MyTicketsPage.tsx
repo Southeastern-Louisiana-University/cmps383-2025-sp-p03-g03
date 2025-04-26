@@ -33,9 +33,7 @@ export default function MyTickets() {
         const userTicketsResponse = await fetch(
           `/api/userticket/GetByUserId/${userId}`,
           {
-            headers: {
-              Authorization: `Bearer ${localStorage.getItem("token")}`,
-            },
+            headers: {},
           }
         );
         if (!userTicketsResponse.ok) {

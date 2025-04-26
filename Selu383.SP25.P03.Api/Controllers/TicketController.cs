@@ -1,13 +1,16 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Selu383.SP25.P03.Api.Data;
 using Selu383.SP25.P03.Api.Features.Cart;
+using Selu383.SP25.P03.Api.Features.Products;
 using Selu383.SP25.P03.Api.Features.Tickets;
 
 namespace Selu383.SP25.P03.Api.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [AllowAnonymous]
     public class TicketController : GenericController<Ticket, TicketDto>
     {
         private readonly DataContext _context; // Fix for IDE0290: Use explicit field instead of primary constructor
