@@ -23,7 +23,7 @@ export default function Login() {
       const success = await auth.signin(username, password);
       if (success) {
         console.log('Login successful');
-        router.push('/(auth)/profile');
+        router.push("/profile");
       } else {
         setError('Invalid username or password');
       }
@@ -85,7 +85,7 @@ export default function Login() {
       {auth.isAuthenticated && (
         <TouchableOpacity
           className="mt-6 px-6 py-3 bg-green-600 rounded-md"
-          onPress={() => router.push('/(auth)/profile')}
+          onPress={() => router.push("/profile")}
         >
           <Text className="text-white font-bold text-center">Go to Profile</Text>
         </TouchableOpacity>
