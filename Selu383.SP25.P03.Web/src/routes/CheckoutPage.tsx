@@ -8,6 +8,7 @@ import { loadStripe, Stripe } from "@stripe/stripe-js";
 import { getStripePublishableKey } from "../Services/PaymentService";
 import { CartItemType, useCart } from "../components/CartContext";
 import { getSeatPrice, getSeatTypeName } from "../Utils/seats";
+
 interface Seat {
   id: number;
   seatTypeId: number;
@@ -41,7 +42,7 @@ export default function Checkout() {
   const [paymentProcessing, setPaymentProcessing] = useState(false);
   const [orderComplete, setOrderComplete] = useState(false);
   const [customerEmail, setCustomerEmail] = useState("");
-  const { cart } = useCart();
+  const { cart, clearCart } = useCart();
   const formattedSeats = selectedSeats
     .map((seat: Seat) => `${seat.row}${seat.seatNumber}`)
     .join(", ");
@@ -322,6 +323,15 @@ export default function Checkout() {
               <span>${calculateTotal()}</span>
             </div>
           </div>
+          <Button
+            onClick={() => {
+              clearCart();
+              navigate("/");
+            }}
+            className="!w-full !bg-red-700 hover:!bg-red-600 !text-white !py-2 !rounded-lg !font-medium mt-2 cursor-pointer"
+          >
+            Clear Cart
+          </Button>
 
           <div className="!bg-gray-800 !rounded-xl !shadow-lg !shadow-indigo-950/50 !p-6">
             <h2 className="!text-xl !font-extrabold !text-indigo-300 !mb-4 !drop-shadow-lg">

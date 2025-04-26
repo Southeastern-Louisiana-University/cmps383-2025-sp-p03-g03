@@ -24,7 +24,7 @@ export default function SeatSelection() {
   const { movieId, theaterId, roomId, scheduleId } = useParams();
   const location = useLocation();
   const navigate = useNavigate();
-  const { time, movie, theater, room } = location.state || {};
+  const { time, movie, theater, room, poster } = location.state || {};
 
   const [seats, setSeats] = useState<Seat[]>([]);
   const [seatTypes, setSeatTypes] = useState<SeatType[]>([]);
@@ -147,25 +147,36 @@ export default function SeatSelection() {
     selectedSeats.forEach((seat) => {
       addToCart({
         id: seat.id,
-        name: formatSeatName(seat.row, seat.seatNumber),
+        name: `${seat.row}${seat.seatNumber}`,
         price: getSeatPrice(seat.seatTypeId),
         quantity: 1,
-        type: "Seat",
+        type: "seat",
+        row: seat.row,
+        seatNumber: seat.seatNumber,
+        seatTypeId: seat.seatTypeId,
+        showtime: { id: Number(scheduleId), time: time }, // <<< fixed
+        movie: {
+          id: movie.id,
+          title: movie.title,
+          runtime: movie.runtime,
+          ageRating: movie.ageRating,
+        },
+        theater: {
+          id: theater.id,
+          name: theater.name,
+        },
+        poster: poster
+          ? { imageType: poster.imageType, imageData: poster.imageData }
+          : undefined,
       });
     });
     navigate("/checkout", {
       state: {
         selectedSeats,
-        showtime: {
-          id: scheduleId,
-          time,
-          movieId: Number(movieId),
-          theaterId: Number(theaterId),
-          roomId: Number(roomId),
-        },
-        theater,
+        showtime: { id: Number(scheduleId), time },
         movie,
-        room,
+        theater,
+        poster,
       },
     });
   };
