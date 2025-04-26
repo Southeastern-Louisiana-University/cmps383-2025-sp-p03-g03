@@ -18,6 +18,7 @@ namespace Selu383.SP25.P03.Api.Features.Tickets
         public int Id { get; set; }
         public int UserId { get; set; }
         public int TicketId { get; set; }
+        public TicketDto? Ticket { get; set; }
 
     }
     public class UserTicketConfiguration : IEntityTypeConfiguration<UserTicket>
