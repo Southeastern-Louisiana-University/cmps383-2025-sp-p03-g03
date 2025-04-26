@@ -1,7 +1,7 @@
 import Headroom from "react-headroom";
 import LDTheatreLogo from "../assets/lionsdencinemas.svg";
 import "../routes/App.css";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "./authContext";
 import UserDropdown from "./userIconDropdown";
 import { useCart } from "./CartContext";
@@ -11,6 +11,18 @@ export default function TopBar() {
   const { isAuthenticated } = useAuth();
   const { cart } = useCart();
   const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
+  const navigate = useNavigate();
+
+  const handleCartClick = () => {
+    if (cart.length === 0) {
+      // Optional: Show a better UI message instead of alert
+      alert("Your cart is empty. Please add some items first!");
+    } else {
+      navigate("/checkout", {
+        state: {},
+      });
+    }
+  };
 
   return (
     <Headroom className="z-[1000] relative headroom-wrapper" pinStart={0}>
@@ -53,11 +65,14 @@ export default function TopBar() {
               Menu
             </h2>
           </Link>
-          <Link to="/cart" className="relative flex items-center">
+          <div
+            onClick={handleCartClick}
+            className="relative flex items-center cursor-pointer"
+          >
             <span className="text-lg">
               <PiShoppingCartBold
                 size={33}
-                className="text-indigo-200 transition-transform hover:scale-110 hover:drop-shadow-xl hover:shadow-indigo-500/50 cursor-pointer"
+                className="text-indigo-200 transition-transform hover:scale-110 hover:drop-shadow-xl hover:shadow-indigo-500/50"
               />
             </span>
             {totalItems > 0 && (
@@ -65,7 +80,7 @@ export default function TopBar() {
                 {totalItems}
               </span>
             )}
-          </Link>
+          </div>
 
           {isAuthenticated ? (
             <div className="flex items-center">

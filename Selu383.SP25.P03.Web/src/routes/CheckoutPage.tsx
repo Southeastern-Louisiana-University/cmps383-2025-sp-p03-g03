@@ -6,7 +6,8 @@ import { useAuth } from "../components/authContext";
 import axios from "axios";
 import { loadStripe, Stripe } from "@stripe/stripe-js";
 import { getStripePublishableKey } from "../Services/PaymentService";
-
+import { CartItemType, useCart } from "../components/CartContext";
+import { getSeatPrice, getSeatTypeName } from "../Utils/seats";
 interface Seat {
   id: number;
   seatTypeId: number;
@@ -17,31 +18,46 @@ interface Seat {
   xPosition: number;
   yPosition: number;
 }
+interface CheckoutState {
+  selectedSeats?: Seat[];
+  showtime?: any;
+  theater?: any;
+  movie?: any;
+  poster?: any;
+}
 
 export default function Checkout() {
   const location = useLocation();
   const navigate = useNavigate();
   const { userId } = useAuth();
-  const { selectedSeats, showtime, theater, movie, poster } =
-    location.state || {};
+  const {
+    selectedSeats = [],
+    showtime = null,
+    theater = null,
+    movie = null,
+    poster = null,
+  } = (location.state || {}) as CheckoutState;
   const [error, setError] = useState<string | null>(null);
   const [paymentProcessing, setPaymentProcessing] = useState(false);
   const [orderComplete, setOrderComplete] = useState(false);
   const [customerEmail, setCustomerEmail] = useState("");
+  const { cart } = useCart();
   const formattedSeats = selectedSeats
     .map((seat: Seat) => `${seat.row}${seat.seatNumber}`)
     .join(", ");
 
   const [stripeInstance, setStripeInstance] = useState<Stripe | null>(null);
 
-  const formattedShowtime = new Date(showtime.time).toLocaleString("en-US", {
-    year: "numeric",
-    month: "long",
-    day: "numeric",
-    hour: "numeric",
-    minute: "2-digit",
-    hour12: true,
-  });
+  const formattedShowtime = showtime
+    ? new Date(showtime.time).toLocaleString("en-US", {
+        year: "numeric",
+        month: "long",
+        day: "numeric",
+        hour: "numeric",
+        minute: "2-digit",
+        hour12: true,
+      })
+    : "";
 
   useEffect(() => {
     if (!userId) {
@@ -51,45 +67,16 @@ export default function Checkout() {
     }
   }, [userId, showtime, theater, selectedSeats, movie]);
 
-  const getSeatType = (seatTypeId: number) => {
-    switch (seatTypeId) {
-      case 1:
-        return "Standard";
-      case 2:
-        return "Premium";
-      case 3:
-        return "Recliner";
-      case 4:
-        return "Accessible";
-      case 5:
-        return "VIP";
-      default:
-        return "Unknown";
-    }
-  };
-
-  const getSeatPrice = (seatTypeId: number) => {
-    switch (seatTypeId) {
-      case 1:
-        return 8;
-      case 2:
-        return 12;
-      case 3:
-        return 14;
-      case 4:
-        return 8;
-      case 5:
-        return 20;
-      default:
-        return 0;
-    }
-  };
-
   const calculateTotal = () => {
-    return selectedSeats.reduce(
+    let cartTotal = cart.reduce(
+      (total, item) => total + item.price * item.quantity,
+      0
+    );
+    let seatsTotal = selectedSeats.reduce(
       (total: number, seat: Seat) => total + getSeatPrice(seat.seatTypeId),
       0
     );
+    return cartTotal + seatsTotal;
   };
 
   const handlePayment = async () => {
@@ -177,7 +164,7 @@ export default function Checkout() {
 
   const currentYear = new Date().getFullYear();
 
-  if (!userId || !showtime || !theater || !selectedSeats?.length || !movie) {
+  if (!userId) {
     return (
       <div className="!flex !flex-col !min-h-screen !bg-gray-900 !text-white">
         <div className="!max-w-4xl !mx-auto !p-6 !text-center !text-red-500 !flex-1 !flex !items-center !justify-center">
@@ -274,6 +261,44 @@ export default function Checkout() {
                 </p>
               </div>
             </div>
+            {cart.filter((item) => item.type === ("seat" as CartItemType))
+              .length > 0 && (
+              <div>
+                <h2 className="text-xl font-bold text-indigo-300 mb-2">
+                  Seats
+                </h2>
+                <ul>
+                  {cart
+                    .filter((item) => item.type === ("seat" as CartItemType))
+                    .map((item) => (
+                      <li key={item.id} className="flex justify-between">
+                        <span>{item.name}</span>
+                        <span>${(item.price * item.quantity).toFixed(2)}</span>
+                      </li>
+                    ))}
+                </ul>
+              </div>
+            )}
+            {cart.filter((item) => item.type === ("concession" as CartItemType))
+              .length > 0 && (
+              <div className="mt-6">
+                <h2 className="text-xl font-bold text-indigo-300 mb-2">
+                  Concessions
+                </h2>
+                <ul>
+                  {cart
+                    .filter(
+                      (item) => item.type === ("concession" as CartItemType)
+                    )
+                    .map((item) => (
+                      <li key={item.id} className="flex justify-between">
+                        <span>{item.name}</span>
+                        <span>${(item.price * item.quantity).toFixed(2)}</span>
+                      </li>
+                    ))}
+                </ul>
+              </div>
+            )}
 
             <div className="!border-t !border-gray-700 !pt-4">
               <h3 className="!font-bold !mb-2 !text-indigo-200">
@@ -284,7 +309,7 @@ export default function Checkout() {
                   <li key={seat.id} className="!flex !justify-between">
                     <span>
                       Seat {seat.row}
-                      {seat.seatNumber} ({getSeatType(seat.seatTypeId)})
+                      {seat.seatNumber} ({getSeatTypeName(seat.seatTypeId)})
                     </span>
                     <span>${getSeatPrice(seat.seatTypeId)}</span>
                   </li>

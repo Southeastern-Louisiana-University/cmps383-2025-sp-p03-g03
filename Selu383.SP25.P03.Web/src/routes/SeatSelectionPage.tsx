@@ -3,7 +3,8 @@ import { useParams, useNavigate, useLocation } from "react-router-dom";
 import { Button } from "@headlessui/react";
 import { ArrowLeftIcon, TicketIcon } from "@heroicons/react/24/outline";
 import { SeatService, SeatTypeService } from "../Services/SeatService";
-
+import { useCart } from "../components/CartContext";
+import { formatSeatName, getSeatPrice, getSeatTypeName } from "../Utils/seats";
 interface Seat {
   id: number;
   seatTypeId: number;
@@ -19,6 +20,7 @@ interface SeatType {
 }
 
 export default function SeatSelection() {
+  const { addToCart } = useCart();
   const { movieId, theaterId, roomId, scheduleId } = useParams();
   const location = useLocation();
   const navigate = useNavigate();
@@ -141,12 +143,16 @@ export default function SeatSelection() {
     );
   };
 
-  const getSeatTypeName = (seatTypeId: number): string => {
-    const type = seatTypes.find((t) => t.id === seatTypeId);
-    return type ? type.seatTypes : "Standard";
-  };
-
   const handleCheckout = () => {
+    selectedSeats.forEach((seat) => {
+      addToCart({
+        id: seat.id,
+        name: formatSeatName(seat.row, seat.seatNumber),
+        price: getSeatPrice(seat.seatTypeId),
+        quantity: 1,
+        type: "Seat",
+      });
+    });
     navigate("/checkout", {
       state: {
         selectedSeats,

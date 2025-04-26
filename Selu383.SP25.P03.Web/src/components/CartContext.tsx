@@ -1,13 +1,14 @@
 //this cart context is going to provide our Cart functionality
 
 import { createContext, useContext, useEffect, useState } from "react";
-
+export type CartItemType = "Seat" | "Concession";
 type CartItem = {
   // what is an item in our cart -- if needed, we can update to reflect our tickets and whatnot
   id: number;
   name: string;
   quantity: number;
   price: number;
+  type: CartItemType;
 };
 
 type CartContextType = {

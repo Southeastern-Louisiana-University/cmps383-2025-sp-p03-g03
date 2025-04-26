@@ -61,6 +61,7 @@ export default function ConcessionsPage() {
       name: product.name,
       price: product.price,
       quantity: 1,
+      type: "Concession",
     });
   };
 
