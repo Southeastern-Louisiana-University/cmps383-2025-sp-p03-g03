@@ -4,9 +4,14 @@ import "../routes/App.css";
 import { Link } from "react-router-dom";
 import { useAuth } from "./authContext";
 import UserDropdown from "./userIconDropdown";
+import { useCart } from "./CartContext";
+import { PiShoppingCartBold } from "react-icons/pi";
 
 export default function TopBar() {
   const { isAuthenticated } = useAuth();
+  const { cart } = useCart();
+  const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
+
   return (
     <Headroom className="z-[1000] relative headroom-wrapper" pinStart={0}>
       <nav className="bg-gray-900 outline-3 outline-indigo-300 shadow-lg shadow-indigo-900/50 p-2 flex justify-between items-center relative z-50">
@@ -47,6 +52,19 @@ export default function TopBar() {
             <h2 className="text-lg md:text-xl lg:text-2xl text-indigo-200 transition-transform hover:scale-110 hover:drop-shadow-xl hover:shadow-indigo-500/50 cursor-pointer">
               Menu
             </h2>
+          </Link>
+          <Link to="/cart" className="relative flex items-center">
+            <span className="text-lg">
+              <PiShoppingCartBold
+                size={33}
+                className="text-indigo-200 transition-transform hover:scale-110 hover:drop-shadow-xl hover:shadow-indigo-500/50 cursor-pointer"
+              />
+            </span>
+            {totalItems > 0 && (
+              <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
+                {totalItems}
+              </span>
+            )}
           </Link>
 
           {isAuthenticated ? (
