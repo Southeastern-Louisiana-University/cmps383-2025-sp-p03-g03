@@ -30,10 +30,10 @@ export default function SeatSelection() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [seatTypeColors] = useState<Record<number, string>>({
-    1: "bg-indigo-600", // Standard
-    2: "bg-purple-600", // Premium
-    3: "bg-amber-600", // VIP
-    4: "bg-green-600 ring-3 ring-blue-400", // Accessible
+    1: "bg-indigo-600",
+    2: "bg-purple-600",
+    3: "bg-amber-600",
+    4: "bg-green-600 ring-3 ring-blue-400",
   });
 
   useEffect(() => {
@@ -76,19 +76,16 @@ export default function SeatSelection() {
   const calculateSeatLayout = () => {
     if (seats.length === 0) return null;
 
-    // Base dimensions for 100 seats
     const BASE_SEAT_COUNT = 100;
     const BASE_CONTAINER_WIDTH = 800;
     const BASE_SEAT_SIZE = 24;
     const BASE_GAP_SIZE = 8;
     const BASE_PADDING = 40;
 
-    // Extract unique rows and sort them
     const uniqueRows = [...new Set(seats.map((seat) => seat.row))].sort(
       (a, b) => a.localeCompare(b, undefined, { numeric: true })
     );
 
-    // Group seats by row and sort by seat number
     const seatsByRow = uniqueRows.map((row) =>
       seats
         .filter((seat) => seat.row === row)
@@ -98,29 +95,24 @@ export default function SeatSelection() {
     const maxSeatsPerRow = Math.max(...seatsByRow.map((row) => row.length));
     const totalSeats = seats.length;
 
-    // Calculate scale factor (cube root for smoother scaling)
     const scaleFactor = Math.max(
       1,
       Math.pow(totalSeats / BASE_SEAT_COUNT, 1 / 3)
     );
 
-    // Apply scaling to all elements
     const seatSize = Math.min(36, BASE_SEAT_SIZE * scaleFactor);
     const gapSize = Math.min(12, BASE_GAP_SIZE * scaleFactor);
     const padding = Math.min(60, BASE_PADDING * scaleFactor);
 
-    // Calculate grid dimensions
     const gridWidth = maxSeatsPerRow * (seatSize + gapSize) - gapSize;
     const gridHeight = uniqueRows.length * (seatSize + gapSize) - gapSize;
 
-    // Calculate container dimensions
     const containerWidth = Math.min(
       window.innerWidth * 0.95,
       Math.max(BASE_CONTAINER_WIDTH, gridWidth + padding * 2)
     );
     const containerHeight = gridHeight + padding * 2;
 
-    // Center the grid
     const availableWidth = containerWidth - padding * 2;
     const startX = padding + Math.max(0, (availableWidth - gridWidth) / 2);
     const startY = padding;
@@ -233,7 +225,6 @@ export default function SeatSelection() {
           </p>
         </div>
 
-        {/* Screen matches container width */}
         {layout && (
           <div
             className="bg-gradient-to-t from-indigo-950 to-gray-800 text-white text-center py-6 mb-8 rounded-lg shadow-lg shadow-indigo-950/50 mx-auto"
