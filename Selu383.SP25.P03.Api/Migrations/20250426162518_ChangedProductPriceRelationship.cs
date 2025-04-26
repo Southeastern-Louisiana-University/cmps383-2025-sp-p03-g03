@@ -21,10 +21,10 @@ namespace Selu383.SP25.P03.Api.Migrations
                 nullable: true);
 
             migrationBuilder.AddForeignKey(
-                name: "FK_ProductPrices_Products_ProductId",
+                name: "FK_ProductPrices_Theaters_ProductId",
                 table: "ProductPrices",
                 column: "ProductId",
-                principalTable: "Products",
+                principalTable: "Theaters",
                 principalColumn: "Id",
                 onDelete: ReferentialAction.Restrict);
         }
