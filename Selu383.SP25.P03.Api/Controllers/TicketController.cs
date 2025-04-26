@@ -38,7 +38,7 @@ namespace Selu383.SP25.P03.Api.Controllers
             {
                 var ticket = new Ticket
                 {
-                    OrderId = request.OrderId, // you could generate or reuse an Order entity later
+                    OrderId = (int)request.OrderId, // you could generate or reuse an Order entity later
                     ScreeningId = request.ScreeningId,
                     SeatId = seat.SeatId,
                     TicketType = seat.SeatType, // ex: "Adult", "Child", etc
