@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useCart } from "../components/CartContext";
 
 type Product = {
   id: number;
@@ -19,6 +20,7 @@ export default function ConcessionsPage() {
   const [products, setProducts] = useState<Product[]>([]);
   const [cart, setCart] = useState<Product[]>([]); // cart state
   const concessionsUrl = "/api/Product";
+  const { addToCart } = useCart();
 
   useEffect(() => {
     fetch(concessionsUrl, {
@@ -53,12 +55,14 @@ export default function ConcessionsPage() {
     {}
   );
 
-  const handleAddToCart = (product: Product) => {
-    setCart((prevCart) => [...prevCart, product]);
-    console.log(`Added to cart: ${product.name}`);
-    if (cart == null) {
-      alert("failed to add to cart");
-    }
+  const handleAddToCart = (product: any) => {
+    addToCart({
+      id: product.id,
+      name: product.name,
+      price: product.price,
+      quantity: 1,
+      type: "concession",
+    });
   };
 
   return (

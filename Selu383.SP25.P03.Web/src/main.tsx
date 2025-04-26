@@ -44,6 +44,7 @@ import ContactPage from "./routes/Contact.tsx";
 import ProfilePage from "./routes/ProfilePage.tsx";
 import SignupPage from "./routes/SignupPage.tsx";
 import CheckoutSuccess from "./routes/CheckoutSuccess.tsx";
+import { CartProvider } from "./components/CartContext.tsx";
 
 const Layout = () => {
   return (
@@ -185,45 +186,45 @@ const router = createBrowserRouter([
             element: <TheaterFormPage />,
           },
         ],
-        }, 
-        {
-            path: "users",
-            children: [
-                {
-                    index: true,
-                    element: <UserListPage />,
-                },
-                {
-                    path: "new",
-                    element: <UserForm />,
-                },
-                {
-                    path: ":id",
-                    element: <UserForm />,
-                },
-            ],
-        },
-        {
-            path: "rooms",
-            children: [
-                {
-                    index: true,
-                    element: <RoomListPage />,
-                },
-                {
-                    path: "new",
-                    element: <RoomFormPage />,
-                },
-                {
-                    path: ":id",
-                    element: <RoomFormPage />,
-                },
-                {
-                    path: ":roomId/seats",
-                    element: <SeatManagement />,
-                },
-            ],
-        },
+      },
+      {
+        path: "users",
+        children: [
+          {
+            index: true,
+            element: <UserListPage />,
+          },
+          {
+            path: "new",
+            element: <UserForm />,
+          },
+          {
+            path: ":id",
+            element: <UserForm />,
+          },
+        ],
+      },
+      {
+        path: "rooms",
+        children: [
+          {
+            index: true,
+            element: <RoomListPage />,
+          },
+          {
+            path: "new",
+            element: <RoomFormPage />,
+          },
+          {
+            path: ":id",
+            element: <RoomFormPage />,
+          },
+          {
+            path: ":roomId/seats",
+            element: <SeatManagement />,
+          },
+        ],
+      },
       {
         path: "movies",
         children: [
@@ -309,9 +310,11 @@ const rootElement = document.getElementById("root");
 if (rootElement) {
   ReactDOM.createRoot(rootElement).render(
     <React.StrictMode>
-      <AuthProvider>
-        <RouterProvider router={router} />
-      </AuthProvider>
+      <CartProvider>
+        <AuthProvider>
+          <RouterProvider router={router} />
+        </AuthProvider>
+      </CartProvider>
     </React.StrictMode>
   );
 }
