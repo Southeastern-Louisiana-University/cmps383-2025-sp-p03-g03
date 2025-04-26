@@ -255,12 +255,20 @@ export default function Checkout() {
             <h2 className="!text-xl !font-extrabold !text-indigo-300 !mb-4 !drop-shadow-lg">
               Order Summary
             </h2>
-            <h2 className="!text-xl !font-extrabold !text-indigo-300 !mb-4 !drop-shadow-lg">
-              Movie:
-            </h2>
-            <h3 className="!text-l !font-extrabold !White !drop-shadow-lg">
-              {movie.title} @ {formattedShowtime}
-            </h3>
+            {movie ? (
+              <>
+                <h2 className="!text-xl !font-extrabold !text-indigo-300 !mb-4 !drop-shadow-lg">
+                  Movie:
+                </h2>
+                <h3 className="!text-l !font-extrabold !text-white !drop-shadow-lg">
+                  {movie.title} @ {formattedShowtime}
+                </h3>
+              </>
+            ) : (
+              <h2 className="!text-xl !font-extrabold !text-red-400 !mb-4 !drop-shadow-lg">
+                No movie selected
+              </h2>
+            )}
             <div className="!flex !gap-4 !mb-6"></div>
             {cart.filter((item) => item.type === ("seat" as CartItemType))
               .length > 0 && (
