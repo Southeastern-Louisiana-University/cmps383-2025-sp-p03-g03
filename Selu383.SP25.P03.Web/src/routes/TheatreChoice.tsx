@@ -29,7 +29,7 @@ function TheatreChoice() {
     const fetchTheaters = async () => {
       try {
         setLoading(true);
-        const response = await fetch("/api/theaters/active");
+        const response = await fetch("/api/theaters/Active");
         if (!response.ok) throw new Error("Failed to load theaters");
         const data = await response.json();
         setTheaters(data);
