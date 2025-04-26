@@ -6,7 +6,7 @@ import { useAuth } from "../components/authContext";
 import axios from "axios";
 import { loadStripe, Stripe } from "@stripe/stripe-js";
 import { getStripePublishableKey } from "../Services/PaymentService";
-import { CartItemType, useCart } from "../components/CartContext";
+import { CartItemType, SeatCartItem, useCart } from "../components/CartContext";
 import { getSeatPrice, getSeatTypeName } from "../Utils/seats";
 
 interface Seat {
@@ -31,20 +31,45 @@ export default function Checkout() {
   const location = useLocation();
   const navigate = useNavigate();
   const { userId } = useAuth();
-  const {
-    selectedSeats = [],
-    showtime = null,
-    theater = null,
-    movie = null,
-    poster = null,
-  } = (location.state || {}) as CheckoutState;
+  const { cart, clearCart, removeFromCart, addToCart } = useCart();
+  const locationState = location.state as CheckoutState | null;
+
+  const selectedSeats =
+    locationState?.selectedSeats ||
+    cart
+      .filter((item) => item.type === "seat")
+      .map((item) => ({
+        id: item.id,
+        row: (item as SeatCartItem).row,
+        seatNumber: (item as SeatCartItem).seatNumber,
+        seatTypeId: (item as SeatCartItem).seatTypeId,
+      }));
+
+  const showtime =
+    locationState?.showtime ||
+    (cart.find((item) => item.type === "seat") as SeatCartItem)?.showtime ||
+    null;
+
+  const movie =
+    locationState?.movie ||
+    (cart.find((item) => item.type === "seat") as SeatCartItem)?.movie ||
+    null;
+  const theater =
+    locationState?.theater ||
+    (cart.find((item) => item.type === "seat") as SeatCartItem)?.theater ||
+    null;
+  const poster =
+    locationState?.poster ||
+    (cart.find((item) => item.type === "seat") as SeatCartItem)?.poster ||
+    null;
+
   const [error, setError] = useState<string | null>(null);
   const [paymentProcessing, setPaymentProcessing] = useState(false);
   const [orderComplete, setOrderComplete] = useState(false);
   const [customerEmail, setCustomerEmail] = useState("");
-  const { cart, clearCart } = useCart();
+
   const formattedSeats = selectedSeats
-    .map((seat: Seat) => `${seat.row}${seat.seatNumber}`)
+    .map((seat) => `${seat.row}${seat.seatNumber}`)
     .join(", ");
 
   const [stripeInstance, setStripeInstance] = useState<Stripe | null>(null);
@@ -60,6 +85,8 @@ export default function Checkout() {
       })
     : "";
 
+  //fallback -- if coming from another place, rebuild the movie from the cart
+
   useEffect(() => {
     if (!userId) {
       setError("You must be logged in to complete a purchase.");
@@ -74,7 +101,7 @@ export default function Checkout() {
       0
     );
     let seatsTotal = selectedSeats.reduce(
-      (total: number, seat: Seat) => total + getSeatPrice(seat.seatTypeId),
+      (total, seat) => total + getSeatPrice(seat.seatTypeId),
       0
     );
     return cartTotal + seatsTotal;
@@ -228,44 +255,17 @@ export default function Checkout() {
             <h2 className="!text-xl !font-extrabold !text-indigo-300 !mb-4 !drop-shadow-lg">
               Order Summary
             </h2>
-
-            <div className="!flex !gap-4 !mb-6">
-              <div className="!flex-shrink-0">
-                {poster ? (
-                  <img
-                    src={`data:${poster.imageType};base64,${poster.imageData}`}
-                    alt={movie.title}
-                    className="!w-24 !h-auto !rounded-lg !shadow-md !shadow-indigo-950/50"
-                    loading="lazy"
-                  />
-                ) : (
-                  <img
-                    src="/placeholder-poster.jpg"
-                    alt={movie.title}
-                    className="!w-24 !h-auto !rounded-lg !shadow-md !shadow-indigo-950/50"
-                    loading="lazy"
-                  />
-                )}
-              </div>
-              <div>
-                <h3 className="!text-lg !font-bold !text-indigo-200">
-                  {movie.title}
-                </h3>
-                <p className="!text-gray-300">
-                  {movie.runtime} min • {movie.ageRating}
-                </p>
-                <p className="!text-indigo-400 !font-medium !mt-2">
-                  {theater.name}
-                </p>
-                <p className="!text-gray-300">
-                  {new Date(showtime.time).toLocaleString()}
-                </p>
-              </div>
-            </div>
+            <h2 className="!text-xl !font-extrabold !text-indigo-300 !mb-4 !drop-shadow-lg">
+              Movie:
+            </h2>
+            <h3 className="!text-l !font-extrabold !White !drop-shadow-lg">
+              {movie.title} @ {formattedShowtime}
+            </h3>
+            <div className="!flex !gap-4 !mb-6"></div>
             {cart.filter((item) => item.type === ("seat" as CartItemType))
               .length > 0 && (
               <div>
-                <h2 className="text-xl font-bold text-indigo-300 mb-2">
+                <h2 className="!border-t !border-gray-700 !pt-4 !mt-4 !flex !justify-between !font-bold !text-lg !text-indigo-200">
                   Seats
                 </h2>
                 <ul>
@@ -280,58 +280,65 @@ export default function Checkout() {
                 </ul>
               </div>
             )}
-            {cart.filter((item) => item.type === ("concession" as CartItemType))
-              .length > 0 && (
-              <div className="mt-6">
-                <h2 className="text-xl font-bold text-indigo-300 mb-2">
+            {cart.some((item) => item.type === "concession") && (
+              <>
+                <h2 className="!border-t !border-gray-700 !pt-4 !mt-4 !flex !justify-between !font-bold !text-lg !text-indigo-200">
                   Concessions
                 </h2>
                 <ul>
                   {cart
-                    .filter(
-                      (item) => item.type === ("concession" as CartItemType)
-                    )
+                    .filter((item) => item.type === "concession")
                     .map((item) => (
-                      <li key={item.id} className="flex justify-between">
-                        <span>{item.name}</span>
+                      <li
+                        key={item.id}
+                        className="flex justify-between items-center py-2"
+                      >
+                        <div className="flex items-center gap-2">
+                          <button
+                            onClick={() => {
+                              if (item.quantity > 1) {
+                                addToCart({ ...item, quantity: -1 });
+                              } else {
+                                removeFromCart(item.id);
+                              }
+                            }}
+                            className="bg-red-600 text-white px-2 rounded"
+                          >
+                            -
+                          </button>
+
+                          <span className="text-white">{item.quantity}</span>
+
+                          <button
+                            onClick={() => addToCart({ ...item, quantity: 1 })}
+                            className="bg-green-600 text-white px-2 rounded"
+                          >
+                            +
+                          </button>
+
+                          <span className="ml-4">{item.name}</span>
+                        </div>
+
                         <span>${(item.price * item.quantity).toFixed(2)}</span>
                       </li>
                     ))}
                 </ul>
-              </div>
+              </>
             )}
-
-            <div className="!border-t !border-gray-700 !pt-4">
-              <h3 className="!font-bold !mb-2 !text-indigo-200">
-                Selected Seats ({selectedSeats.length})
-              </h3>
-              <ul className="!space-y-2 !text-gray-300">
-                {selectedSeats.map((seat: Seat) => (
-                  <li key={seat.id} className="!flex !justify-between">
-                    <span>
-                      Seat {seat.row}
-                      {seat.seatNumber} ({getSeatTypeName(seat.seatTypeId)})
-                    </span>
-                    <span>${getSeatPrice(seat.seatTypeId)}</span>
-                  </li>
-                ))}
-              </ul>
-            </div>
-
             <div className="!border-t !border-gray-700 !pt-4 !mt-4 !flex !justify-between !font-bold !text-lg !text-indigo-200">
               <span>Total:</span>
               <span>${calculateTotal()}</span>
             </div>
+            <Button
+              onClick={() => {
+                clearCart();
+                navigate("/");
+              }}
+              className="!w-full !bg-red-700 hover:!bg-red-600 !text-white !py-2 !rounded-lg !font-medium mt-2 cursor-pointer"
+            >
+              Clear Cart
+            </Button>
           </div>
-          <Button
-            onClick={() => {
-              clearCart();
-              navigate("/");
-            }}
-            className="!w-full !bg-red-700 hover:!bg-red-600 !text-white !py-2 !rounded-lg !font-medium mt-2 cursor-pointer"
-          >
-            Clear Cart
-          </Button>
 
           <div className="!bg-gray-800 !rounded-xl !shadow-lg !shadow-indigo-950/50 !p-6">
             <h2 className="!text-xl !font-extrabold !text-indigo-300 !mb-4 !drop-shadow-lg">
