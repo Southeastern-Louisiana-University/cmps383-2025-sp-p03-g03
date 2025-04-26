@@ -19,6 +19,7 @@ interface Seat {
   xPosition: number;
   yPosition: number;
 }
+
 interface CheckoutState {
   selectedSeats?: Seat[];
   showtime?: any;
@@ -85,8 +86,6 @@ export default function Checkout() {
       })
     : "";
 
-  //fallback -- if coming from another place, rebuild the movie from the cart
-
   useEffect(() => {
     if (!userId) {
       setError("You must be logged in to complete a purchase.");
@@ -113,22 +112,48 @@ export default function Checkout() {
       return;
     }
 
+    if (!showtime?.id) {
+      setError("Invalid showtime selected.");
+      return;
+    }
+
     setPaymentProcessing(true);
     try {
-      // Simulate payment processing (no ticket creation)
+      // Create tickets first
+      await axios.post("/api/ticket/create-tickets", {
+        userId: userId,
+        orderId: Date.now(), // temporary order ID
+        screeningId: showtime.id,
+        seats: selectedSeats.map((seat) => ({
+          seatId: seat.id,
+          seatType: getSeatTypeName(seat.seatTypeId),
+          price: getSeatPrice(seat.seatTypeId),
+        })),
+      });
+
+      // Process payment
       await new Promise((resolve) => setTimeout(resolve, 1000)); // Fake delay for realism
+
+      // Clear cart after successful purchase
+      clearCart();
       setOrderComplete(true);
     } catch (err) {
-      console.error(err);
-      setError("Payment simulation failed. Please try again.");
+      console.error("Payment error:", err);
+      setError("Payment failed. Please try again.");
     } finally {
       setPaymentProcessing(false);
-      await axios.post("https://localhost:7027/api/email/send", {
-        recipientEmail: customerEmail,
-        movieTitle: movie.title,
-        showtime: formattedShowtime,
-        seats: formattedSeats,
-      });
+
+      // Send confirmation email
+      try {
+        await axios.post("/api/email/send", {
+          recipientEmail: customerEmail,
+          movieTitle: movie.title,
+          showtime: formattedShowtime,
+          seats: formattedSeats,
+        });
+      } catch (emailErr) {
+        console.error("Failed to send email:", emailErr);
+      }
     }
   };
 
@@ -342,7 +367,7 @@ export default function Checkout() {
                 clearCart();
                 navigate("/");
               }}
-              className="!w-full !bg-red-700 hover:!bg-red-600 !text-white !py-2 !rounded-lg !font-medium mt-2 cursor-pointer"
+              className="!w-full !bg-indigo-700 hover:!bg-indigo-600 !text-white duration-300 !py-2 !rounded-lg !font-medium mt-2 cursor-pointer"
             >
               Clear Cart
             </Button>
