@@ -63,7 +63,7 @@ export default function ConcessionsPage() {
 
   return (
     <div className="flex flex-col min-h-screen bg-gray-900 text-white">
-      <h1 className="text-center text-4xl sm:text-5xl md:text-6xl font-extrabold text-indigo-300 tracking-wide drop-shadow-lg">
+      <h1 className="text-4xl sm:text-5xl md:text-6xl font-extrabold text-indigo-300 tracking-wide drop-shadow-lg text-center mb-8">
         Menu
       </h1>
       <div className="max-w-7xl mx-auto">
