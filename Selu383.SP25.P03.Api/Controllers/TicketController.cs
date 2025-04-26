@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Selu383.SP25.P03.Api.Data;
 using Selu383.SP25.P03.Api.Features.Cart;
 using Selu383.SP25.P03.Api.Features.Products;
@@ -19,10 +20,9 @@ namespace Selu383.SP25.P03.Api.Controllers
         public TicketController(DataContext context, IMapper mapper)
             : base(context, mapper)
         {
-            _context = context; // Explicitly assign to the private field
+            _context = context; 
             _mapper = mapper;
         }
-
         [HttpPost("create-tickets")]
         public async Task<IActionResult> CreateTickets([FromBody] CreateTicketsRequest request)
         {
@@ -31,39 +31,62 @@ namespace Selu383.SP25.P03.Api.Controllers
                 return BadRequest("No seats provided");
             }
 
-            var tickets = new List<Ticket>();
-            var userTickets = new List<UserTicket>();
-
-            foreach (var seat in request.Seats)
+            
+            var tickets = request.Seats.Select(seat => new Ticket
             {
-                var ticket = new Ticket
-                {
-                    OrderId = (int)request.OrderId, // you could generate or reuse an Order entity later
-                    ScreeningId = request.ScreeningId,
-                    SeatId = seat.SeatId,
-                    TicketType = seat.SeatType, // ex: "Adult", "Child", etc
-                    Price = seat.Price
-                };
-                _context.Set<Ticket>().Add(ticket); // Fix for CS1061: Use Set<T>() to access DbSet
-                tickets.Add(ticket);
-            }
+                OrderId = (int)request.OrderId,
+                ScreeningId = request.ScreeningId,
+                SeatId = seat.SeatId,
+                TicketType = seat.SeatType,
+                Price = seat.Price
+            }).ToList();
 
-            await _context.SaveChangesAsync(); // Save the Tickets first so they get IDs
+            
+            _context.Set<Ticket>().AddRange(tickets);
+            await _context.SaveChangesAsync();
 
-            foreach (var ticket in tickets)
+            
+            var userTickets = tickets.Select(ticket => new UserTicket
             {
-                var userTicket = new UserTicket
-                {
-                    UserId = request.UserId,
-                    TicketId = ticket.Id
-                };
-                _context.Set<UserTicket>().Add(userTicket); // Fix for CS1061: Use Set<T>() to access DbSet
-                userTickets.Add(userTicket);
-            }
+                UserId = request.UserId,
+                TicketId = ticket.Id
+            }).ToList();
 
-            await _context.SaveChangesAsync(); // Save UserTickets
+            _context.Set<UserTicket>().AddRange(userTickets);
+            await _context.SaveChangesAsync();
 
             return Ok(userTickets);
+        }
+        [HttpDelete("delete-by-order/{orderId}")]
+        public async Task<IActionResult> DeleteTicketsByOrderId(long orderId)
+        {
+            
+            var tickets = await _context.Set<Ticket>()
+                .Where(t => t.OrderId == orderId)
+                .ToListAsync();
+
+            if (tickets == null || tickets.Count == 0)
+            {
+                return NotFound($"No tickets found for OrderId {orderId}");
+            }
+
+           
+            var ticketIds = tickets.Select(t => t.Id).ToList();
+
+            
+            var userTickets = await _context.Set<UserTicket>()
+                .Where(ut => ticketIds.Contains(ut.TicketId))
+                .ToListAsync();
+
+            _context.Set<UserTicket>().RemoveRange(userTickets);
+
+            
+            _context.Set<Ticket>().RemoveRange(tickets);
+
+            
+            await _context.SaveChangesAsync();
+
+            return Ok(new { message = $"{tickets.Count} ticket(s) and related user-tickets deleted successfully." });
         }
     }
 }

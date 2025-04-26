@@ -117,9 +117,9 @@ export default function MyTickets() {
           </div>
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {tickets.map((ticket) => (
+            {tickets.map((ticket, index) => (
               <div
-                key={ticket.ticketId}
+                key={`${ticket.ticketId}-${index}`}
                 className="bg-gray-800 rounded-lg p-6 shadow-lg shadow-indigo-950/50 transition-all duration-300 hover:shadow-indigo-800/70"
               >
                 <h2 className="text-xl font-extrabold text-indigo-300 mb-4 drop-shadow-lg">
