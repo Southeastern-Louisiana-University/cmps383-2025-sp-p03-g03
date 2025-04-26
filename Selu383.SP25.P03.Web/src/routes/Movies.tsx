@@ -25,7 +25,7 @@ function Movies() {
   useEffect(() => {
     const fetchMovies = async () => {
       try {
-        const response = await fetch(`/api/movie`);
+        const response = await fetch(`/api/movie/Active`);
         if (!response.ok) {
           throw new Error("Failed to fetch movies");
         }
