@@ -1,17 +1,16 @@
 import { Tabs } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
-import theme from "@/styles/theme";
 
 export default function TabLayout() {
   return (
     <Tabs
       screenOptions={({ route }) => ({
         headerShown: false,
-        tabBarActiveTintColor: theme.colors.primary,
-        tabBarInactiveTintColor: theme.colors.border,
+        tabBarActiveTintColor: "#a5b4fc",
+        tabBarInactiveTintColor: "#555",
         tabBarStyle: {
-          backgroundColor: theme.colors.notification,
-          borderTopColor: theme.colors.primary,
+          backgroundColor: "#fceda5",
+          borderTopColor: "#a5b4fc",
         },
         tabBarIcon: ({ focused, color, size }) => {
           let iconName: keyof typeof Ionicons.glyphMap;

@@ -1,8 +1,7 @@
-import React, { useContext, useEffect, useState } from "react";
-import { View, Text, ScrollView, ActivityIndicator, StyleSheet } from "react-native";
-import { AuthContext } from "@/context/AuthContext";
-import QRCode from "react-native-qrcode-svg";
-import theme from "@/styles/theme";
+import React, { useContext, useEffect, useState } from 'react';
+import { View, Text, ScrollView, ActivityIndicator } from 'react-native';
+import { AuthContext } from '@/context/AuthContext';
+import QRCode from 'react-native-qrcode-svg';
 
 const ProfileScreen = () => {
   const auth = useContext(AuthContext);
@@ -16,13 +15,11 @@ const ProfileScreen = () => {
       if (!userId) return;
 
       try {
-        const res = await fetch(
-          `https://cmps383-2025-sp25-p03-g03.azurewebsites.net/api/userticket/GetByUserId/${userId}`
-        );
+        const res = await fetch(`https://cmps383-2025-sp25-p03-g03.azurewebsites.net/api/userticket/GetByUserId/${userId}`);
         const data = await res.json();
         setTickets(data);
       } catch (error) {
-        console.error("Failed to fetch tickets", error);
+        console.error('Failed to fetch tickets', error);
       } finally {
         setLoading(false);
       }
@@ -33,26 +30,26 @@ const ProfileScreen = () => {
 
   if (loading) {
     return (
-      <View style={styles.loadingContainer}>
-        <ActivityIndicator size="large" color={theme.colors.primary} />
+      <View className="flex-1 justify-center items-center bg-black">
+        <ActivityIndicator size="large" color="#a5b4fc" />
       </View>
     );
   }
 
   return (
-    <ScrollView style={styles.container}>
-      <Text style={styles.headerText}>Welcome, {auth?.user?.userName}</Text>
+    <ScrollView className="flex-1 bg-black p-4">
+      <Text className="text-white text-2xl font-bold mb-4">Welcome, {auth?.user?.userName}</Text>
 
       {tickets.length === 0 ? (
-        <Text style={styles.noTicketsText}>No tickets found.</Text>
+        <Text className="text-gray-400">No tickets found.</Text>
       ) : (
         tickets.map((ticket: any, index) => (
-          <View key={index} style={styles.ticketCard}>
-            <Text style={styles.ticketMovie}>Movie: {ticket.movieTitle || "Unknown"}</Text>
-            <Text style={styles.ticketDetail}>Date: {ticket.date}</Text>
-            <Text style={styles.ticketDetail}>Time: {ticket.time}</Text>
+          <View key={index} className="bg-gray-800 p-4 mb-4 rounded-lg border border-gray-700">
+            <Text className="text-white font-bold">Movie: {ticket.movieTitle || 'Unknown'}</Text>
+            <Text className="text-gray-300">Date: {ticket.date}</Text>
+            <Text className="text-gray-300">Time: {ticket.time}</Text>
 
-            <View style={styles.qrCodeContainer}>
+            <View className="mt-4 items-center">
               <QRCode value={JSON.stringify(ticket)} size={150} />
             </View>
           </View>
@@ -61,48 +58,5 @@ const ProfileScreen = () => {
     </ScrollView>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: theme.colors.background,
-    padding: 16,
-  },
-  loadingContainer: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    backgroundColor: theme.colors.background,
-  },
-  headerText: {
-    color: theme.colors.text,
-    fontSize: 24,
-    fontWeight: "bold",
-    marginBottom: 16,
-  },
-  noTicketsText: {
-    color: theme.colors.border,
-  },
-  ticketCard: {
-    backgroundColor: theme.colors.card,
-    padding: 16,
-    borderRadius: 10,
-    marginBottom: 16,
-    borderWidth: 1,
-    borderColor: theme.colors.border,
-  },
-  ticketMovie: {
-    color: theme.colors.text,
-    fontWeight: "bold",
-    marginBottom: 6,
-  },
-  ticketDetail: {
-    color: theme.colors.text,
-  },
-  qrCodeContainer: {
-    marginTop: 16,
-    alignItems: "center",
-  },
-});
 
 export default ProfileScreen;

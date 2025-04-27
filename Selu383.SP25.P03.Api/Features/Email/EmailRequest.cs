@@ -6,6 +6,5 @@
         public string MovieTitle { get; set; } = string.Empty;
         public string Showtime { get; set; } = string.Empty;
         public string Seats { get; set; } = string.Empty;
-        public string Concessions { get; set; } = string.Empty;
     }
 }

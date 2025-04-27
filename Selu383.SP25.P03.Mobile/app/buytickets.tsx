@@ -13,17 +13,16 @@ import { useLocalSearchParams, useRouter, useNavigation } from "expo-router";
 import {
   getMovieById,
   getMovieScheduleDetails,
-  getActiveTheaters,
+  getTheaters,
 } from "@/services/movieService";
 import type { Movie } from "@/services/movieService";
-import theme from "@/styles/theme";
 
 type MovieSchedule = {
   id: number;
   movieId: number;
   isActive: boolean;
   movieTimes: string[];
-  roomId: number;
+  roomId: number; // Make sure this field is included
 };
 
 export default function BuyTickets() {
@@ -37,6 +36,7 @@ export default function BuyTickets() {
   const [schedule, setSchedule] = useState<MovieSchedule[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedTheaterName, setSelectedTheaterName] = useState<string | null>(null);
+
   const [modalVisible, setModalVisible] = useState(false);
   const [selectedDay, setSelectedDay] = useState<string | null>(null);
   const [selectedTime, setSelectedTime] = useState<string | null>(null);
@@ -54,9 +54,8 @@ export default function BuyTickets() {
         </View>
       ),
       headerStyle: {
-        backgroundColor: theme.colors.notification,
+        backgroundColor: "#fceda5",
       },
-      headerTintColor: "#000",
     });
   }, [navigation]);
 
@@ -70,7 +69,7 @@ export default function BuyTickets() {
         setSchedule(scheduleData);
 
         if (theaterId) {
-          const theaters = await getActiveTheaters();
+          const theaters = await getTheaters();
           const theater = theaters.find((t) => t.id.toString() === theaterId.toString());
           if (theater) {
             setSelectedTheaterName(theater.name);
@@ -104,7 +103,7 @@ export default function BuyTickets() {
   if (loading || !movie) {
     return (
       <View style={styles.center}>
-        <ActivityIndicator size="large" color={theme.colors.primary} />
+        <ActivityIndicator size="large" color="#a5b4fc" />
       </View>
     );
   }
@@ -187,6 +186,7 @@ export default function BuyTickets() {
               style={styles.confirmButton}
               onPress={() => {
                 setModalVisible(false);
+                // ✅ Navigate to selectseats.tsx with all the params
                 router.push({
                   pathname: "/selectseats",
                   params: {
@@ -212,7 +212,7 @@ export default function BuyTickets() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: theme.colors.background,
+    backgroundColor: "#a5b4fc",
     padding: 16,
   },
   poster: {
@@ -220,24 +220,24 @@ const styles = StyleSheet.create({
     height: 400,
     borderRadius: 10,
     marginBottom: 12,
-    backgroundColor: theme.colors.card,
+    backgroundColor: "#000",
   },
   movieTitle: {
     fontSize: 26,
     fontWeight: "bold",
-    color: theme.colors.text,
+    color: "#000",
     textAlign: "center",
     marginBottom: 6,
   },
   theaterName: {
     fontSize: 18,
     fontWeight: "600",
-    color: theme.colors.text,
+    color: "#000",
     textAlign: "center",
     marginBottom: 16,
   },
   text: {
-    color: theme.colors.text,
+    color: "#000",
     fontSize: 18,
     fontWeight: "bold",
     textAlign: "center",
@@ -250,12 +250,12 @@ const styles = StyleSheet.create({
     paddingVertical: 20,
     marginBottom: 25,
     borderBottomWidth: 2,
-    borderBottomColor: theme.colors.border,
+    borderBottomColor: "#fff",
   },
   dayTitle: {
     fontSize: 22,
     fontWeight: "bold",
-    color: theme.colors.text,
+    color: "#000",
     marginBottom: 12,
     marginTop: 10,
   },
@@ -265,7 +265,7 @@ const styles = StyleSheet.create({
     gap: 10,
   },
   timeButton: {
-    backgroundColor: theme.colors.notification,
+    backgroundColor: "#fceda5",
     paddingVertical: 12,
     paddingHorizontal: 20,
     borderRadius: 10,
@@ -288,7 +288,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   modalContent: {
-    backgroundColor: theme.colors.notification,
+    backgroundColor: "#fceda5",
     padding: 24,
     borderRadius: 16,
     width: "80%",
@@ -303,18 +303,18 @@ const styles = StyleSheet.create({
   },
   modalText: {
     fontSize: 16,
-    color: "#000",
+    color: "#333",
     textAlign: "center",
     marginBottom: 20,
   },
   confirmButton: {
-    backgroundColor: theme.colors.primary,
+    backgroundColor: "#a5b4fc",
     paddingVertical: 12,
     paddingHorizontal: 24,
     borderRadius: 8,
   },
   confirmButtonText: {
-    color: theme.colors.text,
+    color: "#000",
     fontWeight: "bold",
     fontSize: 16,
   },

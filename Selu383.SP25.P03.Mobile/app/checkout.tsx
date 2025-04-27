@@ -8,11 +8,11 @@ import {
 } from "react-native";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import QRCode from "react-native-qrcode-svg";
-import theme from "@/styles/theme";
 
 export default function Checkout() {
   const router = useRouter();
   const { ticket, selectedSeats, concessions } = useLocalSearchParams();
+
   const [showQRCode, setShowQRCode] = useState(false);
 
   let parsedTicket: any = null;
@@ -32,7 +32,7 @@ export default function Checkout() {
   }
 
   try {
-    parsedConcessions = concessions ? JSON.parse(concessions as string) : [];
+    parsedConcessions = concessions ? JSON.parse(concessions as string) : [];  
   } catch (e) {
     console.warn("Invalid concessions data", e);
   }
@@ -46,17 +46,10 @@ export default function Checkout() {
   const ticketTotal = parsedSeats.length * ticketPricePerSeat;
   const finalTotal = concessionTotal + ticketTotal;
 
-  // ✅ FIXED QR DATA - Only sending small essential data:
   const qrData = JSON.stringify({
-    ticketId: parsedTicket?.id,
-    seats: parsedSeats.map((seat) => ({
-      row: seat.row,
-      seatNumber: seat.seatNumber,
-    })),
-    concessions: parsedConcessions.map((item) => ({
-      id: item.id,
-      quantity: item.quantity,
-    })),
+    ticket: parsedTicket,
+    seats: parsedSeats,
+    concessions: parsedConcessions,
     total: finalTotal.toFixed(2),
   });
 
@@ -135,83 +128,43 @@ export default function Checkout() {
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: theme.colors.background,
-    padding: 20,
-  },
-  title: {
-    fontSize: 24,
-    fontWeight: "bold",
-    color: theme.colors.text,
-    marginBottom: 20,
-  },
+  container: { flex: 1, backgroundColor: "#a5b4fc", padding: 20 },
+  title: { fontSize: 24, fontWeight: "bold", color: "#000", marginBottom: 20 },
   ticketBox: {
-    backgroundColor: theme.colors.notification,
+    backgroundColor: "#fceda5",
     padding: 16,
     borderRadius: 10,
     marginBottom: 20,
   },
-  sectionTitle: {
-    fontSize: 20,
-    fontWeight: "bold",
-    color: "#000",
-    marginBottom: 8,
-  },
-  detail: {
-    fontSize: 16,
-    color: "#000",
-  },
-  price: {
-    fontSize: 16,
-    fontWeight: "bold",
-    color: "#000",
-    marginTop: 6,
-  },
+  sectionTitle: { fontSize: 20, fontWeight: "bold", color: "#000", marginBottom: 8 },
+  detail: { fontSize: 16, color: "#000" },
+  price: { fontSize: 16, fontWeight: "bold", color: "#000", marginTop: 6 },
   item: {
     flexDirection: "row",
     justifyContent: "space-between",
-    backgroundColor: theme.colors.notification,
+    backgroundColor: "#fceda5",
     padding: 12,
     borderRadius: 8,
     marginBottom: 10,
   },
-  itemText: {
-    fontSize: 16,
-    color: "#000",
-  },
+  itemText: { fontSize: 16, color: "#000" },
   totalRow: {
     flexDirection: "row",
     justifyContent: "space-between",
     marginTop: 20,
     paddingTop: 10,
     borderTopWidth: 2,
-    borderTopColor: theme.colors.text,
+    borderTopColor: "#000",
   },
-  totalLabel: {
-    fontSize: 18,
-    fontWeight: "bold",
-    color: theme.colors.text,
-  },
-  totalPrice: {
-    fontSize: 18,
-    fontWeight: "bold",
-    color: theme.colors.text,
-  },
+  totalLabel: { fontSize: 18, fontWeight: "bold", color: "#000" },
+  totalPrice: { fontSize: 18, fontWeight: "bold", color: "#000" },
   confirmButton: {
     marginTop: 30,
-    backgroundColor: theme.colors.primary,
+    backgroundColor: "#000",
     paddingVertical: 14,
     borderRadius: 10,
     alignItems: "center",
   },
-  confirmText: {
-    color: "#000",
-    fontSize: 16,
-    fontWeight: "bold",
-  },
-  qrContainer: {
-    alignItems: "center",
-    marginTop: 20,
-  },
+  confirmText: { color: "#a5b4fc", fontSize: 16, fontWeight: "bold" },
+  qrContainer: { alignItems: "center", marginTop: 20 },
 });
