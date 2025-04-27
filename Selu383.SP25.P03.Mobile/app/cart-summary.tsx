@@ -8,6 +8,7 @@ import {
 } from "react-native";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
+import theme from "@/styles/theme"; 
 
 type CartItem = {
   id: number;
@@ -87,7 +88,7 @@ export default function CartSummary() {
                   ${(item.price * item.quantity).toFixed(2)}
                 </Text>
                 <Pressable onPress={() => deleteItem(item.id)}>
-                  <Ionicons name="trash-outline" size={22} color="#000" />
+                  <Ionicons name="trash-outline" size={22} color={theme.colors.text} />
                 </Pressable>
               </View>
             </View>
@@ -118,30 +119,57 @@ export default function CartSummary() {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: "#a5b4fc", padding: 20 },
-  title: { fontSize: 24, fontWeight: "bold", color: "#000", marginBottom: 20 },
-  emptyText: { textAlign: "center", fontSize: 18, color: "#000", marginTop: 50 },
+  container: {
+    flex: 1,
+    backgroundColor: theme.colors.background,           
+    padding: 20,
+  },
+  title: {
+    fontSize: 24,
+    fontWeight: "bold",
+    color: theme.colors.text,                           
+    marginBottom: 20,
+  },
+  emptyText: {
+    textAlign: "center",
+    fontSize: 18,
+    color: theme.colors.text,                           
+    marginTop: 50,
+  },
   item: {
     flexDirection: "row",
     justifyContent: "space-between",
-    backgroundColor: "#fceda5",
+    backgroundColor: theme.colors.notification,         
     padding: 12,
     borderRadius: 10,
     marginBottom: 12,
     alignItems: "center",
   },
   itemInfo: { flex: 1 },
-  itemText: { fontSize: 16, fontWeight: "bold", color: "#000", marginBottom: 6 },
+  itemText: {
+    fontSize: 16,
+    fontWeight: "bold",
+    color: theme.colors.text,                           
+    marginBottom: 6,
+  },
   quantityRow: { flexDirection: "row", alignItems: "center" },
   qtyBtn: {
-    backgroundColor: "#fff",
+    backgroundColor: theme.colors.card,                 
     paddingHorizontal: 10,
     paddingVertical: 4,
     borderRadius: 4,
     marginHorizontal: 6,
   },
-  qtyText: { fontWeight: "bold", fontSize: 16, color: "#000" },
-  quantity: { fontSize: 16, fontWeight: "bold", color: "#000" },
+  qtyText: {
+    fontWeight: "bold",
+    fontSize: 16,
+    color: theme.colors.text,                           
+  },
+  quantity: {
+    fontSize: 16,
+    fontWeight: "bold",
+    color: theme.colors.text,                           
+  },
   rightSection: { alignItems: "flex-end", gap: 6 },
   totalRow: {
     flexDirection: "row",
@@ -149,16 +177,28 @@ const styles = StyleSheet.create({
     marginTop: 20,
     paddingTop: 10,
     borderTopWidth: 2,
-    borderTopColor: "#000",
+    borderTopColor: theme.colors.text,                  
   },
-  totalLabel: { fontSize: 18, fontWeight: "bold", color: "#000" },
-  totalPrice: { fontSize: 18, fontWeight: "bold", color: "#000" },
+  totalLabel: {
+    fontSize: 18,
+    fontWeight: "bold",
+    color: theme.colors.text,                           
+  },
+  totalPrice: {
+    fontSize: 18,
+    fontWeight: "bold",
+    color: theme.colors.text,                           
+  },
   checkoutBtn: {
-    backgroundColor: "#fceda5",
+    backgroundColor: theme.colors.notification,         
     marginTop: 24,
     paddingVertical: 14,
     borderRadius: 8,
     alignItems: "center",
   },
-  checkoutText: { color: "#000", fontWeight: "bold", fontSize: 16 },
+  checkoutText: {
+    color: theme.colors.text,                           
+    fontWeight: "bold",
+    fontSize: 16,
+  },
 });
