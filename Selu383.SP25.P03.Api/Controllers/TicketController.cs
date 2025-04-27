@@ -15,7 +15,7 @@ namespace Selu383.SP25.P03.Api.Controllers
     [AllowAnonymous]
     public class TicketController : GenericController<Ticket, TicketDto>
     {
-        private readonly DataContext _context; // Fix for IDE0290: Use explicit field instead of primary constructor
+        private readonly DataContext _context; 
         private readonly IMapper _mapper;
 
         public TicketController(DataContext context, IMapper mapper)
@@ -33,6 +33,19 @@ namespace Selu383.SP25.P03.Api.Controllers
             }
 
             
+            var seatIds = request.Seats.Select(seat => seat.SeatId).ToList();
+
+            var alreadyTakenSeats = await _context.Set<Ticket>()
+                .Where(t => t.ScreeningId == request.ScreeningId && seatIds.Contains(t.SeatId.Value))
+                .Select(t => t.SeatId)
+                .ToListAsync();
+
+            if (alreadyTakenSeats.Count > 0)
+            {
+                return BadRequest(new { message = "One or more seats are already taken.", seats = alreadyTakenSeats });
+            }
+
+           
             var tickets = request.Seats.Select(seat => new Ticket
             {
                 OrderId = (int)request.OrderId,
@@ -42,21 +55,9 @@ namespace Selu383.SP25.P03.Api.Controllers
                 Price = seat.Price
             }).ToList();
 
-            
             _context.Set<Ticket>().AddRange(tickets);
             await _context.SaveChangesAsync();
 
-            var seatIds = request.Seats.Select(seat =>  seat.SeatId).ToList();
-
-            var seatsToUpdate = await _context.Set<Seat>()
-                .Where(seat => seatIds.Contains(seat.Id)).ToListAsync();
-
-            foreach (var seat in seatsToUpdate)
-            {
-                seat.isAvailable = false;
-            }
-
-            
             var userTickets = tickets.Select(ticket => new UserTicket
             {
                 UserId = request.UserId,
