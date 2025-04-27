@@ -45,6 +45,7 @@ import ProfilePage from "./routes/ProfilePage.tsx";
 import SignupPage from "./routes/SignupPage.tsx";
 import CheckoutSuccess from "./routes/CheckoutSuccess.tsx";
 import { CartProvider } from "./components/CartContext.tsx";
+import TicketDetailsPage from "./components/TicketDetailsPage.tsx";
 
 const Layout = () => {
   return (
@@ -100,6 +101,10 @@ const router = createBrowserRouter([
           {
             path: ":movieId/seats/:theaterId/:roomId/:scheduleId",
             element: <SeatSelection />,
+          },
+          {
+            path: "/ticket/:ticketId",
+            element: <TicketDetailsPage />,
           },
         ],
       },

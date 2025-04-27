@@ -139,7 +139,6 @@ export default function MyTickets() {
                   <QRCodeComponent
                     userId={parseInt(userId)}
                     ticketId={ticket.id}
-                    value={`ticket:${ticket.id}`}
                   />
                 </div>
               </div>
