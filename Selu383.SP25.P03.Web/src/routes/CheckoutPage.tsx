@@ -357,7 +357,7 @@ export default function Checkout() {
             )}
             <div className="!border-t !border-gray-700 !pt-4 !mt-4 !flex !justify-between !font-bold !text-lg !text-indigo-200">
               <span>Total:</span>
-              <span>${calculateTotal()}</span>
+              <span>${calculateTotal().toFixed(2)}</span>
             </div>
             <Button
               onClick={() => {
