@@ -35,7 +35,7 @@ export default function SeatSelection() {
     1: "bg-indigo-600",
     2: "bg-purple-600",
     3: "bg-amber-600",
-    4: "bg-green-600 ring-3 ring-blue-400",
+    4: "bg-indigo-600 ring-3 ring-blue-400",
   });
 
   useEffect(() => {
