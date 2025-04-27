@@ -10,6 +10,7 @@ type Product = {
   productTypeName: string;
   imageData: string | null;
   imageType: string | null;
+  price: number;
   productType: {
     id: number;
     name: string;
@@ -94,6 +95,9 @@ export default function ConcessionsPage() {
                   <h3 className="text-lg font-bold text-center mb-4 text-gray-900">
                     {product.name}
                   </h3>
+                  <p className="text-center text-gray-700 font-semibold mb-4">
+                    ${product.price}
+                  </p>
                   <button
                     onClick={() => handleAddToCart(product)}
                     className="mt-auto bg-indigo-500 text-white px-4 py-2 rounded-md hover:bg-indigo-400 transition w-full"

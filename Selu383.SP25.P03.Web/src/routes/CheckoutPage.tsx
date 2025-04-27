@@ -99,11 +99,8 @@ export default function Checkout() {
       (total, item) => total + item.price * item.quantity,
       0
     );
-    let seatsTotal = selectedSeats.reduce(
-      (total, seat) => total + getSeatPrice(seat.seatTypeId),
-      0
-    );
-    return cartTotal + seatsTotal;
+
+    return cartTotal;
   };
 
   const handlePayment = async () => {
@@ -150,6 +147,10 @@ export default function Checkout() {
           movieTitle: movie.title,
           showtime: formattedShowtime,
           seats: formattedSeats,
+          concessions: cart
+            .filter((item) => item.type === "concession")
+            .map((item) => `${item.name} (x${item.quantity})`)
+            .join(", "),
         });
       } catch (emailErr) {
         console.error("Failed to send email:", emailErr);
@@ -242,7 +243,7 @@ export default function Checkout() {
                 Privacy
               </a>
               <a href="/contact" className="hover:!text-indigo-300">
-                Contact
+                Contact Us
               </a>
             </div>
           </div>
@@ -360,7 +361,7 @@ export default function Checkout() {
             )}
             <div className="!border-t !border-gray-700 !pt-4 !mt-4 !flex !justify-between !font-bold !text-lg !text-indigo-200">
               <span>Total:</span>
-              <span>${calculateTotal()}</span>
+              <span>${calculateTotal().toFixed(2)}</span>
             </div>
             <Button
               onClick={() => {
