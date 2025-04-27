@@ -99,11 +99,8 @@ export default function Checkout() {
       (total, item) => total + item.price * item.quantity,
       0
     );
-    let seatsTotal = selectedSeats.reduce(
-      (total, seat) => total + getSeatPrice(seat.seatTypeId),
-      0
-    );
-    return cartTotal + seatsTotal;
+
+    return cartTotal;
   };
 
   const handlePayment = async () => {
