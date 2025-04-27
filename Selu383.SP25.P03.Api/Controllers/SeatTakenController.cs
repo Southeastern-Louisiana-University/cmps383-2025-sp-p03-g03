@@ -9,7 +9,7 @@ namespace Selu383.SP25.P03.Api.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class SeatTakenController : GenericController<Room, RoomDto>
+    public class SeatTakenController : GenericController<SeatTaken, SeatTakenDTO>
     {
         public SeatTakenController(DataContext context, IMapper mapper)
             : base(context, mapper)
@@ -33,20 +33,20 @@ namespace Selu383.SP25.P03.Api.Controllers
         }
 
         // CREATE
-        [HttpPost]
-        public async Task<ActionResult<SeatTaken>> CreateSeatTaken([FromBody] SeatTaken newSeatTaken)
-        {
-            _context.Set<SeatTaken>().Add(newSeatTaken);
-            await _context.SaveChangesAsync();
+        //[HttpPost("NewSeatTaken")]
+        //public async Task<ActionResult<SeatTaken>> CreateNewSeatTaken([FromBody] SeatTaken newSeatTaken)
+        //{
+        //    _context.Set<SeatTaken>().Add(newSeatTaken);
+        //    await _context.SaveChangesAsync();
 
-            return CreatedAtAction(nameof(GetRoomByTheaterId), new
-            {
-                theaterId = newSeatTaken.TheaterId,
-                MovieScheduleId = newSeatTaken.MovieScheduleId,
-                RoomId = newSeatTaken.RoomsId,
-                SeatId = newSeatTaken.SeatTypeId
-            }, newSeatTaken);
-        }
+        //    return CreatedAtAction(nameof(GetRoomByTheaterId), new
+        //    {
+        //        theaterId = newSeatTaken.TheaterId,
+        //        MovieScheduleId = newSeatTaken.MovieScheduleId,
+        //        RoomId = newSeatTaken.RoomsId,
+        //        SeatId = newSeatTaken.SeatTypeId
+        //    }, newSeatTaken);
+        //}
 
         // UPDATE
         [HttpPut("{theaterId}/{MovieScheduleId}/{RoomId}/{SeatId}")]

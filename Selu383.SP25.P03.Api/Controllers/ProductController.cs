@@ -43,8 +43,18 @@ namespace Selu383.SP25.P03.Api.Controllers
 
             return Ok(products);
         }
-        
 
+        // GET: api/MasterProductImage/GetByProductId/5
+        [HttpGet("GetByProductId/{Id}")]
+        [AllowAnonymous]
+        public async Task<ActionResult<IEnumerable<Product>>> GetByProductId(int Id)
+        {
+            var products = await _context.Set<Product>()
+                .Where(i => i.Id == Id)
+                .ToListAsync();
+
+            return products;
+        }
 
     }
 
