@@ -24,7 +24,7 @@ public class SeatTakenController : GenericController<Room, RoomDto>
                 i.TheaterId == theaterId &&
                 i.MovieScheduleId == movieScheduleId &&
                 i.RoomsId == roomId &&
-                i.SeatTypeId == seatId)
+                i.SeatId == seatId)
             .ToListAsync();
 
         return Ok(result);
@@ -41,7 +41,7 @@ public class SeatTakenController : GenericController<Room, RoomDto>
             theaterId = newSeatTaken.TheaterId,
             movieScheduleId = newSeatTaken.MovieScheduleId,
             roomId = newSeatTaken.RoomsId,
-            seatId = newSeatTaken.SeatTypeId
+            seatId = newSeatTaken.SeatId
         }, newSeatTaken);
     }
 
@@ -55,7 +55,7 @@ public class SeatTakenController : GenericController<Room, RoomDto>
                 i.TheaterId == theaterId &&
                 i.MovieScheduleId == movieScheduleId &&
                 i.RoomsId == roomId &&
-                i.SeatTypeId == seatId);
+                i.SeatId == seatId);
 
         if (existing == null)
         {
@@ -76,7 +76,7 @@ public class SeatTakenController : GenericController<Room, RoomDto>
                 i.TheaterId == theaterId &&
                 i.MovieScheduleId == movieScheduleId &&
                 i.RoomsId == roomId &&
-                i.SeatTypeId == seatId);
+                i.SeatId == seatId);
 
         if (existing == null)
         {
