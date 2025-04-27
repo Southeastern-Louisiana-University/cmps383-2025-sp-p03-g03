@@ -15,14 +15,11 @@ namespace Selu383.SP25.P03.Api.Controllers
     [AllowAnonymous]
     public class TicketController : GenericController<Ticket, TicketDto>
     {
-        private readonly DataContext _context; 
-        private readonly IMapper _mapper;
+
 
         public TicketController(DataContext context, IMapper mapper)
-            : base(context, mapper)
-        {
-            _context = context; 
-            _mapper = mapper;
+            : base(context, mapper)        {
+
         }
         [HttpPost("create-tickets")]
         public async Task<IActionResult> CreateTickets([FromBody] CreateTicketsRequest request)
@@ -36,7 +33,8 @@ namespace Selu383.SP25.P03.Api.Controllers
             var seatIds = request.Seats.Select(seat => seat.SeatId).ToList();
 
             var alreadyTakenSeats = await _context.Set<Ticket>()
-                .Where(t => t.ScreeningId == request.ScreeningId && seatIds.Contains(t.SeatId.Value))
+                .Where(t => t.ScreeningId == request.ScreeningId && t.SeatId.HasValue && seatIds.Contains(t.SeatId.Value))
+
                 .Select(t => t.SeatId)
                 .ToListAsync();
 
