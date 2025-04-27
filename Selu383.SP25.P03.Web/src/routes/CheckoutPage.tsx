@@ -243,7 +243,7 @@ export default function Checkout() {
                 Privacy
               </a>
               <a href="/contact" className="hover:!text-indigo-300">
-                Contact
+                Contact Us
               </a>
             </div>
           </div>
