@@ -18,8 +18,7 @@ namespace Selu383.SP25.P03.Api.Controllers
 
 
         public TicketController(DataContext context, IMapper mapper)
-            : base(context, mapper)
-        {
+            : base(context, mapper)        {
 
         }
         [HttpPost("create-tickets")]
