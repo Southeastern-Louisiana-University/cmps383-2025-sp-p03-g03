@@ -187,6 +187,15 @@ export default function BuyTickets() {
               style={styles.confirmButton}
               onPress={() => {
                 setModalVisible(false);
+
+                const ticketData = {
+                  id: selectedScheduleId,
+                  movieTitle: movie.title,
+                  date: selectedDay,
+                  time: selectedFullTime,               
+                  roomId: selectedRoomId,              
+                };
+
                 router.push({
                   pathname: "/selectseats",
                   params: {
@@ -196,6 +205,7 @@ export default function BuyTickets() {
                     theaterName: selectedTheaterName || "",
                     movieTitle: movie.title,
                     time: selectedFullTime || "",
+                    ticket: JSON.stringify(ticketData), 
                   },
                 });
               }}

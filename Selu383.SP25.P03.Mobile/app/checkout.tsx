@@ -19,36 +19,42 @@ export default function Checkout() {
   let parsedSeats: any[] = [];
   let parsedConcessions: any[] = [];
 
-  try {
-    parsedTicket = ticket ? JSON.parse(ticket as string) : null;
-  } catch (e) {
-    console.warn("Invalid ticket data", e);
+  if (typeof ticket === "string") {
+    try {
+      parsedTicket = JSON.parse(ticket);
+    } catch (e) {
+      console.warn("⚠️ Invalid ticket data (string case)", e);
+    }
+  } else if (typeof ticket === "object" && ticket !== null) {
+    parsedTicket = ticket;
   }
 
-  try {
-    parsedSeats = selectedSeats ? JSON.parse(selectedSeats as string) : [];
-  } catch (e) {
-    console.warn("Invalid seats data", e);
+  if (typeof selectedSeats === "string") {
+    try {
+      parsedSeats = JSON.parse(selectedSeats);
+    } catch (e) {
+      console.warn("⚠️ Invalid seats data", e);
+    }
   }
 
-  try {
-    parsedConcessions = concessions ? JSON.parse(concessions as string) : [];
-  } catch (e) {
-    console.warn("Invalid concessions data", e);
+  if (typeof concessions === "string") {
+    try {
+      parsedConcessions = JSON.parse(concessions);
+    } catch (e) {
+      console.warn("⚠️ Invalid concessions data", e);
+    }
   }
 
   const concessionTotal = parsedConcessions.reduce(
     (sum, item) => sum + item.quantity * item.price,
     0
   );
-
   const ticketPricePerSeat = 10.0;
   const ticketTotal = parsedSeats.length * ticketPricePerSeat;
   const finalTotal = concessionTotal + ticketTotal;
 
-  // ✅ FIXED QR DATA - Only sending small essential data:
   const qrData = JSON.stringify({
-    ticketId: parsedTicket?.id,
+    ticketId: parsedTicket?.id || null,
     seats: parsedSeats.map((seat) => ({
       row: seat.row,
       seatNumber: seat.seatNumber,
@@ -64,8 +70,24 @@ export default function Checkout() {
     setShowQRCode(true);
   };
 
+  const nothingSelected = parsedSeats.length === 0 && parsedConcessions.length === 0;
+
+  if (nothingSelected) {
+    return (
+      <View style={styles.container}>
+        <Text style={styles.title}>⚠️ Error: No ticket or concessions selected.</Text>
+        <Pressable
+          style={[styles.confirmButton, { marginTop: 20 }]}
+          onPress={() => router.replace("/")}
+        >
+          <Text style={styles.confirmText}>Back to Home</Text>
+        </Pressable>
+      </View>
+    );
+  }
+
   return (
-    <ScrollView style={styles.container}>
+    <ScrollView style={styles.container} contentContainerStyle={{ paddingBottom: 80 }}>
       <Text style={styles.title}>🧾 Checkout Summary</Text>
 
       {parsedTicket && (
@@ -73,8 +95,10 @@ export default function Checkout() {
           <Text style={styles.sectionTitle}>🎟️ Ticket Info</Text>
           <Text style={styles.detail}>Movie: {parsedTicket.movieTitle}</Text>
           <Text style={styles.detail}>Date: {parsedTicket.date}</Text>
-          <Text style={styles.detail}>Time: {parsedTicket.time}</Text>
-          <Text style={styles.detail}>Theater: {parsedTicket.theater}</Text>
+          <Text style={styles.detail}>
+            Time: {new Date(parsedTicket.time).toLocaleTimeString([], { hour: "numeric", minute: "2-digit" })}
+          </Text>
+          <Text style={styles.detail}>Theater: {parsedTicket.roomId ? String(parsedTicket.roomId) : "N/A"}</Text>
         </View>
       )}
 
@@ -86,26 +110,20 @@ export default function Checkout() {
               Row {seat.row} Seat {seat.seatNumber}
             </Text>
           ))}
-          <Text style={styles.price}>
-            Ticket Price: ${ticketTotal.toFixed(2)}
-          </Text>
+          <Text style={styles.price}>Ticket Price: ${ticketTotal.toFixed(2)}</Text>
         </View>
       )}
 
       {parsedConcessions.length > 0 && (
-        <>
+        <View style={styles.ticketBox}>
           <Text style={styles.sectionTitle}>🍿 Concessions</Text>
           {parsedConcessions.map((item) => (
             <View key={item.id} style={styles.item}>
-              <Text style={styles.itemText}>
-                {item.name} × {item.quantity}
-              </Text>
-              <Text style={styles.itemText}>
-                ${(item.quantity * item.price).toFixed(2)}
-              </Text>
+              <Text style={styles.itemText}>{item.name} × {item.quantity}</Text>
+              <Text style={styles.itemText}>${(item.quantity * item.price).toFixed(2)}</Text>
             </View>
           ))}
-        </>
+        </View>
       )}
 
       <View style={styles.totalRow}>
@@ -123,7 +141,7 @@ export default function Checkout() {
           <Text style={styles.detail}>Here is your QR code:</Text>
           <QRCode value={qrData} size={200} />
           <Pressable
-            style={[styles.confirmButton, { marginTop: 20 }]}
+            style={[styles.confirmButton, { marginTop: 50, paddingVertical: 18, paddingHorizontal: 32 }]}
             onPress={() => router.replace("/")}
           >
             <Text style={styles.confirmText}>Back to Home</Text>
@@ -155,7 +173,7 @@ const styles = StyleSheet.create({
   sectionTitle: {
     fontSize: 20,
     fontWeight: "bold",
-    color: "#000",
+    color: "#a5b4fc",
     marginBottom: 8,
   },
   detail: {
