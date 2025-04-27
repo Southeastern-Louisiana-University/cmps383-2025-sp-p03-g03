@@ -27,11 +27,10 @@ export interface Theater {
   name: string;
 }
 
-export const getMovies = async (): Promise<Movie[]> => {
-  const res = await axios.get(`${BASE_URL}/api/movie`);
+export const getActiveMovies = async (): Promise<Movie[]> => {
+  const res = await axios.get(`${BASE_URL}/api/movie/active`);
   const movies = res.data;
 
-  // ✅ Concurrently fetch posters for each movie
   const moviesWithPosters = await Promise.all(
     movies.map(async (movie: Omit<Movie, "poster">) => {
       try {
@@ -39,7 +38,27 @@ export const getMovies = async (): Promise<Movie[]> => {
         return { ...movie, poster: posterRes.data };
       } catch (error) {
         console.error(`❌ Failed to fetch poster for movie ${movie.id}`, error);
-        return { ...movie, poster: null }; // Fallback: null posters if the call fails
+        return { ...movie, poster: null };
+      }
+    })
+  );
+
+  return moviesWithPosters;
+};
+
+
+export const getMovies = async (): Promise<Movie[]> => {
+  const res = await axios.get(`${BASE_URL}/api/movie`);
+  const movies = res.data;
+
+  const moviesWithPosters = await Promise.all(
+    movies.map(async (movie: Omit<Movie, "poster">) => {
+      try {
+        const posterRes = await axios.get(`${BASE_URL}/api/MoviePoster/GetByMovieId/${movie.id}`);
+        return { ...movie, poster: posterRes.data };
+      } catch (error) {
+        console.error(`❌ Failed to fetch poster for movie ${movie.id}`, error);
+        return { ...movie, poster: null };
       }
     })
   );
@@ -67,6 +86,12 @@ export const getMovieScheduleDetails = async (movieId: number) => {
   }
   return res.json();
 };
+
+export const getActiveTheaters = async (): Promise<Theater[]> => {
+  const res = await axios.get(`${BASE_URL}/api/theater/active`);
+  return res.data;
+};
+
 
 export const getTheaters = async (): Promise<Theater[]> => {
   const res = await axios.get(`${BASE_URL}/api/theaters`);
