@@ -38,6 +38,7 @@ namespace Selu383.SP25.P03.Api.Controllers
                     TicketType = ut.Ticket.TicketType,
                     Price = ut.Ticket.Price
                 }
+                
             }).ToList();
 
             return Ok(result);
