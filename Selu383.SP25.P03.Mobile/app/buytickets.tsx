@@ -16,13 +16,14 @@ import {
   getTheaters,
 } from "@/services/movieService";
 import type { Movie } from "@/services/movieService";
+import theme from "@/styles/theme"; 
 
 type MovieSchedule = {
   id: number;
   movieId: number;
   isActive: boolean;
   movieTimes: string[];
-  roomId: number; // Make sure this field is included
+  roomId: number;
 };
 
 export default function BuyTickets() {
@@ -54,8 +55,9 @@ export default function BuyTickets() {
         </View>
       ),
       headerStyle: {
-        backgroundColor: "#fceda5",
+        backgroundColor: theme.colors.notification, 
       },
+      headerTintColor: "#000",
     });
   }, [navigation]);
 
@@ -103,7 +105,7 @@ export default function BuyTickets() {
   if (loading || !movie) {
     return (
       <View style={styles.center}>
-        <ActivityIndicator size="large" color="#a5b4fc" />
+        <ActivityIndicator size="large" color={theme.colors.primary} />
       </View>
     );
   }
@@ -186,7 +188,6 @@ export default function BuyTickets() {
               style={styles.confirmButton}
               onPress={() => {
                 setModalVisible(false);
-                // ✅ Navigate to selectseats.tsx with all the params
                 router.push({
                   pathname: "/selectseats",
                   params: {
@@ -212,7 +213,7 @@ export default function BuyTickets() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#a5b4fc",
+    backgroundColor: theme.colors.background,
     padding: 16,
   },
   poster: {
@@ -220,24 +221,24 @@ const styles = StyleSheet.create({
     height: 400,
     borderRadius: 10,
     marginBottom: 12,
-    backgroundColor: "#000",
+    backgroundColor: theme.colors.card,
   },
   movieTitle: {
     fontSize: 26,
     fontWeight: "bold",
-    color: "#000",
+    color: theme.colors.text,
     textAlign: "center",
     marginBottom: 6,
   },
   theaterName: {
     fontSize: 18,
     fontWeight: "600",
-    color: "#000",
+    color: theme.colors.text,
     textAlign: "center",
     marginBottom: 16,
   },
   text: {
-    color: "#000",
+    color: theme.colors.text,
     fontSize: 18,
     fontWeight: "bold",
     textAlign: "center",
@@ -250,12 +251,12 @@ const styles = StyleSheet.create({
     paddingVertical: 20,
     marginBottom: 25,
     borderBottomWidth: 2,
-    borderBottomColor: "#fff",
+    borderBottomColor: theme.colors.border,
   },
   dayTitle: {
     fontSize: 22,
     fontWeight: "bold",
-    color: "#000",
+    color: theme.colors.text,
     marginBottom: 12,
     marginTop: 10,
   },
@@ -265,7 +266,7 @@ const styles = StyleSheet.create({
     gap: 10,
   },
   timeButton: {
-    backgroundColor: "#fceda5",
+    backgroundColor: theme.colors.notification,
     paddingVertical: 12,
     paddingHorizontal: 20,
     borderRadius: 10,
@@ -288,7 +289,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   modalContent: {
-    backgroundColor: "#fceda5",
+    backgroundColor: theme.colors.notification,
     padding: 24,
     borderRadius: 16,
     width: "80%",
@@ -303,18 +304,18 @@ const styles = StyleSheet.create({
   },
   modalText: {
     fontSize: 16,
-    color: "#333",
+    color: "#000",
     textAlign: "center",
     marginBottom: 20,
   },
   confirmButton: {
-    backgroundColor: "#a5b4fc",
+    backgroundColor: theme.colors.primary,
     paddingVertical: 12,
     paddingHorizontal: 24,
     borderRadius: 8,
   },
   confirmButtonText: {
-    color: "#000",
+    color: theme.colors.text,
     fontWeight: "bold",
     fontSize: 16,
   },

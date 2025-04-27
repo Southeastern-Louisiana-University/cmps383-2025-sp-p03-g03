@@ -6,11 +6,11 @@ import {
   ActivityIndicator,
   FlatList,
   Pressable,
-  Text,
 } from "react-native";
 import { getMovies } from "@/services/movieService";
 import { useRouter } from "expo-router";
-import type { Movie } from "@/services/movieService"; 
+import type { Movie } from "@/services/movieService";
+import theme from "@/styles/theme";
 
 export default function Index() {
   const [movies, setMovies] = useState<Movie[]>([]);
@@ -33,7 +33,7 @@ export default function Index() {
       {loading ? (
         <ActivityIndicator
           size="large"
-          color="#a5b4fc"
+          color={theme.colors.primary}
           style={{ marginTop: 20 }}
         />
       ) : (
@@ -66,7 +66,7 @@ export default function Index() {
                 ? {
                     uri: `data:${item.poster[0].imageType};base64,${item.poster[0].imageData}`,
                   }
-                : require("@/assets/images/posters/fallback.jpg"); 
+                : require("@/assets/images/posters/fallback.jpg");
 
             return (
               <Pressable
@@ -94,7 +94,7 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingTop: 20,
     paddingHorizontal: 20,
-    backgroundColor: "#a5b4fc",
+    backgroundColor: theme.colors.background,
   },
   listContainer: {
     paddingBottom: 20,
@@ -102,7 +102,7 @@ const styles = StyleSheet.create({
   posterCard: {
     flex: 1,
     margin: 8,
-    backgroundColor: "#000",
+    backgroundColor: theme.colors.card,
     borderRadius: 10,
     overflow: "hidden",
     elevation: 2,

@@ -8,6 +8,7 @@ import {
   Alert,
 } from "react-native";
 import { useLocalSearchParams, useRouter } from "expo-router";
+import theme from "@/styles/theme";
 
 interface Seat {
   id: number;
@@ -21,8 +22,7 @@ interface Seat {
 }
 
 export default function SelectSeats() {
-  const { movieId, scheduleId, roomId, theaterName, movieTitle, time } =
-    useLocalSearchParams();
+  const { movieId, scheduleId, roomId, theaterName, movieTitle, time } = useLocalSearchParams();
   const router = useRouter();
 
   const [seats, setSeats] = useState<Seat[]>([]);
@@ -32,7 +32,6 @@ export default function SelectSeats() {
   useEffect(() => {
     const fetchSeats = async () => {
       if (!roomId) {
-        console.warn("No room ID provided. Using test data.");
         setSeats(generateTestSeats(0));
         setLoading(false);
         return;
@@ -48,8 +47,6 @@ export default function SelectSeats() {
         const data = await response.json();
         setSeats(data);
       } catch (error) {
-        console.error("Error fetching seats:", error);
-        Alert.alert("Error", "Failed to load seats. Using test data.");
         setSeats(generateTestSeats(Number(roomId)));
       } finally {
         setLoading(false);
@@ -94,7 +91,7 @@ export default function SelectSeats() {
   if (loading) {
     return (
       <View style={styles.center}>
-        <ActivityIndicator size="large" color="#a5b4fc" />
+        <ActivityIndicator size="large" color={theme.colors.primary} />
       </View>
     );
   }
@@ -154,13 +151,12 @@ export default function SelectSeats() {
         <Text style={styles.confirmText}>Proceed to Checkout</Text>
       </TouchableOpacity>
 
-      {/* 🟢 Add to Cart / Add Concessions Button */}
       <TouchableOpacity
         style={styles.concessionsButton}
         onPress={() => {
           router.push({
             pathname: "/concessions",
-            params: seatParams, // ✅ Pass seat data into concessions page
+            params: seatParams,
           });
         }}
       >
@@ -171,37 +167,74 @@ export default function SelectSeats() {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, padding: 20, backgroundColor: "#a5b4fc" },
-  title: { fontSize: 24, fontWeight: "bold", textAlign: "center", marginBottom: 10 },
-  subtitle: { fontSize: 16, textAlign: "center", marginBottom: 20 },
-  seatMap: { flexDirection: "row", flexWrap: "wrap", justifyContent: "center" },
+  container: {
+    flex: 1,
+    padding: 20,
+    backgroundColor: theme.colors.background,
+  },
+  title: {
+    fontSize: 24,
+    fontWeight: "bold",
+    textAlign: "center",
+    marginBottom: 10,
+    color: theme.colors.text,
+  },
+  subtitle: {
+    fontSize: 16,
+    textAlign: "center",
+    marginBottom: 20,
+    color: theme.colors.text,
+  },
+  seatMap: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    justifyContent: "center",
+  },
   seatButton: {
     width: 40,
     height: 40,
     margin: 5,
-    backgroundColor: "#4b5563",
+    backgroundColor: theme.colors.card,
     justifyContent: "center",
     alignItems: "center",
     borderRadius: 5,
   },
-  seatUnavailable: { backgroundColor: "red" },
-  seatSelected: { backgroundColor: "green" },
-  seatText: { color: "white" },
+  seatUnavailable: {
+    backgroundColor: "red",
+  },
+  seatSelected: {
+    backgroundColor: "green",
+  },
+  seatText: {
+    color: theme.colors.text,
+  },
   confirmButton: {
-    backgroundColor: "#fceda5",
+    backgroundColor: theme.colors.notification,
     padding: 16,
     borderRadius: 10,
     marginTop: 20,
     alignItems: "center",
   },
-  confirmText: { textAlign: "center", fontWeight: "bold", color: "#000" },
+  confirmText: {
+    textAlign: "center",
+    fontWeight: "bold",
+    color: theme.colors.text,
+  },
   concessionsButton: {
-    backgroundColor: "#000",
+    backgroundColor: theme.colors.primary,
     padding: 16,
     borderRadius: 10,
     marginTop: 10,
     alignItems: "center",
   },
-  concessionsText: { color: "#a5b4fc", fontWeight: "bold", fontSize: 16 },
-  center: { flex: 1, justifyContent: "center", alignItems: "center" },
+  concessionsText: {
+    color: theme.colors.text,
+    fontWeight: "bold",
+    fontSize: 16,
+  },
+  center: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+  },
 });

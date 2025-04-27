@@ -1,28 +1,16 @@
-import { View, Text, Image, Pressable, StyleSheet, Modal, TouchableOpacity } from "react-native";
+import { View, Text, Image, Pressable, StyleSheet } from "react-native";
 import { useRouter } from "expo-router";
-import { Feather } from "@expo/vector-icons";
-import { useContext, useState } from "react";
-import { AuthContext } from "@/context/AuthContext";
-import { useColorScheme } from "@/hooks/useColorScheme";
+import theme from "@/styles/theme";
 
 export default function CustomHeader() {
   const router = useRouter();
-  const auth = useContext(AuthContext);
-  const [modalVisible, setModalVisible] = useState(false);
-  const { colorScheme, setColorScheme } = useColorScheme();
-
-  const toggleTheme = (theme: "light" | "dark") => {
-    setColorScheme(theme);
-    setModalVisible(false);
-  };
 
   return (
     <View style={styles.header}>
-      {/* Logo + Title */}
       <Pressable
         style={styles.logoRow}
         onPress={() => router.push("/")}
-        android_ripple={{ color: "#ddd", borderless: true }}
+        android_ripple={{ color: theme.colors.border, borderless: true }}
       >
         <Image
           source={require("@/assets/images/Lion Face.png")}
@@ -31,54 +19,22 @@ export default function CustomHeader() {
         />
         <Text style={styles.title}>Lion's Den Cinemas</Text>
       </Pressable>
-
-      {/* Settings Icon Only */}
-      <View style={styles.iconRow}>
-        <Pressable
-          onPress={() => setModalVisible(true)}
-          style={({ pressed }) => [styles.lastIconButton, pressed && styles.iconPressed]}
-          hitSlop={10}
-        >
-          <Feather name="settings" size={28} color="#000" />
-        </Pressable>
-      </View>
-
-      {/* Theme Modal */}
-      <Modal
-        visible={modalVisible}
-        transparent
-        animationType="fade"
-        onRequestClose={() => setModalVisible(false)}
-      >
-        <View style={styles.modalOverlay}>
-          <View style={styles.modalBox}>
-            <Text style={styles.modalTitle}>Choose Theme</Text>
-            <TouchableOpacity onPress={() => toggleTheme("light")} style={styles.modalOption}>
-              <Text style={styles.modalText}>🌞 Light Mode</Text>
-            </TouchableOpacity>
-            <TouchableOpacity onPress={() => toggleTheme("dark")} style={styles.modalOption}>
-              <Text style={styles.modalText}>🌚 Dark Mode</Text>
-            </TouchableOpacity>
-          </View>
-        </View>
-      </Modal>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
   header: {
-    backgroundColor: "#fceda5",
+    backgroundColor: theme.colors.notification,
     flexDirection: "row",
     alignItems: "center",
-    justifyContent: "space-between",
+    justifyContent: "flex-start",
     paddingHorizontal: 12,
     paddingVertical: 8,
   },
   logoRow: {
     flexDirection: "row",
     alignItems: "center",
-    flex: 1,
   },
   logo: {
     width: 30,
@@ -88,47 +44,6 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 18,
     fontWeight: "bold",
-    color: "#000",
-  },
-  iconRow: {
-    flexDirection: "row",
-    alignItems: "center",
-    paddingRight: 4,
-    columnGap: 14,
-  },
-  lastIconButton: {
-    padding: 10,
-    borderRadius: 20,
-  },
-  iconPressed: {
-    backgroundColor: "#e0e0e0",
-  },
-  modalOverlay: {
-    flex: 1,
-    backgroundColor: "rgba(0,0,0,0.5)",
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  modalBox: {
-    backgroundColor: "#fff",
-    padding: 24,
-    borderRadius: 12,
-    width: "80%",
-    alignItems: "center",
-  },
-  modalTitle: {
-    fontSize: 18,
-    fontWeight: "bold",
-    marginBottom: 16,
-    color: "#000",
-  },
-  modalOption: {
-    paddingVertical: 10,
-    width: "100%",
-    alignItems: "center",
-  },
-  modalText: {
-    fontSize: 16,
     color: "#000",
   },
 });
