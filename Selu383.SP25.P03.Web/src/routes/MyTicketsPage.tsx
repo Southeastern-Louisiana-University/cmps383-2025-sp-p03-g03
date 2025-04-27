@@ -2,9 +2,8 @@ import { useState, useEffect } from "react";
 import QRCodeComponent from "../components/qrCode";
 import { useAuth } from "../components/authContext";
 
-// Define interfaces matching backend DTOs
 interface TicketDto {
-  ticketId: number;
+  id: number;
   orderId: number;
   screeningId: number;
   seatId: number | null;
@@ -16,6 +15,7 @@ interface UserTicketDto {
   id: number;
   userId: number;
   ticketId: number;
+  ticket: TicketDto | null;
 }
 
 export default function MyTickets() {
@@ -31,30 +31,16 @@ export default function MyTickets() {
       try {
         setLoading(true);
         const userTicketsResponse = await fetch(
-          `/api/userticket/GetByUserId/${userId}`,
-          {
-            headers: {
-              Authorization: `Bearer ${localStorage.getItem("token")}`,
-            },
-          }
+          `/api/userticket/GetByUserId/${userId}`
         );
         if (!userTicketsResponse.ok) {
           throw new Error("Failed to fetch user tickets");
         }
         const userTickets: UserTicketDto[] = await userTicketsResponse.json();
 
-        const ticketPromises = userTickets.map((ut) =>
-          fetch(`/api/ticket/${ut.ticketId}`, {
-            headers: {
-              Authorization: `Bearer ${localStorage.getItem("token")}`,
-            },
-          }).then((res) => {
-            if (!res.ok)
-              throw new Error(`Failed to fetch ticket ${ut.ticketId}`);
-            return res.json();
-          })
-        );
-        const ticketData: TicketDto[] = await Promise.all(ticketPromises);
+        const ticketData: TicketDto[] = userTickets
+          .map((ut) => ut.ticket)
+          .filter((ticket): ticket is TicketDto => ticket !== null);
 
         setTickets(ticketData);
       } catch (err) {
@@ -119,13 +105,13 @@ export default function MyTickets() {
           </div>
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {tickets.map((ticket) => (
+            {tickets.map((ticket, index) => (
               <div
-                key={ticket.ticketId}
+                key={`${ticket.id}-${index}`}
                 className="bg-gray-800 rounded-lg p-6 shadow-lg shadow-indigo-950/50 transition-all duration-300 hover:shadow-indigo-800/70"
               >
                 <h2 className="text-xl font-extrabold text-indigo-300 mb-4 drop-shadow-lg">
-                  Ticket #{ticket.ticketId}
+                  Ticket #{ticket.id}
                 </h2>
                 <div className="space-y-2 text-gray-200">
                   <p>
@@ -152,8 +138,7 @@ export default function MyTickets() {
                 <div className="mt-4">
                   <QRCodeComponent
                     userId={parseInt(userId)}
-                    ticketId={ticket.ticketId}
-                    value={`ticket:${ticket.ticketId}`}
+                    ticketId={ticket.id}
                   />
                 </div>
               </div>
@@ -162,7 +147,6 @@ export default function MyTickets() {
         )}
       </div>
 
-      {/* Footer */}
       <footer className="w-full bg-indigo-950 text-white py-6">
         <div className="container mx-auto px-4 text-center">
           <p>© {currentYear} Lion's Den Cinemas. All rights reserved.</p>

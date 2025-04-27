@@ -3,7 +3,8 @@ import { useParams, useNavigate, useLocation } from "react-router-dom";
 import { Button } from "@headlessui/react";
 import { ArrowLeftIcon, TicketIcon } from "@heroicons/react/24/outline";
 import { SeatService, SeatTypeService } from "../Services/SeatService";
-
+import { useCart } from "../components/CartContext";
+import { formatSeatName, getSeatPrice, getSeatTypeName } from "../Utils/seats";
 interface Seat {
   id: number;
   seatTypeId: number;
@@ -19,10 +20,11 @@ interface SeatType {
 }
 
 export default function SeatSelection() {
+  const { addToCart } = useCart();
   const { movieId, theaterId, roomId, scheduleId } = useParams();
   const location = useLocation();
   const navigate = useNavigate();
-  const { time, movie, theater, room } = location.state || {};
+  const { time, movie, theater, room, poster } = location.state || {};
 
   const [seats, setSeats] = useState<Seat[]>([]);
   const [seatTypes, setSeatTypes] = useState<SeatType[]>([]);
@@ -141,25 +143,40 @@ export default function SeatSelection() {
     );
   };
 
-  const getSeatTypeName = (seatTypeId: number): string => {
-    const type = seatTypes.find((t) => t.id === seatTypeId);
-    return type ? type.seatTypes : "Standard";
-  };
-
   const handleCheckout = () => {
+    selectedSeats.forEach((seat) => {
+      addToCart({
+        id: seat.id,
+        name: `${seat.row}${seat.seatNumber}`,
+        price: getSeatPrice(seat.seatTypeId),
+        quantity: 1,
+        type: "seat",
+        row: seat.row,
+        seatNumber: seat.seatNumber,
+        seatTypeId: seat.seatTypeId,
+        showtime: { id: Number(scheduleId), time: time }, // <<< fixed
+        movie: {
+          id: movie.id,
+          title: movie.title,
+          runtime: movie.runtime,
+          ageRating: movie.ageRating,
+        },
+        theater: {
+          id: theater.id,
+          name: theater.name,
+        },
+        poster: poster
+          ? { imageType: poster.imageType, imageData: poster.imageData }
+          : undefined,
+      });
+    });
     navigate("/checkout", {
       state: {
         selectedSeats,
-        showtime: {
-          id: scheduleId,
-          time,
-          movieId: Number(movieId),
-          theaterId: Number(theaterId),
-          roomId: Number(roomId),
-        },
-        theater,
+        showtime: { id: Number(scheduleId), time },
         movie,
-        room,
+        theater,
+        poster,
       },
     });
   };

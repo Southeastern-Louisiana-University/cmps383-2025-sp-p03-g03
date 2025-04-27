@@ -13,7 +13,8 @@ namespace Selu383.SP25.P03.Api.Features.Products
         public required DateOnly StartDate { get; set; } = DateOnly.FromDateTime(DateTime.Now);
         public DateOnly? EndDate { get; set; }
         public required Product Product { get; set; }
-        public required Theater Theater { get; set; } 
+        public int? TheaterId { get; set; }
+        public required Theater? Theater { get; set; } 
 
     }
     public class ProductPriceDto
@@ -31,7 +32,8 @@ namespace Selu383.SP25.P03.Api.Features.Products
         public void Configure(EntityTypeBuilder<ProductPrice> builder)
         {
             builder.HasKey(x => x.Id);
-            builder.Property(e => e.ProductId);
+
+            builder.Property(e => e.ProductId).IsRequired();
 
             builder.Property(e => e.Price)
                 .HasColumnType("decimal(18,2)")
@@ -47,7 +49,8 @@ namespace Selu383.SP25.P03.Api.Features.Products
 
             builder.HasOne(e => e.Theater)
                 .WithMany()
-                .HasForeignKey(e => e.ProductId); 
+                .HasForeignKey(e => e.ProductId)
+                .OnDelete(DeleteBehavior.Restrict);
 
         }
     }
