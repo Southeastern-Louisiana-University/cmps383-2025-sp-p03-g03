@@ -92,16 +92,20 @@ export default function Checkout() {
         }
     }, [userId, showtime, theater, selectedSeats, movie]);
 
+    //const calculateTotal = () => {
+    //    const cartTotal = cart.reduce(
+    //        (total, item) => total + item.price * item.quantity,
+    //        0
+    //    );
+    //    const seatsTotal = selectedSeats.reduce(
+    //        (total, seat) => total + getSeatPrice(seat.seatTypeId),
+    //        0
+    //    );
+    //    return cartTotal + seatsTotal;
+    //};
+
     const calculateTotal = () => {
-        const cartTotal = cart.reduce(
-            (total, item) => total + item.price * item.quantity,
-            0
-        );
-        const seatsTotal = selectedSeats.reduce(
-            (total, seat) => total + getSeatPrice(seat.seatTypeId),
-            0
-        );
-        return cartTotal + seatsTotal;
+        return cart.reduce((total, item) => total + item.price * item.quantity, 0);
     };
 
     // Function to mark seats as taken
