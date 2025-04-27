@@ -46,7 +46,6 @@ export const getActiveMovies = async (): Promise<Movie[]> => {
   return moviesWithPosters;
 };
 
-
 export const getMovies = async (): Promise<Movie[]> => {
   const res = await axios.get(`${BASE_URL}/api/movie`);
   const movies = res.data;
@@ -89,9 +88,9 @@ export const getMovieScheduleDetails = async (movieId: number) => {
 
 export const getActiveTheaters = async (): Promise<Theater[]> => {
   const res = await axios.get(`${BASE_URL}/api/theater/active`);
-  return res.data;
+  const theaters = res.data.data || res.data;  
+  return theaters;
 };
-
 
 export const getTheaters = async (): Promise<Theater[]> => {
   const res = await axios.get(`${BASE_URL}/api/theaters`);
