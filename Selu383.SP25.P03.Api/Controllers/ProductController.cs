@@ -32,6 +32,7 @@ namespace Selu383.SP25.P03.Api.Controllers
                 ProductTypeId = p.ProductTypeId,
                 ImageData = p.ImageData,
                 ImageType = p.ImageType,
+                Price = p.Price,
                 ProductType = new ProductType
                 {
                     Id = p.ProductType.Id,

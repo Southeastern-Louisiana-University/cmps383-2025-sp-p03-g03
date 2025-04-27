@@ -13,6 +13,7 @@ namespace Selu383.SP25.P03.Api.Features.Products
         public required byte[] ImageData { get; set; }
         public string? ImageType { get; set; }
         public int ProductTypeId { get; set; }
+        public decimal? Price { get; set; }
         public required ProductType ProductType { get; set; } // singular
     }
     public class ProductDto
@@ -23,6 +24,7 @@ namespace Selu383.SP25.P03.Api.Features.Products
         public required byte[] ImageData { get; set; }
         public string? ImageType { get; set; }
         public int ProductTypeId { get; set; }
+        public decimal? Price { get; set; }
         //public required ProductType ProductType { get; set; }
 
     }
@@ -37,6 +39,11 @@ namespace Selu383.SP25.P03.Api.Features.Products
             builder.HasOne(e => e.ProductType)
                 .WithMany()
                 .HasForeignKey(e => e.ProductTypeId);
+
+
+            builder.Property(e => e.Price)
+                .HasColumnType("decimal(18,2)");
+                
 
         }
     }
