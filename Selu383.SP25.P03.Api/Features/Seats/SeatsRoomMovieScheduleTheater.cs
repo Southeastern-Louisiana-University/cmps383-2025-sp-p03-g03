@@ -11,7 +11,7 @@ namespace Selu383.SP25.P03.Api.Features.Seats
         public int TheaterId { get; set; }
         public int MovieScheduleId { get; set; }
         public int RoomsId { get; set; }
-        public int SeatTypeId { get; set; }
+        public int SeatId { get; set; }
         public bool IsTaken { get; set; }
     }
 
@@ -21,7 +21,7 @@ namespace Selu383.SP25.P03.Api.Features.Seats
         public int TheaterId { get; set; }
         public int MovieScheduleId { get; set; }
         public int RoomsId { get; set; }
-        public int SeatTypeId { get; set; }
+        public int SeatId { get; set; }
         public bool IsTaken { get; set; }
     }
 
@@ -32,7 +32,7 @@ namespace Selu383.SP25.P03.Api.Features.Seats
             
             builder.Property(e => e.TheaterId).IsRequired();
             builder.Property(e => e.MovieScheduleId).IsRequired();
-            builder.Property(e => e.SeatTypeId).IsRequired();
+            builder.Property(e => e.SeatId).IsRequired();
             builder.Property(e => e.RoomsId).IsRequired();
             builder.Property(e => e.IsTaken).IsRequired();
 

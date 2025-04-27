@@ -26,11 +26,27 @@ namespace Selu383.SP25.P03.Api.Controllers
                     i.TheaterId == theaterId &&
                     i.MovieScheduleId == MovieScheduleId &&
                     i.RoomsId == RoomId &&
-                    i.SeatTypeId == SeatId)
+                    i.SeatId == SeatId)
                 .ToListAsync();
 
             return Ok(result);
         }
+
+        // READ - Get by all IDs
+        [HttpGet("GetAllBySchedule/{theaterId}/{MovieScheduleId}/{RoomId}")]
+        public async Task<ActionResult<IEnumerable<SeatTaken>>> GetRoomByTheaterId(
+            int theaterId, int MovieScheduleId, int RoomId)
+        {
+            var result = await _context.Set<SeatTaken>()
+                .Where(i =>
+                    i.TheaterId == theaterId &&
+                    i.MovieScheduleId == MovieScheduleId &&
+                    i.RoomsId == RoomId)
+                .ToListAsync();
+
+            return Ok(result);
+        }
+
 
         // CREATE
         //[HttpPost("NewSeatTaken")]
@@ -56,7 +72,7 @@ namespace Selu383.SP25.P03.Api.Controllers
                 i.TheaterId == TheaterId &&
                 i.MovieScheduleId == MovieScheduleId &&
                 i.RoomsId == RoomId &&
-                i.SeatTypeId == SeatId);
+                i.SeatId == SeatId);
 
             if (existing == null)
             {
@@ -77,7 +93,7 @@ namespace Selu383.SP25.P03.Api.Controllers
                 i.TheaterId == theaterId &&
                 i.MovieScheduleId == MovieScheduleId &&
                 i.RoomsId == RoomId &&
-                i.SeatTypeId == SeatId);
+                i.SeatId == SeatId);
 
             if (existing == null)
             {
