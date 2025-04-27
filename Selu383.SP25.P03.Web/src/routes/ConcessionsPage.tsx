@@ -18,7 +18,7 @@ type Product = {
 
 export default function ConcessionsPage() {
   const [products, setProducts] = useState<Product[]>([]);
-  const [cart, setCart] = useState<Product[]>([]); // cart state
+  //const [cart, setCart] = useState<Product[]>([]); // cart state
   const concessionsUrl = "/api/Product";
   const { addToCart } = useCart();
 

@@ -59,10 +59,10 @@ export default function Checkout() {
     locationState?.theater ||
     (cart.find((item) => item.type === "seat") as SeatCartItem)?.theater ||
     null;
-  const poster =
-    locationState?.poster ||
-    (cart.find((item) => item.type === "seat") as SeatCartItem)?.poster ||
-    null;
+  // const poster =
+  //   locationState?.poster ||
+  //   (cart.find((item) => item.type === "seat") as SeatCartItem)?.poster ||
+  //   null;
 
   const [error, setError] = useState<string | null>(null);
   const [paymentProcessing, setPaymentProcessing] = useState(false);
