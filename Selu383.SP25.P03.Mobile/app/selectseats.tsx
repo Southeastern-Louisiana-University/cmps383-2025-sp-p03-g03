@@ -6,8 +6,10 @@ import {
   ActivityIndicator,
   StyleSheet,
   Alert,
+  ScrollView,
 } from "react-native";
 import { useLocalSearchParams, useRouter } from "expo-router";
+import theme from "@/styles/theme";
 
 interface Seat {
   id: number;
@@ -20,9 +22,24 @@ interface Seat {
   yPosition: number;
 }
 
+const seatTypeColors: Record<number, string> = {
+  1: "#fceda5",
+  2: "#a855f7",
+  3: "#f97316",
+  4: "#3b82f6",
+};
+
 export default function SelectSeats() {
-  const { movieId, scheduleId, roomId, theaterName, movieTitle, time } =
-    useLocalSearchParams();
+  const {
+    movieId,
+    scheduleId,
+    roomId,
+    theaterName,
+    movieTitle,
+    time,
+    ticket,
+  } = useLocalSearchParams();
+
   const router = useRouter();
 
   const [seats, setSeats] = useState<Seat[]>([]);
@@ -30,57 +47,30 @@ export default function SelectSeats() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const fetchSeats = async () => {
-      if (!roomId) {
-        console.warn("No room ID provided. Using test data.");
-        setSeats(generateTestSeats(0));
-        setLoading(false);
-        return;
-      }
+    const testSeats = Array.from({ length: 100 }, (_, index) => ({
+      id: index + 1,
+      seatTypeId: (index % 4) + 1,
+      roomsId: 1,
+      isAvailable: true,
+      row: String.fromCharCode(65 + Math.floor(index / 10)),
+      seatNumber: (index % 10) + 1,
+      xPosition: (index % 10) + 1,
+      yPosition: Math.floor(index / 10) + 1,
+    }));
+    setSeats(testSeats);
+    setLoading(false);
+  }, []);
 
-      try {
-        const response = await fetch(
-          `https://cmps383-2025-sp25-p03-g03.azurewebsites.net/api/seat/GetByRoomId/${roomId}`
-        );
-        if (!response.ok) {
-          throw new Error(`Failed to fetch seats: ${response.status}`);
-        }
-        const data = await response.json();
-        setSeats(data);
-      } catch (error) {
-        console.error("Error fetching seats:", error);
-        Alert.alert("Error", "Failed to load seats. Using test data.");
-        setSeats(generateTestSeats(Number(roomId)));
-      } finally {
-        setLoading(false);
-      }
-    };
+  const uniqueRows = [...new Set(seats.map((seat) => seat.row.toUpperCase()))].sort((a, b) =>
+    a.localeCompare(b, undefined, { numeric: true })
+  );
 
-    fetchSeats();
-  }, [roomId]);
+  const seatsByRow = uniqueRows.map((row) =>
+    seats.filter((seat) => seat.row.toUpperCase() === row).sort((a, b) => a.seatNumber - b.seatNumber)
+  );
 
-  const generateTestSeats = (roomId: number): Seat[] => {
-    const rows = ["A", "B", "C", "D", "E"];
-    const seatsPerRow = 8;
-    const testSeats: Seat[] = [];
-
-    rows.forEach((row, rowIndex) => {
-      for (let i = 1; i <= seatsPerRow; i++) {
-        testSeats.push({
-          id: rowIndex * seatsPerRow + i,
-          seatTypeId: 1,
-          roomsId: roomId,
-          isAvailable: Math.random() > 0.3,
-          row,
-          seatNumber: i,
-          xPosition: i * 40,
-          yPosition: rowIndex * 40,
-        });
-      }
-    });
-
-    return testSeats;
-  };
+  const maxSeatsPerRow = Math.max(...seatsByRow.map((row) => row.length));
+  const seatSize = Math.min(30, Math.floor((300 - 40) / maxSeatsPerRow));
 
   const handleSeatSelect = (seat: Seat) => {
     if (!seat.isAvailable) return;
@@ -94,75 +84,111 @@ export default function SelectSeats() {
   if (loading) {
     return (
       <View style={styles.center}>
-        <ActivityIndicator size="large" color="#a5b4fc" />
+        <ActivityIndicator size="large" color={theme.colors.primary} />
       </View>
     );
   }
 
+  const ticketData = {
+    id: scheduleId,
+    movieTitle: movieTitle?.toString() || "",
+    date: "", 
+    time: time?.toString() || "",
+    theater: roomId?.toString() || "",
+    roomId: roomId?.toString() || "", 
+  };
+  
   const seatParams = {
+    ticket: JSON.stringify(ticketData), 
     selectedSeats: JSON.stringify(selectedSeats),
     movieTitle: movieTitle?.toString() || "",
     theaterName: theaterName?.toString() || "",
     time: time?.toString() || "",
     scheduleId: scheduleId?.toString() || "",
   };
+  
+
+  const formattedTime = new Date(time as string).toLocaleTimeString([], {
+    hour: "2-digit",
+    minute: "2-digit",
+  });
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Select Your Seats for {movieTitle}</Text>
-      <Text style={styles.subtitle}>
-        {theaterName} • {time}
-      </Text>
+      <Text style={styles.title}>Seats for {movieTitle}</Text>
+      <Text style={styles.subtitle}>{theaterName} • {formattedTime}</Text>
 
-      <View style={styles.seatMap}>
-        {seats.map((seat) => (
-          <TouchableOpacity
-            key={seat.id}
-            style={[
-              styles.seatButton,
-              !seat.isAvailable && styles.seatUnavailable,
-              selectedSeats.some((s) => s.id === seat.id) && styles.seatSelected,
-            ]}
-            onPress={() => handleSeatSelect(seat)}
-            disabled={!seat.isAvailable}
-          >
-            <Text style={styles.seatText}>
-              {seat.row}
-              {seat.seatNumber}
-            </Text>
-          </TouchableOpacity>
+      <View style={styles.screenBox}>
+        <Text style={styles.screenText}>SCREEN</Text>
+      </View>
+
+      <ScrollView horizontal>
+        <ScrollView>
+          <View style={styles.seatMap}>
+            {seatsByRow.map((rowSeats, rowIndex) => (
+              <View key={rowIndex} style={styles.row}>
+                {rowSeats.map((seat) => (
+                  <TouchableOpacity
+                    key={seat.id}
+                    style={[
+                      styles.seatButton,
+                      {
+                        width: seatSize,
+                        height: seatSize,
+                        backgroundColor: selectedSeats.some((s) => s.id === seat.id)
+                          ? "#22c55e"
+                          : seat.isAvailable
+                          ? seatTypeColors[seat.seatTypeId] || "#dc2626"
+                          : "#dc2626",
+                      },
+                      selectedSeats.some((s) => s.id === seat.id) && styles.seatSelected,
+                    ]}
+                    onPress={() => handleSeatSelect(seat)}
+                    disabled={!seat.isAvailable}
+                  >
+                    <Text style={styles.seatText}>{seat.row}{seat.seatNumber}</Text>
+                  </TouchableOpacity>
+                ))}
+              </View>
+            ))}
+          </View>
+        </ScrollView>
+      </ScrollView>
+
+      <View style={styles.legend}>
+        {Object.entries(seatTypeColors).map(([id, color]) => (
+          <View key={id} style={styles.legendItem}>
+            <View style={[styles.legendDot, { backgroundColor: color }]} />
+            <Text style={styles.legendText}>{["Standard", "Premium", "Recliner", "Accessible"][parseInt(id) - 1]}</Text>
+          </View>
         ))}
+        <View style={styles.legendItem}>
+          <View style={[styles.legendDot, { backgroundColor: "#dc2626" }]} />
+          <Text style={styles.legendText}>Reserved</Text>
+        </View>
+        <View style={styles.legendItem}>
+          <View style={[styles.legendDot, { backgroundColor: "#22c55e" }]} />
+          <Text style={styles.legendText}>Selected</Text>
+        </View>
       </View>
 
       <TouchableOpacity
-        style={[
-          styles.confirmButton,
-          selectedSeats.length === 0 && { opacity: 0.5 },
-        ]}
+        style={[styles.confirmButton, { padding: 12 }, selectedSeats.length === 0 && { opacity: 0.5 }]}
         onPress={() => {
           if (selectedSeats.length === 0) {
             Alert.alert("No seats selected", "Please select at least one seat.");
             return;
           }
-          router.push({
-            pathname: "/checkout",
-            params: seatParams,
-          });
+          router.push({ pathname: "/checkout", params: seatParams });
         }}
         disabled={selectedSeats.length === 0}
       >
         <Text style={styles.confirmText}>Proceed to Checkout</Text>
       </TouchableOpacity>
 
-      {/* 🟢 Add to Cart / Add Concessions Button */}
       <TouchableOpacity
-        style={styles.concessionsButton}
-        onPress={() => {
-          router.push({
-            pathname: "/concessions",
-            params: seatParams, // ✅ Pass seat data into concessions page
-          });
-        }}
+        style={[styles.concessionsButton, { padding: 12 }]}
+        onPress={() => router.push({ pathname: "/concessions", params: seatParams })}
       >
         <Text style={styles.concessionsText}>🍿 Add Concessions</Text>
       </TouchableOpacity>
@@ -171,37 +197,108 @@ export default function SelectSeats() {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, padding: 20, backgroundColor: "#a5b4fc" },
-  title: { fontSize: 24, fontWeight: "bold", textAlign: "center", marginBottom: 10 },
-  subtitle: { fontSize: 16, textAlign: "center", marginBottom: 20 },
-  seatMap: { flexDirection: "row", flexWrap: "wrap", justifyContent: "center" },
+  container: {
+    flex: 1,
+    backgroundColor: theme.colors.background,
+  },
+  title: {
+    fontSize: 18,
+    fontWeight: "bold",
+    textAlign: "center",
+    marginBottom: 5,
+    color: theme.colors.text,
+  },
+  subtitle: {
+    fontSize: 12,
+    textAlign: "center",
+    marginBottom: 10,
+    color: theme.colors.text,
+  },
+  screenBox: {
+    backgroundColor: theme.colors.notification,
+    paddingVertical: 8,
+    borderRadius: 10,
+    alignItems: "center",
+    marginBottom: 20,
+  },
+  screenText: {
+    fontSize: 18,
+    fontWeight: "bold",
+    color: "#000",
+  },
+  legend: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    justifyContent: "center",
+    marginBottom: 28,
+  },
+  legendItem: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginHorizontal: 6,
+    marginVertical: 4,
+  },
+  legendDot: {
+    width: 14,
+    height: 16,
+    borderRadius: 8,
+    marginRight: 6,
+  },
+  legendText: {
+    color: theme.colors.text,
+    fontSize: 14,
+  },
+  seatMap: {
+    alignItems: "center",
+    marginBottom: 20,
+    paddingHorizontal: 28,
+  },
+  row: {
+    flexDirection: "row",
+    justifyContent: "center",
+    marginVertical: 4,
+  },
   seatButton: {
-    width: 40,
-    height: 40,
-    margin: 5,
-    backgroundColor: "#4b5563",
     justifyContent: "center",
     alignItems: "center",
-    borderRadius: 5,
+    marginHorizontal: 4,
+    marginVertical: 4,
+    borderRadius: 50,
   },
-  seatUnavailable: { backgroundColor: "red" },
-  seatSelected: { backgroundColor: "green" },
-  seatText: { color: "white" },
+  seatSelected: {
+    borderWidth: 2,
+    borderColor: "#000",
+  },
+  seatText: {
+    fontSize: 9,
+    color: "#fff",
+  },
   confirmButton: {
-    backgroundColor: "#fceda5",
-    padding: 16,
+    backgroundColor: theme.colors.notification,
     borderRadius: 10,
-    marginTop: 20,
+    marginTop: 30,
     alignItems: "center",
   },
-  confirmText: { textAlign: "center", fontWeight: "bold", color: "#000" },
+  confirmText: {
+    textAlign: "center",
+    fontWeight: "bold",
+    color: "#000",
+  },
   concessionsButton: {
-    backgroundColor: "#000",
-    padding: 16,
+    backgroundColor: theme.colors.primary,
     borderRadius: 10,
-    marginTop: 10,
+    marginTop: 18,
+    marginBottom: 26,
     alignItems: "center",
   },
-  concessionsText: { color: "#a5b4fc", fontWeight: "bold", fontSize: 16 },
-  center: { flex: 1, justifyContent: "center", alignItems: "center" },
+  concessionsText: {
+    color: theme.colors.text,
+    fontWeight: "bold",
+    fontSize: 16,
+  },
+  center: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+  },
 });

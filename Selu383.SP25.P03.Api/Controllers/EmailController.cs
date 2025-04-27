@@ -35,7 +35,8 @@ namespace Selu383.SP25.P03.Api.Features.Emails
                 {
                     movie = emailRequest.MovieTitle,
                     showtime = emailRequest.Showtime,
-                    seats = emailRequest.Seats 
+                    seats = emailRequest.Seats,
+                    concessions = emailRequest.Concessions
                 }
             };
 
