@@ -264,4 +264,4 @@ paket-files/
 __pycache__/
 *.pyc
 
-Selu383.SP25.P03.Api/appsettings.Development.json
+appsettings.Development.json

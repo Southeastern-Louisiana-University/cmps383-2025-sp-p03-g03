@@ -1,109 +1,91 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using Selu383.SP25.P03.Api.Controllers;
 using Selu383.SP25.P03.Api.Data;
 using Selu383.SP25.P03.Api.Features.Rooms;
-using Microsoft.EntityFrameworkCore;
 using Selu383.SP25.P03.Api.Features.Seats;
 
-namespace Selu383.SP25.P03.Api.Controllers
+[Route("api/[controller]")]
+[ApiController]
+public class SeatTakenController : GenericController<Room, RoomDto>
 {
-    [Route("api/[controller]")]
-    [ApiController]
-    public class SeatTakenController : GenericController<SeatTaken, SeatTakenDTO>
+    public SeatTakenController(DataContext context, IMapper mapper)
+        : base(context, mapper)
     {
-        public SeatTakenController(DataContext context, IMapper mapper)
-            : base(context, mapper)
-        {
-        }
+    }
 
-        // READ - Get by all IDs
-        [HttpGet("GetBySchedule/{theaterId}/{MovieScheduleId}/{RoomId}/{SeatId}")]
-        public async Task<ActionResult<IEnumerable<SeatTaken>>> GetRoomByTheaterId(
-            int theaterId, int MovieScheduleId, int RoomId, int SeatId)
-        {
-            var result = await _context.Set<SeatTaken>()
-                .Where(i =>
-                    i.TheaterId == theaterId &&
-                    i.MovieScheduleId == MovieScheduleId &&
-                    i.RoomsId == RoomId &&
-                    i.SeatId == SeatId)
-                .ToListAsync();
-
-            return Ok(result);
-        }
-
-        // READ - Get by all IDs
-        [HttpGet("GetAllBySchedule/{theaterId}/{MovieScheduleId}/{RoomId}")]
-        public async Task<ActionResult<IEnumerable<SeatTaken>>> GetRoomByTheaterId(
-            int theaterId, int MovieScheduleId, int RoomId)
-        {
-            var result = await _context.Set<SeatTaken>()
-                .Where(i =>
-                    i.TheaterId == theaterId &&
-                    i.MovieScheduleId == MovieScheduleId &&
-                    i.RoomsId == RoomId)
-                .ToListAsync();
-
-            return Ok(result);
-        }
-
-
-        // CREATE
-        //[HttpPost("NewSeatTaken")]
-        //public async Task<ActionResult<SeatTaken>> CreateNewSeatTaken([FromBody] SeatTaken newSeatTaken)
-        //{
-        //    _context.Set<SeatTaken>().Add(newSeatTaken);
-        //    await _context.SaveChangesAsync();
-
-        //    return CreatedAtAction(nameof(GetRoomByTheaterId), new
-        //    {
-        //        theaterId = newSeatTaken.TheaterId,
-        //        MovieScheduleId = newSeatTaken.MovieScheduleId,
-        //        RoomId = newSeatTaken.RoomsId,
-        //        SeatId = newSeatTaken.SeatTypeId
-        //    }, newSeatTaken);
-        //}
-
-        // UPDATE
-        [HttpPut("{theaterId}/{MovieScheduleId}/{RoomId}/{SeatId}")]
-        public async Task<IActionResult> UpdateSeatTaken(int TheaterId, int MovieScheduleId, int RoomId, int SeatId, [FromBody] SeatTaken updatedSeatTaken)
-        {
-            var existing = await _context.Set<SeatTaken>().FirstOrDefaultAsync(i =>
-                i.TheaterId == TheaterId &&
-                i.MovieScheduleId == MovieScheduleId &&
-                i.RoomsId == RoomId &&
-                i.SeatId == SeatId);
-
-            if (existing == null)
-            {
-                return NotFound();
-            }
-
-            _context.Entry(existing).CurrentValues.SetValues(updatedSeatTaken);
-            await _context.SaveChangesAsync();
-
-            return NoContent();
-        }
-
-        // DELETE
-        [HttpDelete("{theaterId}/{MovieScheduleId}/{RoomId}/{SeatId}")]
-        public async Task<IActionResult> DeleteSeatTaken(int theaterId, int MovieScheduleId, int RoomId, int SeatId)
-        {
-            var existing = await _context.Set<SeatTaken>().FirstOrDefaultAsync(i =>
+    [HttpGet("GetBySchedule/{theaterId}/{movieScheduleId}/{roomId}/{seatId}")]
+    public async Task<ActionResult<IEnumerable<SeatTaken>>> GetRoomByTheaterId(
+        int theaterId, int movieScheduleId, int roomId, int seatId)
+    {
+        var result = await _context.Set<SeatTaken>()
+            .Where(i =>
                 i.TheaterId == theaterId &&
-                i.MovieScheduleId == MovieScheduleId &&
-                i.RoomsId == RoomId &&
-                i.SeatId == SeatId);
+                i.MovieScheduleId == movieScheduleId &&
+                i.RoomsId == roomId &&
+                i.SeatTypeId == seatId)
+            .ToListAsync();
 
-            if (existing == null)
-            {
-                return NotFound();
-            }
+        return Ok(result);
+    }
 
-            _context.Set<SeatTaken>().Remove(existing);
-            await _context.SaveChangesAsync();
+    [HttpPost("Create")]
+    public async Task<ActionResult<SeatTaken>> CreateSeatTaken([FromBody] SeatTaken newSeatTaken)
+    {
+        _context.Set<SeatTaken>().Add(newSeatTaken);
+        await _context.SaveChangesAsync();
 
-            return NoContent();
+        return CreatedAtAction(nameof(GetRoomByTheaterId), new
+        {
+            theaterId = newSeatTaken.TheaterId,
+            movieScheduleId = newSeatTaken.MovieScheduleId,
+            roomId = newSeatTaken.RoomsId,
+            seatId = newSeatTaken.SeatTypeId
+        }, newSeatTaken);
+    }
+
+    [HttpPut("Update/{theaterId}/{movieScheduleId}/{roomId}/{seatId}")]
+    public async Task<IActionResult> UpdateSeatTaken(
+        int theaterId, int movieScheduleId, int roomId, int seatId,
+        [FromBody] SeatTaken updatedSeatTaken)
+    {
+        var existing = await _context.Set<SeatTaken>()
+            .FirstOrDefaultAsync(i =>
+                i.TheaterId == theaterId &&
+                i.MovieScheduleId == movieScheduleId &&
+                i.RoomsId == roomId &&
+                i.SeatTypeId == seatId);
+
+        if (existing == null)
+        {
+            return NotFound();
         }
+
+        _context.Entry(existing).CurrentValues.SetValues(updatedSeatTaken);
+        await _context.SaveChangesAsync();
+        return NoContent();
+    }
+
+    [HttpDelete("Delete/{theaterId}/{movieScheduleId}/{roomId}/{seatId}")]
+    public async Task<IActionResult> DeleteSeatTaken(
+        int theaterId, int movieScheduleId, int roomId, int seatId)
+    {
+        var existing = await _context.Set<SeatTaken>()
+            .FirstOrDefaultAsync(i =>
+                i.TheaterId == theaterId &&
+                i.MovieScheduleId == movieScheduleId &&
+                i.RoomsId == roomId &&
+                i.SeatTypeId == seatId);
+
+        if (existing == null)
+        {
+            return NotFound();
+        }
+
+        _context.Set<SeatTaken>().Remove(existing);
+        await _context.SaveChangesAsync();
+
+        return NoContent();
     }
 }
