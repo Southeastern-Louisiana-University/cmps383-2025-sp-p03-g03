@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using Selu383.SP25.P03.Api.Data;
 using Selu383.SP25.P03.Api.Features.Cart;
 using Selu383.SP25.P03.Api.Features.Products;
+using Selu383.SP25.P03.Api.Features.Seats;
 using Selu383.SP25.P03.Api.Features.Tickets;
 
 namespace Selu383.SP25.P03.Api.Controllers
@@ -44,6 +45,16 @@ namespace Selu383.SP25.P03.Api.Controllers
             
             _context.Set<Ticket>().AddRange(tickets);
             await _context.SaveChangesAsync();
+
+            var seatIds = request.Seats.Select(seat =>  seat.SeatId).ToList();
+
+            var seatsToUpdate = await _context.Set<Seat>()
+                .Where(seat => seatIds.Contains(seat.Id)).ToListAsync();
+
+            foreach (var seat in seatsToUpdate)
+            {
+                seat.isAvailable = false;
+            }
 
             
             var userTickets = tickets.Select(ticket => new UserTicket
