@@ -22,7 +22,16 @@ interface Seat {
 }
 
 export default function SelectSeats() {
-  const { movieId, scheduleId, roomId, theaterName, movieTitle, time } = useLocalSearchParams();
+  const {
+    movieId,
+    scheduleId,
+    roomId,
+    theaterName,
+    movieTitle,
+    time,
+    ticket, 
+  } = useLocalSearchParams();
+
   const router = useRouter();
 
   const [seats, setSeats] = useState<Seat[]>([]);
@@ -47,6 +56,7 @@ export default function SelectSeats() {
         const data = await response.json();
         setSeats(data);
       } catch (error) {
+        console.warn("Error fetching seats, using test data instead:", error);
         setSeats(generateTestSeats(Number(roomId)));
       } finally {
         setLoading(false);
@@ -97,6 +107,7 @@ export default function SelectSeats() {
   }
 
   const seatParams = {
+    ticket: ticket?.toString() || "",                         
     selectedSeats: JSON.stringify(selectedSeats),
     movieTitle: movieTitle?.toString() || "",
     theaterName: theaterName?.toString() || "",

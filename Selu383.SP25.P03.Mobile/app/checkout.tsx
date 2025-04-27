@@ -19,22 +19,29 @@ export default function Checkout() {
   let parsedSeats: any[] = [];
   let parsedConcessions: any[] = [];
 
-  try {
-    parsedTicket = ticket ? JSON.parse(ticket as string) : null;
-  } catch (e) {
-    console.warn("Invalid ticket data", e);
+ 
+  if (typeof ticket === "string") {
+    try {
+      parsedTicket = JSON.parse(ticket);
+    } catch (e) {
+      console.warn("Invalid ticket data", e);
+    }
   }
 
-  try {
-    parsedSeats = selectedSeats ? JSON.parse(selectedSeats as string) : [];
-  } catch (e) {
-    console.warn("Invalid seats data", e);
+  if (typeof selectedSeats === "string") {
+    try {
+      parsedSeats = JSON.parse(selectedSeats);
+    } catch (e) {
+      console.warn("Invalid seats data", e);
+    }
   }
 
-  try {
-    parsedConcessions = concessions ? JSON.parse(concessions as string) : [];
-  } catch (e) {
-    console.warn("Invalid concessions data", e);
+  if (typeof concessions === "string") {
+    try {
+      parsedConcessions = JSON.parse(concessions);
+    } catch (e) {
+      console.warn("Invalid concessions data", e);
+    }
   }
 
   const concessionTotal = parsedConcessions.reduce(
@@ -46,7 +53,6 @@ export default function Checkout() {
   const ticketTotal = parsedSeats.length * ticketPricePerSeat;
   const finalTotal = concessionTotal + ticketTotal;
 
-  // ✅ FIXED QR DATA - Only sending small essential data:
   const qrData = JSON.stringify({
     ticketId: parsedTicket?.id,
     seats: parsedSeats.map((seat) => ({
@@ -63,6 +69,21 @@ export default function Checkout() {
   const handleConfirm = () => {
     setShowQRCode(true);
   };
+
+ 
+  if (!parsedTicket || parsedSeats.length === 0) {
+    return (
+      <View style={styles.container}>
+        <Text style={styles.title}>⚠️ Error: Missing ticket or seat information.</Text>
+        <Pressable
+          style={[styles.confirmButton, { marginTop: 20 }]}
+          onPress={() => router.replace("/")}
+        >
+          <Text style={styles.confirmText}>Back to Home</Text>
+        </Pressable>
+      </View>
+    );
+  }
 
   return (
     <ScrollView style={styles.container}>

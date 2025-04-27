@@ -6,7 +6,7 @@ import theme from "@/styles/theme";
 
 export default function Concessions() {
   const router = useRouter();
-  const { selectedSeats, movieTitle, theaterName, time, scheduleId } = useLocalSearchParams();
+  const { ticket, selectedSeats, movieTitle, theaterName, time, scheduleId } = useLocalSearchParams(); 
 
   const [products, setProducts] = useState<Product[]>([]);
   const [cart, setCart] = useState<any[]>([]);
@@ -99,8 +99,9 @@ export default function Concessions() {
             router.push({
               pathname: "/checkout",
               params: {
+                ticket: ticket || "",                               
                 concessions: JSON.stringify(cart),
-                selectedSeats: selectedSeats || "[]",
+                selectedSeats: selectedSeats || "[]",               
                 movieTitle: movieTitle || "",
                 theaterName: theaterName || "",
                 time: time || "",
