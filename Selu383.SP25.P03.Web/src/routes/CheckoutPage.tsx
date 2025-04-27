@@ -147,6 +147,10 @@ export default function Checkout() {
           movieTitle: movie.title,
           showtime: formattedShowtime,
           seats: formattedSeats,
+          concessions: cart
+            .filter((item) => item.type === "concession")
+            .map((item) => `${item.name} (x${item.quantity})`)
+            .join(", "),
         });
       } catch (emailErr) {
         console.error("Failed to send email:", emailErr);
