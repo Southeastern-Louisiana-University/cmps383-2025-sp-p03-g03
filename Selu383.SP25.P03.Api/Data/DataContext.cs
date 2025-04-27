@@ -47,6 +47,8 @@ namespace Selu383.SP25.P03.Api.Data
         public DbSet<RoomSeats> RoomSeats { get; set; }
         public DbSet<ProductType> ProductTypes { get; set; }
 
+        public DbSet<SeatTaken> SeatTaken { get; set; }
+
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
