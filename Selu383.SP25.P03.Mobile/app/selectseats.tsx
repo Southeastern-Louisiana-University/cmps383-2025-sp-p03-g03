@@ -218,7 +218,7 @@ const styles = StyleSheet.create({
   confirmText: {
     textAlign: "center",
     fontWeight: "bold",
-    color: theme.colors.text,
+    color: "#000",
   },
   concessionsButton: {
     backgroundColor: theme.colors.primary,

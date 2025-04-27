@@ -155,17 +155,17 @@ const styles = StyleSheet.create({
   sectionTitle: {
     fontSize: 20,
     fontWeight: "bold",
-    color: theme.colors.text,
+    color: "#ffffff",
     marginBottom: 8,
   },
   detail: {
     fontSize: 16,
-    color: theme.colors.text,
+    color: "#000",
   },
   price: {
     fontSize: 16,
     fontWeight: "bold",
-    color: theme.colors.text,
+    color: "#000",
     marginTop: 6,
   },
   item: {
