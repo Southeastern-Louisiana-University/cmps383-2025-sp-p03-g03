@@ -1,4 +1,4 @@
-import { ThemeProvider } from '@react-navigation/native';
+import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native';
 import { useFonts } from 'expo-font';
 import { Stack } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
@@ -7,12 +7,13 @@ import { useEffect } from 'react';
 import 'react-native-reanimated';
 
 import { AuthProvider } from '@/context/AuthContext';
+import { useColorScheme } from '@/hooks/useColorScheme';
 import CustomHeader from '@/components/ui/CustomHeader';
-import theme from '@/styles/theme';  // ✅ Importing your theme here
 
 SplashScreen.preventAutoHideAsync();
 
 export default function RootLayout() {
+  const { colorScheme } = useColorScheme();
   const [loaded] = useFonts({
     SpaceMono: require('../assets/fonts/SpaceMono-Regular.ttf'),
   });
@@ -29,28 +30,24 @@ export default function RootLayout() {
 
   return (
     <AuthProvider>
-     
-     <ThemeProvider value={theme}>  
-
-
+      <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
         <Stack
           screenOptions={{
             headerTitle: () => <CustomHeader />,
             headerStyle: {
-              backgroundColor: theme.colors.card, 
+              backgroundColor: '#fceda5',
             },
-            headerTintColor: theme.colors.text,    
             contentStyle: {
-              backgroundColor: theme.colors.background, 
+              backgroundColor: '#a5b4fc',
             },
           }}
         >
-         
+          {/* 👇 These register the nested folders (tabs) and (auth) */}
           <Stack.Screen name="(tabs)" options={{ headerShown: true }} />
           <Stack.Screen name="(auth)" options={{ headerShown: false }} />
           <Stack.Screen name="+not-found" />
         </Stack>
-        <StatusBar style="light" /> 
+        <StatusBar style="auto" />
       </ThemeProvider>
     </AuthProvider>
   );
