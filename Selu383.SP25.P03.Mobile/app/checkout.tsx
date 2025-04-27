@@ -155,7 +155,7 @@ const styles = StyleSheet.create({
   sectionTitle: {
     fontSize: 20,
     fontWeight: "bold",
-    color: "#ffffff",
+    color: "#000",
     marginBottom: 8,
   },
   detail: {
@@ -206,7 +206,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   confirmText: {
-    color: theme.colors.text,
+    color: "#000",
     fontSize: 16,
     fontWeight: "bold",
   },

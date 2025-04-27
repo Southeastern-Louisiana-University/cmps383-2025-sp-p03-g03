@@ -13,10 +13,10 @@ import { useLocalSearchParams, useRouter, useNavigation } from "expo-router";
 import {
   getMovieById,
   getMovieScheduleDetails,
-  getTheaters,
+  getActiveTheaters,
 } from "@/services/movieService";
 import type { Movie } from "@/services/movieService";
-import theme from "@/styles/theme"; 
+import theme from "@/styles/theme";
 
 type MovieSchedule = {
   id: number;
@@ -37,7 +37,6 @@ export default function BuyTickets() {
   const [schedule, setSchedule] = useState<MovieSchedule[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedTheaterName, setSelectedTheaterName] = useState<string | null>(null);
-
   const [modalVisible, setModalVisible] = useState(false);
   const [selectedDay, setSelectedDay] = useState<string | null>(null);
   const [selectedTime, setSelectedTime] = useState<string | null>(null);
@@ -55,7 +54,7 @@ export default function BuyTickets() {
         </View>
       ),
       headerStyle: {
-        backgroundColor: theme.colors.notification, 
+        backgroundColor: theme.colors.notification,
       },
       headerTintColor: "#000",
     });
@@ -71,7 +70,7 @@ export default function BuyTickets() {
         setSchedule(scheduleData);
 
         if (theaterId) {
-          const theaters = await getTheaters();
+          const theaters = await getActiveTheaters();
           const theater = theaters.find((t) => t.id.toString() === theaterId.toString());
           if (theater) {
             setSelectedTheaterName(theater.name);
