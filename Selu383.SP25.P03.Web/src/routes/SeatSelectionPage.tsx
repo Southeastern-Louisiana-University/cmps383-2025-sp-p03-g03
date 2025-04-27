@@ -4,7 +4,7 @@ import { Button } from "@headlessui/react";
 import { ArrowLeftIcon, TicketIcon } from "@heroicons/react/24/outline";
 import { SeatService, SeatTypeService } from "../Services/SeatService";
 import { useCart } from "../components/CartContext";
-import { formatSeatName, getSeatPrice, getSeatTypeName } from "../Utils/seats";
+import { getSeatPrice, getSeatTypeName } from "../Utils/seats";
 interface Seat {
   id: number;
   seatTypeId: number;
@@ -24,7 +24,7 @@ export default function SeatSelection() {
   const { movieId, theaterId, roomId, scheduleId } = useParams();
   const location = useLocation();
   const navigate = useNavigate();
-  const { time, movie, theater, room, poster } = location.state || {};
+  const { time, movie, theater, poster } = location.state || {};
 
   const [seats, setSeats] = useState<Seat[]>([]);
   const [seatTypes, setSeatTypes] = useState<SeatType[]>([]);
