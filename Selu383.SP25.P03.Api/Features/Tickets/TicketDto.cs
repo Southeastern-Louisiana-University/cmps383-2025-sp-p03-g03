@@ -8,7 +8,7 @@ namespace Selu383.SP25.P03.Api.Features.Tickets
     public class Ticket : IEntity
     {
         public int Id { get; set; }
-        public int OrderId { get; set; }
+        public long OrderId { get; set; }
         public int ScreeningId { get; set; }
         public int? SeatId { get; set; }
         public string? TicketType { get; set; }
@@ -16,8 +16,8 @@ namespace Selu383.SP25.P03.Api.Features.Tickets
     }
     public class TicketDto
     {
-        public int TicketId { get; set; }
-        public int OrderId { get; set; }
+        public int Id { get; set; }
+        public long OrderId { get; set; }
         public int ScreeningId { get; set; }
         public int? SeatId { get; set; }
         public string? TicketType { get; set; }

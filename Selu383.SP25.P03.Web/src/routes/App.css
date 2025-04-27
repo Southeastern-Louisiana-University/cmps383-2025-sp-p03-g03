@@ -17,9 +17,21 @@ body {
 }
 
 .bg-summit {
-    --tw-bg-opacity: 1;
-    background-color: rgba(29, 54, 101, var(--tw-bg-opacity));
+  --tw-bg-opacity: 1;
+  background-color: rgba(29, 54, 101, var(--tw-bg-opacity));
 }
-/*nav {
-  background-color: #fecc01;
-}*/
+
+.swiper-pagination-bullet {
+  background: #4f46e5 !important;
+  opacity: 0.4;
+}
+
+.swiper-pagination-bullet-active {
+  background: #4f46e5 !important;
+  opacity: 1;
+}
+
+.swiper-button-prev,
+.swiper-button-next {
+  color: #4f46e5 !important;
+}

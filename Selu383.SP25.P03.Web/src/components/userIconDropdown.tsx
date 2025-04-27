@@ -45,7 +45,7 @@ const UserDropdown: React.FC = () => {
       <button onClick={() => setIsOpen(!isOpen)} className="focus:outline-none">
         <FaUserCircle
           size={32}
-          className="text-indigo-300 transition-transform hover:scale-110 cursor-pointer hover:drop-shadow-xl hover:shadow-indigo-500/50"
+          className="text-indigo-200 transition-transform hover:scale-110 cursor-pointer hover:drop-shadow-xl hover:shadow-indigo-500/50"
         />
       </button>
       {isOpen && (
