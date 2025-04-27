@@ -78,7 +78,7 @@ export default function SeatSelection() {
   const calculateSeatLayout = () => {
     if (seats.length === 0) return null;
 
-    const BASE_SEAT_COUNT = 100;
+    const BASE_SEAT_COUNT = 50;
     const BASE_CONTAINER_WIDTH = 800;
     const BASE_SEAT_SIZE = 24;
     const BASE_GAP_SIZE = 8;
