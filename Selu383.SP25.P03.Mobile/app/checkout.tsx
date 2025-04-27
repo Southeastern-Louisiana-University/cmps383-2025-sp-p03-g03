@@ -27,8 +27,6 @@ export default function Checkout() {
     }
   } else if (typeof ticket === "object" && ticket !== null) {
     parsedTicket = ticket;
-  } else {
-    console.warn("⚠️ Ticket is missing or invalid!");
   }
 
   if (typeof selectedSeats === "string") {
@@ -51,13 +49,12 @@ export default function Checkout() {
     (sum, item) => sum + item.quantity * item.price,
     0
   );
-
   const ticketPricePerSeat = 10.0;
   const ticketTotal = parsedSeats.length * ticketPricePerSeat;
   const finalTotal = concessionTotal + ticketTotal;
 
   const qrData = JSON.stringify({
-    ticketId: parsedTicket?.id,
+    ticketId: parsedTicket?.id || null,
     seats: parsedSeats.map((seat) => ({
       row: seat.row,
       seatNumber: seat.seatNumber,
@@ -73,10 +70,12 @@ export default function Checkout() {
     setShowQRCode(true);
   };
 
-  if (!parsedTicket || parsedSeats.length === 0) {
+  const nothingSelected = parsedSeats.length === 0 && parsedConcessions.length === 0;
+
+  if (nothingSelected) {
     return (
       <View style={styles.container}>
-        <Text style={styles.title}>⚠️ Error: Missing ticket or seat information.</Text>
+        <Text style={styles.title}>⚠️ Error: No ticket or concessions selected.</Text>
         <Pressable
           style={[styles.confirmButton, { marginTop: 20 }]}
           onPress={() => router.replace("/")}
@@ -88,7 +87,7 @@ export default function Checkout() {
   }
 
   return (
-    <ScrollView style={styles.container} contentContainerStyle={{ paddingBottom: 60 }}>
+    <ScrollView style={styles.container} contentContainerStyle={{ paddingBottom: 80 }}>
       <Text style={styles.title}>🧾 Checkout Summary</Text>
 
       {parsedTicket && (
@@ -99,9 +98,7 @@ export default function Checkout() {
           <Text style={styles.detail}>
             Time: {new Date(parsedTicket.time).toLocaleTimeString([], { hour: "numeric", minute: "2-digit" })}
           </Text>
-          <Text style={styles.detail}>
-            Theater: {parsedTicket.roomId ? String(parsedTicket.roomId) : "N/A"}
-          </Text>
+          <Text style={styles.detail}>Theater: {parsedTicket.roomId ? String(parsedTicket.roomId) : "N/A"}</Text>
         </View>
       )}
 
@@ -113,26 +110,20 @@ export default function Checkout() {
               Row {seat.row} Seat {seat.seatNumber}
             </Text>
           ))}
-          <Text style={styles.price}>
-            Ticket Price: ${ticketTotal.toFixed(2)}
-          </Text>
+          <Text style={styles.price}>Ticket Price: ${ticketTotal.toFixed(2)}</Text>
         </View>
       )}
 
       {parsedConcessions.length > 0 && (
-        <>
+        <View style={styles.ticketBox}>
           <Text style={styles.sectionTitle}>🍿 Concessions</Text>
           {parsedConcessions.map((item) => (
             <View key={item.id} style={styles.item}>
-              <Text style={styles.itemText}>
-                {item.name} × {item.quantity}
-              </Text>
-              <Text style={styles.itemText}>
-                ${(item.quantity * item.price).toFixed(2)}
-              </Text>
+              <Text style={styles.itemText}>{item.name} × {item.quantity}</Text>
+              <Text style={styles.itemText}>${(item.quantity * item.price).toFixed(2)}</Text>
             </View>
           ))}
-        </>
+        </View>
       )}
 
       <View style={styles.totalRow}>
