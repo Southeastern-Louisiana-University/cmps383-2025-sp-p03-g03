@@ -1,4 +1,3 @@
-// services/movieService.ts
 import axios from "axios";
 
 const BASE_URL = "https://cmps383-2025-sp25-p03-g03.azurewebsites.net";
@@ -30,7 +29,6 @@ export interface Theater {
 export const getActiveMovies = async (): Promise<Movie[]> => {
   const res = await axios.get(`${BASE_URL}/api/movie/active`);
   const movies = res.data;
-
   const moviesWithPosters = await Promise.all(
     movies.map(async (movie: Omit<Movie, "poster">) => {
       try {
@@ -42,14 +40,12 @@ export const getActiveMovies = async (): Promise<Movie[]> => {
       }
     })
   );
-
   return moviesWithPosters;
 };
 
 export const getMovies = async (): Promise<Movie[]> => {
   const res = await axios.get(`${BASE_URL}/api/movie`);
   const movies = res.data;
-
   const moviesWithPosters = await Promise.all(
     movies.map(async (movie: Omit<Movie, "poster">) => {
       try {
@@ -61,14 +57,12 @@ export const getMovies = async (): Promise<Movie[]> => {
       }
     })
   );
-
   return moviesWithPosters;
 };
 
 export const getMovieById = async (id: number | string): Promise<Movie> => {
   const res = await axios.get(`${BASE_URL}/api/movie/${id}`);
   const movie = res.data;
-
   try {
     const posterRes = await axios.get(`${BASE_URL}/api/MoviePoster/GetByMovieId/${movie.id}`);
     return { ...movie, poster: posterRes.data };
@@ -87,8 +81,12 @@ export const getMovieScheduleDetails = async (movieId: number) => {
 };
 
 export const getActiveTheaters = async (): Promise<Theater[]> => {
-  const res = await axios.get(`${BASE_URL}/api/theater/active`);
-  const theaters = res.data.data || res.data;  
+  const res = await axios.get(`${BASE_URL}/api/theaters/active`);
+  const theaters = res.data?.theaters || res.data?.data || res.data;
+  if (!Array.isArray(theaters)) {
+    console.error("❌ Expected an array of theaters, but got:", theaters);
+    return [];
+  }
   return theaters;
 };
 

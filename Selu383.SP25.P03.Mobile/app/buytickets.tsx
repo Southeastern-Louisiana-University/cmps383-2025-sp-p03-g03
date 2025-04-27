@@ -192,8 +192,8 @@ export default function BuyTickets() {
                   id: selectedScheduleId,
                   movieTitle: movie.title,
                   date: selectedDay,
-                  time: selectedFullTime,
-                  theater: selectedTheaterName,
+                  time: selectedFullTime,               
+                  roomId: selectedRoomId,              
                 };
 
                 router.push({

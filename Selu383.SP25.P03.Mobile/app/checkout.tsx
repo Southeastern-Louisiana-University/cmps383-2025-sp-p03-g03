@@ -19,20 +19,23 @@ export default function Checkout() {
   let parsedSeats: any[] = [];
   let parsedConcessions: any[] = [];
 
- 
   if (typeof ticket === "string") {
     try {
       parsedTicket = JSON.parse(ticket);
     } catch (e) {
-      console.warn("Invalid ticket data", e);
+      console.warn("⚠️ Invalid ticket data (string case)", e);
     }
+  } else if (typeof ticket === "object" && ticket !== null) {
+    parsedTicket = ticket;
+  } else {
+    console.warn("⚠️ Ticket is missing or invalid!");
   }
 
   if (typeof selectedSeats === "string") {
     try {
       parsedSeats = JSON.parse(selectedSeats);
     } catch (e) {
-      console.warn("Invalid seats data", e);
+      console.warn("⚠️ Invalid seats data", e);
     }
   }
 
@@ -40,7 +43,7 @@ export default function Checkout() {
     try {
       parsedConcessions = JSON.parse(concessions);
     } catch (e) {
-      console.warn("Invalid concessions data", e);
+      console.warn("⚠️ Invalid concessions data", e);
     }
   }
 
@@ -70,7 +73,6 @@ export default function Checkout() {
     setShowQRCode(true);
   };
 
- 
   if (!parsedTicket || parsedSeats.length === 0) {
     return (
       <View style={styles.container}>
@@ -86,7 +88,7 @@ export default function Checkout() {
   }
 
   return (
-    <ScrollView style={styles.container}>
+    <ScrollView style={styles.container} contentContainerStyle={{ paddingBottom: 60 }}>
       <Text style={styles.title}>🧾 Checkout Summary</Text>
 
       {parsedTicket && (
@@ -94,8 +96,12 @@ export default function Checkout() {
           <Text style={styles.sectionTitle}>🎟️ Ticket Info</Text>
           <Text style={styles.detail}>Movie: {parsedTicket.movieTitle}</Text>
           <Text style={styles.detail}>Date: {parsedTicket.date}</Text>
-          <Text style={styles.detail}>Time: {parsedTicket.time}</Text>
-          <Text style={styles.detail}>Theater: {parsedTicket.theater}</Text>
+          <Text style={styles.detail}>
+            Time: {new Date(parsedTicket.time).toLocaleTimeString([], { hour: "numeric", minute: "2-digit" })}
+          </Text>
+          <Text style={styles.detail}>
+            Theater: {parsedTicket.roomId ? String(parsedTicket.roomId) : "N/A"}
+          </Text>
         </View>
       )}
 
@@ -144,7 +150,7 @@ export default function Checkout() {
           <Text style={styles.detail}>Here is your QR code:</Text>
           <QRCode value={qrData} size={200} />
           <Pressable
-            style={[styles.confirmButton, { marginTop: 20 }]}
+            style={[styles.confirmButton, { marginTop: 50, paddingVertical: 18, paddingHorizontal: 32 }]}
             onPress={() => router.replace("/")}
           >
             <Text style={styles.confirmText}>Back to Home</Text>
@@ -176,7 +182,7 @@ const styles = StyleSheet.create({
   sectionTitle: {
     fontSize: 20,
     fontWeight: "bold",
-    color: "#000",
+    color: "#a5b4fc",
     marginBottom: 8,
   },
   detail: {
