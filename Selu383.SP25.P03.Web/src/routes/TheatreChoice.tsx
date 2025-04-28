@@ -52,7 +52,7 @@ function TheatreChoice() {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center min-h-screen bg-gradient-to-b from-indigo-950 to-gray-900 text-white">
+      <div className="flex items-center justify-center min-h-screen bg-gray-900 text-white">
         <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-indigo-300! mb-4"></div>
         <p className="text-indigo-300">Loading theaters...</p>
       </div>

@@ -378,8 +378,8 @@ function MovieDetails() {
                 onClick={() => setShowVideo(!showVideo)}
                 className="mt-4 flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white py-3 px-6 rounded-lg transition-all duration-300 shadow-md hover:shadow-lg cursor-pointer w-fit"
               >
+                <PlayCircleIcon className="h-7 w-7" />
                 {showVideo ? "Hide Trailer" : "Watch Trailer"}
-                <PlayCircleIcon className="h-5 w-5" />
               </Button>
               {showVideo && (
                 <div className="mt-6 bg-gray-800 p-6 rounded-lg shadow-lg shadow-indigo-950/50">
@@ -405,8 +405,8 @@ function MovieDetails() {
             onClick={handleShowtimesClick}
             className="mt-6 flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white py-3 px-6 rounded-lg transition-all duration-300 shadow-md hover:shadow-lg cursor-pointer w-fit"
           >
+            <TicketIcon className="h-7 w-7" />
             {theaterId ? "Show Showtimes" : "Select Theater"}
-            <TicketIcon className="h-5 w-5" />
           </Button>
           {showShowtimes && !theaterId && (
             <div className="mt-6 bg-gray-800 p-6 rounded-lg shadow-lg">
