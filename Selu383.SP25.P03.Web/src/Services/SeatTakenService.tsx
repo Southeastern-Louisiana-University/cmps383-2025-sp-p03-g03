@@ -39,12 +39,20 @@ export const SeatTakenService = {
                 // Get specific seat
                 logger.info(`Fetching taken seat for schedule: Theater ${theaterId}, Schedule ${movieScheduleId}, Room ${roomId}, Seat ${seatId}`);
                 const response = await axios.get<SeatTakenDTO[]>(`${API_URL}/GetBySchedule/${theaterId}/${movieScheduleId}/${roomId}/${seatId}`);
+                if (!Array.isArray(response.data)) {
+                    logger.warn(`API did not return an array, got ${typeof response.data} instead. Returning empty array.`);
+                    return [];
+                }
                 logger.success(`Retrieved ${response.data.length} taken seat record`);
                 return response.data;
             } else {
                 // Get all seats for this schedule/room
                 logger.info(`Fetching all taken seats for schedule: Theater ${theaterId}, Schedule ${movieScheduleId}, Room ${roomId}`);
                 const response = await axios.get<SeatTakenDTO[]>(`${API_URL}/GetAllBySchedule/${theaterId}/${movieScheduleId}/${roomId}`);
+                if (!Array.isArray(response.data)) {
+                    logger.warn(`API did not return an array, got ${typeof response.data} instead. Returning empty array.`);
+                    return [];
+                }
                 logger.success(`Retrieved ${response.data.length} taken seats for the schedule`);
                 return response.data;
             }
@@ -53,7 +61,8 @@ export const SeatTakenService = {
                 logger.warn(`No taken seats found, returning empty array`);
                 return [];
             }
-            return handleApiError(error, `Fetching taken seats for schedule: Theater ${theaterId}, Schedule ${movieScheduleId}, Room ${roomId}`);
+            logger.error(`Error fetching taken seats: ${error instanceof Error ? error.message : 'Unknown error'}`, error);
+            return []; // Return empty array on error instead of throwing
         }
     },
 

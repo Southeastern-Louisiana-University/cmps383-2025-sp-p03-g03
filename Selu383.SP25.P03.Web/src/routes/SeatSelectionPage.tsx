@@ -24,6 +24,15 @@ interface SeatType {
   seatTypes: string;
 }
 
+interface SeatTaken {
+    id: number;
+    theaterId: number;
+    movieScheduleId: number;
+    roomsId: number;
+    seatId: number;
+    isTaken: boolean;
+}
+
 export default function SeatSelection() {
   const { addToCart } = useCart();
   const { movieId, theaterId, roomId, scheduleId } = useParams();
@@ -43,10 +52,186 @@ export default function SeatSelection() {
     4: "bg-indigo-600", // Base color for accessible seats
   });
 
-  useEffect(() => {
-    if (!movieId || !theaterId || !roomId || !scheduleId || !movie) {
-      navigate(-1);
-      return;
+    useEffect(() => {
+        if (!movieId || !theaterId || !roomId || !scheduleId || !movie) {
+            navigate(-1);
+            return;
+        }
+
+        const fetchData = async () => {
+            try {
+                setLoading(true);
+                setError(null);
+
+                // Fetch seat types and seats first (these are critical)
+                const [seatTypeData, seatsData] = await Promise.all([
+                    SeatTypeService.getAll(),
+                    SeatService.getByRoomId(Number(roomId)),
+                ]);
+
+                // Set the seat types data for the legend display
+                setSeatTypes(seatTypeData);
+
+                // Then try to fetch taken seats (but don't fail if this errors)
+                let takenSeatsArray: SeatTaken[] = [];
+                try {
+                    const result = await SeatTakenService.getBySchedule(
+                        Number(theaterId),
+                        Number(scheduleId),
+                        Number(roomId)
+                    );
+                    takenSeatsArray = Array.isArray(result) ? result : [];
+                } catch (err) {
+                    console.warn("Error fetching taken seats:", err);
+                    // Continue with empty array for taken seats
+                }
+
+                // Mark seats as unavailable if they are taken
+                const updatedSeats = seatsData.map(seat => {
+                    const isTaken = takenSeatsArray.some(
+                        takenSeat => takenSeat.seatId === seat.id && takenSeat.isTaken
+                    );
+                    return {
+                        ...seat,
+                        isAvailable: isTaken ? false : seat.isAvailable,
+                        isTaken
+                    };
+                });
+
+                setSeats(updatedSeats);
+
+                if (updatedSeats.length === 0) {
+                    setError("No seats found for this room");
+                }
+            } catch (err) {
+                console.error("Error loading data:", err);
+                setError(
+                    `Failed to load seat data: ${err instanceof Error ? err.message : "Unknown error"
+                    }`
+                );
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchData();
+    }, [movieId, theaterId, roomId, scheduleId, movie, navigate]);
+
+    const calculateSeatLayout = () => {
+        if (seats.length === 0) return null;
+
+        const BASE_SEAT_COUNT = 50;
+        const BASE_CONTAINER_WIDTH = 800;
+        const BASE_SEAT_SIZE = 24;
+        const BASE_GAP_SIZE = 8;
+        const BASE_PADDING = 40;
+
+        const uniqueRows = [...new Set(seats.map((seat) => seat.row))].sort(
+            (a, b) => a.localeCompare(b, undefined, { numeric: true })
+        );
+
+        const seatsByRow = uniqueRows.map((row) =>
+            seats
+                .filter((seat) => seat.row === row)
+                .sort((a, b) => a.seatNumber - b.seatNumber)
+        );
+
+        const maxSeatsPerRow = Math.max(...seatsByRow.map((row) => row.length));
+        const totalSeats = seats.length;
+
+        const scaleFactor = Math.max(
+            1,
+            Math.pow(totalSeats / BASE_SEAT_COUNT, 1 / 3)
+        );
+
+        const seatSize = Math.min(36, BASE_SEAT_SIZE * scaleFactor);
+        const gapSize = Math.min(12, BASE_GAP_SIZE * scaleFactor);
+        const padding = Math.min(60, BASE_PADDING * scaleFactor);
+
+        const gridWidth = maxSeatsPerRow * (seatSize + gapSize) - gapSize;
+        const gridHeight = uniqueRows.length * (seatSize + gapSize) - gapSize;
+
+        const containerWidth = Math.min(
+            window.innerWidth * 0.95,
+            Math.max(BASE_CONTAINER_WIDTH, gridWidth + padding * 2)
+        );
+        const containerHeight = gridHeight + padding * 2;
+
+        const availableWidth = containerWidth - padding * 2;
+        const startX = padding + Math.max(0, (availableWidth - gridWidth) / 2);
+        const startY = padding;
+
+        return {
+            containerWidth,
+            containerHeight,
+            seatSize,
+            gapSize,
+            startX,
+            startY,
+            uniqueRows,
+            seatsByRow,
+            padding,
+            scaleFactor,
+        };
+    };
+
+    const handleSeatClick = (seat: Seat) => {
+        if (!seat.isAvailable) return; // This already covers taken seats since we mark them as unavailable
+
+        setSelectedSeats((prev) =>
+            prev.some((s) => s.id === seat.id)
+                ? prev.filter((s) => s.id !== seat.id)
+                : [...prev, seat]
+        );
+    };
+
+    const handleCheckout = () => {
+        selectedSeats.forEach((seat) => {
+            addToCart({
+                id: seat.id,
+                name: `${seat.row}${seat.seatNumber}`,
+                price: getSeatPrice(seat.seatTypeId),
+                quantity: 1,
+                type: "seat",
+                row: seat.row,
+                seatNumber: seat.seatNumber,
+                seatTypeId: seat.seatTypeId,
+                showtime: { id: Number(scheduleId), time: time },
+                movie: {
+                    id: movie.id,
+                    title: movie.title,
+                    runtime: movie.runtime,
+                    ageRating: movie.ageRating,
+                },
+                theater: {
+                    id: theater.id,
+                    name: theater.name,
+                },
+                poster: poster
+                    ? { imageType: poster.imageType, imageData: poster.imageData }
+                    : undefined,
+            });
+        });
+        navigate("/checkout", {
+            state: {
+                selectedSeats,
+                showtime: { id: Number(scheduleId), time },
+                movie,
+                theater,
+                poster,
+            },
+        });
+    };
+
+    const currentYear = new Date().getFullYear();
+
+    if (loading) {
+        return (
+            <div className="flex items-center justify-center min-h-screen bg-gray-900 text-white">
+                <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-indigo-300 mb-4"></div>
+                <p className="text-indigo-300">Loading seat map...</p>
+            </div>
+        );
     }
 
     const fetchData = async () => {
