@@ -24,14 +24,14 @@ interface SeatType {
     seatTypes: string;
 }
 
-//interface SeatTaken {
-//    id: number;
-//    theaterId: number;
-//    movieScheduleId: number;
-//    roomsId: number;
-//    seatId: number;
-//    isTaken: boolean;
-//}
+interface SeatTaken {
+    id: number;
+    theaterId: number;
+    movieScheduleId: number;
+    roomsId: number;
+    seatId: number;
+    isTaken: boolean;
+}
 
 export default function SeatSelection() {
     const { addToCart } = useCart();
@@ -63,26 +63,38 @@ export default function SeatSelection() {
                 setLoading(true);
                 setError(null);
 
-                const [types, seatsData, takenSeatsData] = await Promise.all([
+                // Fetch seat types and seats first (these are critical)
+                const [seatTypeData, seatsData] = await Promise.all([
                     SeatTypeService.getAll(),
                     SeatService.getByRoomId(Number(roomId)),
-                    SeatTakenService.getBySchedule(
+                ]);
+
+                // Set the seat types data for the legend display
+                setSeatTypes(seatTypeData);
+
+                // Then try to fetch taken seats (but don't fail if this errors)
+                let takenSeatsArray: SeatTaken[] = [];
+                try {
+                    const result = await SeatTakenService.getBySchedule(
                         Number(theaterId),
                         Number(scheduleId),
                         Number(roomId)
-                    ),
-                ]);
+                    );
+                    takenSeatsArray = Array.isArray(result) ? result : [];
+                } catch (err) {
+                    console.warn("Error fetching taken seats:", err);
+                    // Continue with empty array for taken seats
+                }
 
-                setSeatTypes(types);
-
-                const updatedSeats = seatsData.map((seat) => {
-                    const isTaken = takenSeatsData.some(
-                        (takenSeat) => takenSeat.seatId === seat.id && takenSeat.isTaken
+                // Mark seats as unavailable if they are taken
+                const updatedSeats = seatsData.map(seat => {
+                    const isTaken = takenSeatsArray.some(
+                        takenSeat => takenSeat.seatId === seat.id && takenSeat.isTaken
                     );
                     return {
                         ...seat,
-                        isAvailable: !isTaken && seat.isAvailable,
-                        isTaken,
+                        isAvailable: isTaken ? false : seat.isAvailable,
+                        isTaken
                     };
                 });
 
@@ -93,7 +105,10 @@ export default function SeatSelection() {
                 }
             } catch (err) {
                 console.error("Error loading data:", err);
-                setError(`Failed to load seat data: ${err instanceof Error ? err.message : "Unknown error"}`);
+                setError(
+                    `Failed to load seat data: ${err instanceof Error ? err.message : "Unknown error"
+                    }`
+                );
             } finally {
                 setLoading(false);
             }
@@ -101,7 +116,6 @@ export default function SeatSelection() {
 
         fetchData();
     }, [movieId, theaterId, roomId, scheduleId, movie, navigate]);
-
 
     const calculateSeatLayout = () => {
         if (seats.length === 0) return null;
