@@ -6,7 +6,7 @@ import { useAuth } from "../components/authContext";
 import axios from "axios";
 import { loadStripe, Stripe } from "@stripe/stripe-js";
 import { getStripePublishableKey } from "../Services/PaymentService";
-import { CartItemType, SeatCartItem, useCart } from "../components/CartContext";
+import { SeatCartItem, useCart } from "../components/CartContext";
 import { getSeatPrice, getSeatTypeName } from "../Utils/seats";
 import { SeatTakenService } from "../Services/SeatTakenService";
 
