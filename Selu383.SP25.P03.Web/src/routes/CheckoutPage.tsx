@@ -283,7 +283,7 @@ export default function Checkout() {
             <p>{error || "Invalid checkout data"}</p>
             <Button
               onClick={() => navigate("/")}
-              className="mt-4 bg-indigo-700 hover:bg-indigo-600 text-white py-3 px-6 rounded-lg transition-all duration-300 shadow-md hover:shadow-lg"
+              className="mt-4 bg-indigo-700 hover:bg-indigo-600 text-white py-3 px-6 rounded-lg transition-all duration-300 shadow-md hover:shadow-lg cursor-pointer"
             >
               Return to Home
             </Button>
@@ -334,7 +334,7 @@ export default function Checkout() {
                     state: { selectedSeats, showtime, theater, movie },
                   });
                 }}
-                className="flex-1 bg-indigo-700 hover:bg-indigo-600 text-white py-2 rounded-lg font-medium transition-all duration-300 shadow-md hover:shadow-lg"
+                className="flex-1 bg-indigo-700 hover:bg-indigo-600 text-white py-2 rounded-lg font-medium transition-all duration-300 shadow-md hover:shadow-lg cursor-pointer"
               >
                 Yes, add concessions
               </Button>
@@ -348,7 +348,7 @@ export default function Checkout() {
                     await continueRegularPayment();
                   }
                 }}
-                className="flex-1 bg-gray-600 hover:bg-gray-500 text-white py-2 rounded-lg font-medium transition-all duration-300 shadow-md hover:shadow-lg"
+                className="flex-1 bg-gray-600 hover:bg-gray-500 text-white py-2 rounded-lg font-medium transition-all duration-300 shadow-md hover:shadow-lg cursor-pointer"
               >
                 No, continue
               </Button>
@@ -445,14 +445,14 @@ export default function Checkout() {
                                 removeFromCart(item.id);
                               }
                             }}
-                            className="bg-red-600 text-white px-2 rounded"
+                            className="bg-red-600 text-white px-2 rounded cursor-pointer"
                           >
                             -
                           </button>
                           <span className="text-white">{item.quantity}</span>
                           <button
                             onClick={() => addToCart({ ...item, quantity: 1 })}
-                            className="bg-green-600 text-white px-2 rounded"
+                            className="bg-green-600 text-white px-2 rounded cursor-pointer"
                           >
                             +
                           </button>
@@ -473,7 +473,7 @@ export default function Checkout() {
                 clearCart();
                 navigate("/");
               }}
-              className="w-full bg-indigo-700 hover:bg-indigo-600 text-white py-2 rounded-lg font-medium mt-2 transition-all duration-300 shadow-md hover:shadow-lg"
+              className="w-full bg-indigo-700 hover:bg-indigo-600 text-white py-2 rounded-lg font-medium mt-2 transition-all duration-300 shadow-md hover:shadow-lg cursor-pointer"
             >
               Clear Cart
             </Button>
@@ -534,17 +534,17 @@ export default function Checkout() {
                 />
               </div>
               <Button
-                onClick={handleStripePayment}
-                className="w-full bg-black text-white py-3 rounded-lg font-medium mt-4 transition-all duration-300 shadow-md hover:shadow-lg"
-              >
-                Pay with Apple Pay / Card
-              </Button>
-              <Button
                 onClick={handlePayment}
                 disabled={paymentProcessing}
-                className="w-full bg-indigo-700 hover:bg-indigo-600 text-white py-3 rounded-lg font-medium mt-4 transition-all duration-300 shadow-md hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed"
+                className="w-full bg-indigo-700 hover:bg-indigo-600 text-white py-3 rounded-lg font-medium mt-4 transition-all duration-300 shadow-md hover:shadow-lg cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {paymentProcessing ? "Processing..." : "Complete Purchase"}
+              </Button>
+              <Button
+                onClick={handleStripePayment}
+                className="w-full bg-indigo-700 hover:bg-indigo-600 text-white py-3 rounded-lg font-medium mt-4 transition-all duration-300 shadow-md hover:shadow-lg cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                Pay with Apple Pay / Card
               </Button>
             </div>
           </div>
