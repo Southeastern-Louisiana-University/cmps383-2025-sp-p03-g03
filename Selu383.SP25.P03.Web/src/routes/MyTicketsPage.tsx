@@ -1,60 +1,45 @@
-import { useState, useEffect } from "react";
-import QRCodeComponent from "../components/qrCode";
+import { useEffect, useState } from "react";
 import { useAuth } from "../components/authContext";
+import QRCodeComponent from "../components/qrCode";
 
-interface TicketDto {
+interface TicketDetails {
   id: number;
-  orderId: number;
-  screeningId: number;
-  seatId: number | null;
-  ticketType: string | null;
+  theaterName: string;
+  movieName: string;
+  movieTime: string;
+  roomName: string;
+  seatName: string;
+  ticketType: string;
   price: number;
-}
-
-interface UserTicketDto {
-  id: number;
+  screeningId: number;
   userId: number;
-  ticketId: number;
-  ticket: TicketDto | null;
 }
 
-export default function MyTickets() {
+export default function TicketDetailsPage() {
   const { userId } = useAuth();
-  const [tickets, setTickets] = useState<TicketDto[]>([]);
+  const [tickets, setTickets] = useState<TicketDetails[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     if (!userId) return;
 
-    const fetchUserTickets = async () => {
+    const fetchTickets = async () => {
       try {
-        setLoading(true);
-        const userTicketsResponse = await fetch(
-          `/api/userticket/GetByUserId/${userId}`
-        );
-        if (!userTicketsResponse.ok) {
-          throw new Error("Failed to fetch user tickets");
+        const res = await fetch(`/api/TicketDetails/user/${userId}`);
+        if (!res.ok) {
+          throw new Error("Failed to fetch tickets");
         }
-        const userTickets: UserTicketDto[] = await userTicketsResponse.json();
-
-        const ticketData: TicketDto[] = userTickets
-          .map((ut) => ut.ticket)
-          .filter((ticket): ticket is TicketDto => ticket !== null);
-
-        setTickets(ticketData);
+        const data: TicketDetails[] = await res.json();
+        setTickets(data);
       } catch (err) {
-        setError(
-          err instanceof Error
-            ? err.message
-            : "An error occurred while fetching tickets"
-        );
+        setError(err instanceof Error ? err.message : "Error fetching tickets");
       } finally {
         setLoading(false);
       }
     };
 
-    fetchUserTickets();
+    fetchTickets();
   }, [userId]);
 
   const currentYear = new Date().getFullYear();
@@ -63,7 +48,7 @@ export default function MyTickets() {
     return (
       <div className="flex items-center justify-center min-h-screen bg-gray-900 text-white">
         <p className="text-xl text-gray-300">
-          You need to login to see tickets
+          Please log in to view your tickets.
         </p>
       </div>
     );
@@ -96,6 +81,7 @@ export default function MyTickets() {
         <h1 className="text-4xl font-extrabold text-indigo-300 drop-shadow-lg">
           My Tickets
         </h1>
+
         {tickets.length === 0 ? (
           <div className="text-center py-8 bg-gray-800 rounded-lg shadow-lg shadow-indigo-950/50">
             <p className="text-xl text-indigo-200">No tickets found</p>
@@ -105,39 +91,45 @@ export default function MyTickets() {
           </div>
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {tickets.map((ticket, index) => (
+            {tickets.map((ticket) => (
               <div
-                key={`${ticket.id}-${index}`}
+                key={ticket.id}
                 className="bg-gray-800 rounded-lg p-6 shadow-lg shadow-indigo-950/50 transition-all duration-300 hover:shadow-indigo-800/70"
               >
                 <h2 className="text-xl font-extrabold text-indigo-300 mb-4 drop-shadow-lg">
-                  Ticket #{ticket.id}
+                  {ticket.movieName || "Unknown Movie"}
                 </h2>
                 <div className="space-y-2 text-gray-200">
                   <p>
-                    <strong className="text-indigo-400">Order ID:</strong>{" "}
-                    {ticket.orderId}
+                    <strong className="text-indigo-400">Showtime:</strong>{" "}
+                    {new Date(ticket.movieTime).toLocaleString("en-US", {
+                      year: "numeric",
+                      month: "long",
+                      day: "numeric",
+                      hour: "numeric",
+                      minute: "2-digit",
+                      hour12: true,
+                    })}
                   </p>
                   <p>
-                    <strong className="text-indigo-400">Screening ID:</strong>{" "}
-                    {ticket.screeningId}
+                    <strong className="text-indigo-400">Seat:</strong>{" "}
+                    {ticket.seatName || "N/A"}
                   </p>
+
                   <p>
-                    <strong className="text-indigo-400">Seat ID:</strong>{" "}
-                    {ticket.seatId ?? "N/A"}
-                  </p>
-                  <p>
-                    <strong className="text-indigo-400">Type:</strong>{" "}
-                    {ticket.ticketType ?? "N/A"}
+                    <strong className="text-indigo-400">Ticket Type:</strong>{" "}
+                    {ticket.ticketType}
                   </p>
                   <p>
                     <strong className="text-indigo-400">Price:</strong> $
                     {ticket.price.toFixed(2)}
                   </p>
                 </div>
+
                 <div className="mt-4">
+                  <strong className="text-indigo-400">QR Code:</strong>
                   <QRCodeComponent
-                    userId={parseInt(userId)}
+                    userId={ticket.userId}
                     ticketId={ticket.id}
                   />
                 </div>
@@ -150,17 +142,6 @@ export default function MyTickets() {
       <footer className="w-full bg-indigo-950 text-white py-6">
         <div className="container mx-auto px-4 text-center">
           <p>© {currentYear} Lion's Den Cinemas. All rights reserved.</p>
-          <div className="mt-2 space-x-4">
-            <a href="/terms" className="hover:text-indigo-300">
-              Terms
-            </a>
-            <a href="/privacy" className="hover:text-indigo-300">
-              Privacy
-            </a>
-            <a href="/contact" className="hover:text-indigo-300">
-              Contact
-            </a>
-          </div>
         </div>
       </footer>
     </div>
