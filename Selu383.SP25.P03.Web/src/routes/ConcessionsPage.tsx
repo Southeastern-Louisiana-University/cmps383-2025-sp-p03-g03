@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { useCart } from "../components/CartContext";
+import { PiShoppingCartBold } from "react-icons/pi";
 
 type Product = {
   id: number;
@@ -146,19 +147,20 @@ export default function ConcessionsPage() {
                                 : "opacity-0 group-hover:opacity-100"
                             }`}
                           >
-                            <p className="text-indigo-300 font-bold text-sm md:text-base px-4">
+                            <p className="text-indigo-300 font-bold text-lg! md:text-base px-4">
                               ${product.price.toFixed(2)}
                             </p>
                             <button
                               onClick={() => handleAddToCart(product)}
                               disabled={isAdded}
-                              className={`mt-4 bg-indigo-700 text-white px-4 py-2 rounded-lg font-medium transition-all duration-300 shadow-md hover:shadow-lg cursor-pointer ${
+                              className={`mt-4 flex items-center gap-2 bg-indigo-700 text-white px-4 py-2 rounded-lg font-medium transition-all duration-300 shadow-md hover:shadow-lg cursor-pointer ${
                                 isAdded
                                   ? "opacity-50 cursor-not-allowed"
                                   : "hover:bg-indigo-600"
                               }`}
                             >
-                              {isAdded ? "Added!" : "Add to Cart"}
+                              <PiShoppingCartBold className="h-4 w-4" />
+                              <span>{isAdded ? "Added!" : "Add to Cart"}</span>
                             </button>
                           </div>
                         </>
@@ -189,7 +191,7 @@ export default function ConcessionsPage() {
       </div>
 
       {/* Footer */}
-      <footer className="w-full bg-indigo-950 text-white py-6">
+      <footer className="w-full bg-indigo-800 text-white py-6">
         <div className="container mx-auto px-4 text-center">
           <p>© {currentYear} Lion's Den Cinemas. All rights reserved.</p>
           <div className="mt-2 space-x-4">

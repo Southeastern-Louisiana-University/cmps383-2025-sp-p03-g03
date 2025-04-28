@@ -34,4 +34,11 @@ body {
 .swiper-button-prev,
 .swiper-button-next {
   color: #4f46e5 !important;
+  transition: transform 0.3s ease, color 0.3s ease !important;
+}
+
+.swiper-button-prev:hover,
+.swiper-button-next:hover {
+  transform: scale(1.2) !important;
+  color: #a5b4fc !important; /* Tailwind indigo-300 */
 }
