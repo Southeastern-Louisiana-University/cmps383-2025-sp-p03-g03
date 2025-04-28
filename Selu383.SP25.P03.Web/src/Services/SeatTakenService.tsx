@@ -33,29 +33,19 @@ const handleApiError = (error: unknown, context: string): never => {
 // SeatTaken service methods
 export const SeatTakenService = {
     // Get taken seats for a specific schedule
-    getBySchedule: async (theaterId: number, movieScheduleId: number, roomId: number, seatId?: number): Promise<SeatTakenDTO[]> => {
+    getBySchedule: async (theaterId: number, movieScheduleId: number, roomId: number ): Promise<SeatTakenDTO[]> => {
         try {
-            if (seatId) {
-                // Get specific seat
-                logger.info(`Fetching taken seat for schedule: Theater ${theaterId}, Schedule ${movieScheduleId}, Room ${roomId}, Seat ${seatId}`);
-                const response = await axios.get<SeatTakenDTO[]>(`${API_URL}/GetBySchedule/${theaterId}/${movieScheduleId}/${roomId}/${seatId}`);
-                if (!Array.isArray(response.data)) {
-                    logger.warn(`API did not return an array, got ${typeof response.data} instead. Returning empty array.`);
-                    return [];
-                }
-                logger.success(`Retrieved ${response.data.length} taken seat record`);
-                return response.data;
-            } else {
+
                 // Get all seats for this schedule/room
                 logger.info(`Fetching all taken seats for schedule: Theater ${theaterId}, Schedule ${movieScheduleId}, Room ${roomId}`);
-                const response = await axios.get<SeatTakenDTO[]>(`${API_URL}/GetAllBySchedule/${theaterId}/${movieScheduleId}/${roomId}`);
+                const response = await axios.get<SeatTakenDTO[]>(`${API_URL}/GetBySchedule/${theaterId}/${movieScheduleId}/${roomId}`);
                 if (!Array.isArray(response.data)) {
                     logger.warn(`API did not return an array, got ${typeof response.data} instead. Returning empty array.`);
                     return [];
                 }
                 logger.success(`Retrieved ${response.data.length} taken seats for the schedule`);
                 return response.data;
-            }
+            
         } catch (error) {
             if (axios.isAxiosError(error) && error.response?.status === 404) {
                 logger.warn(`No taken seats found, returning empty array`);
