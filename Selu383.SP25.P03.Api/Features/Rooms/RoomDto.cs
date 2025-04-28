@@ -39,12 +39,12 @@ namespace Selu383.SP25.P03.Api.Features.Rooms
         public void Configure(EntityTypeBuilder<Room> builder)
         {
             builder.HasKey(e => e.Id);
-            builder.Property(e => e.Name).IsRequired();
+            builder.Property(e => e.Name).IsRequired(false);
             builder.Property(e => e.NumOfSeats).IsRequired();
             builder.Property(e => e.rows).IsRequired();
             builder.Property(e => e.columns).IsRequired();
-            builder.Property(e => e.ScreenType).IsRequired();
-            builder.Property(e => e.Audio).IsRequired();
+            builder.Property(e => e.ScreenType).IsRequired(false);
+            builder.Property(e => e.Audio).IsRequired(false);
             builder.Property(e => e.IsActive)
                 .HasDefaultValue(true)
                 .IsRequired();

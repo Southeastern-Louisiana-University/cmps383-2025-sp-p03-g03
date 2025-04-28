@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Selu383.SP25.P03.Api.Controllers;
@@ -8,29 +9,32 @@ using Selu383.SP25.P03.Api.Features.Seats;
 
 [Route("api/[controller]")]
 [ApiController]
-public class SeatTakenController : GenericController<Room, RoomDto>
+public class SeatTakenController : GenericController<SeatTaken, SeatTakenDTO>
 {
+    
+    
     public SeatTakenController(DataContext context, IMapper mapper)
         : base(context, mapper)
     {
     }
 
-    [HttpGet("GetBySchedule/{theaterId}/{movieScheduleId}/{roomId}/{seatId}")]
+    [HttpGet("GetBySchedule/{theaterId}/{movieScheduleId}/{roomId}")]
     public async Task<ActionResult<IEnumerable<SeatTaken>>> GetRoomByTheaterId(
-        int theaterId, int movieScheduleId, int roomId, int seatId)
+        int theaterId, int movieScheduleId, int roomId)
     {
         var result = await _context.Set<SeatTaken>()
             .Where(i =>
                 i.TheaterId == theaterId &&
                 i.MovieScheduleId == movieScheduleId &&
-                i.RoomsId == roomId &&
-                i.SeatId == seatId)
+                i.RoomsId == roomId) 
+                //i.SeatId == seatId)
             .ToListAsync();
 
         return Ok(result);
     }
 
     [HttpPost("Create")]
+    [AllowAnonymous]
     public async Task<ActionResult<SeatTaken>> CreateSeatTaken([FromBody] SeatTaken newSeatTaken)
     {
         _context.Set<SeatTaken>().Add(newSeatTaken);
