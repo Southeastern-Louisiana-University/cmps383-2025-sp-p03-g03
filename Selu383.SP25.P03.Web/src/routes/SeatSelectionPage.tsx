@@ -284,7 +284,26 @@ export default function SeatSelection() {
               : "No showtime selected"}
           </p>
         </div>
-
+        <div className="flex flex-wrap justify-center gap-4 md:gap-6 mb-10">
+          {seatTypes.map((type) => (
+            <div key={type.id} className="flex items-center gap-2">
+              <div
+                className={`w-5 h-5 rounded-full ${
+                  seatTypeColors[type.id] || "bg-gray-600"
+                }`}
+              ></div>
+              <span className="text-sm text-gray-300">{type.seatTypes}</span>
+            </div>
+          ))}
+          <div className="flex items-center gap-2">
+            <div className="w-5 h-5 bg-red-600 rounded-full"></div>
+            <span className="text-sm text-gray-300">Reserved</span>
+          </div>
+          <div className="flex items-center gap-2">
+            <div className="w-5 h-5 bg-green-600 rounded-full"></div>
+            <span className="text-sm text-gray-300">Selected</span>
+          </div>
+        </div>
         {layout && (
           <div
             className="bg-gradient-to-t from-indigo-950 to-gray-800 text-white text-center py-6 mb-8 rounded-lg shadow-lg shadow-indigo-950/50 mx-auto"
@@ -405,27 +424,6 @@ export default function SeatSelection() {
             </div>
           </>
         )}
-
-        <div className="flex flex-wrap justify-center gap-4 md:gap-6">
-          {seatTypes.map((type) => (
-            <div key={type.id} className="flex items-center gap-2">
-              <div
-                className={`w-5 h-5 rounded-full ${
-                  seatTypeColors[type.id] || "bg-gray-600"
-                }`}
-              ></div>
-              <span className="text-sm text-gray-300">{type.seatTypes}</span>
-            </div>
-          ))}
-          <div className="flex items-center gap-2">
-            <div className="w-5 h-5 bg-red-600 rounded-full"></div>
-            <span className="text-sm text-gray-300">Reserved</span>
-          </div>
-          <div className="flex items-center gap-2">
-            <div className="w-5 h-5 bg-green-600 rounded-full"></div>
-            <span className="text-sm text-gray-300">Selected</span>
-          </div>
-        </div>
       </div>
 
       <footer className="w-full bg-indigo-950 text-white py-6">
