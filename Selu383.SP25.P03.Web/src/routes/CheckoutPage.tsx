@@ -404,8 +404,19 @@ export default function Checkout() {
                   {cart
                     .filter((item) => item.type === "seat")
                     .map((item) => (
-                      <li key={item.id} className="flex justify-between">
-                        <span>{item.name}</span>
+                      <li
+                        key={item.id}
+                        className="flex justify-between items-center py-2"
+                      >
+                        <div className="flex items-center gap-2">
+                          <button
+                            onClick={() => removeFromCart(item.id)}
+                            className="border border-red-500 text-red-500 px-2 py-1 rounded hover:bg-red-500 hover:text-white text-xs"
+                          >
+                            Remove
+                          </button>
+                          <span className="ml-4">{item.name}</span>
+                        </div>
                         <span>${(item.price * item.quantity).toFixed(2)}</span>
                       </li>
                     ))}
