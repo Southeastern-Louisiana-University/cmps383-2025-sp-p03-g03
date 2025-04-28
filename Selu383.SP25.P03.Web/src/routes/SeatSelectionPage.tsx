@@ -3,7 +3,7 @@ import { useParams, useNavigate, useLocation } from "react-router-dom";
 import { Button } from "@headlessui/react";
 import { ArrowLeftIcon, TicketIcon } from "@heroicons/react/24/outline";
 import { SeatService, SeatTypeService } from "../Services/SeatService";
-import { SeatTakenService } from "../Services/SeatTakenService"; // Add import for the new service
+import { SeatTakenService } from "../Services/SeatTakenService";
 import { useCart } from "../components/CartContext";
 import { getSeatPrice, getSeatTypeName } from "../Utils/seats";
 
@@ -16,7 +16,7 @@ interface Seat {
   seatNumber: number;
   xPosition: number;
   yPosition: number;
-  isTaken?: boolean; // Add isTaken property
+  isTaken?: boolean;
 }
 
 interface SeatType {
@@ -63,16 +63,13 @@ export default function SeatSelection() {
         setLoading(true);
         setError(null);
 
-        // Fetch seat types and seats first (these are critical)
         const [seatTypeData, seatsData] = await Promise.all([
           SeatTypeService.getAll(),
           SeatService.getByRoomId(Number(roomId)),
         ]);
 
-        // Set the seat types data for the legend display
         setSeatTypes(seatTypeData);
 
-        // Then try to fetch taken seats (but don't fail if this errors)
         let takenSeatsArray: SeatTaken[] = [];
         try {
           const result = await SeatTakenService.getBySchedule(
@@ -83,10 +80,8 @@ export default function SeatSelection() {
           takenSeatsArray = Array.isArray(result) ? result : [];
         } catch (err) {
           console.warn("Error fetching taken seats:", err);
-          // Continue with empty array for taken seats
         }
 
-        // Mark seats as unavailable if they are taken
         const updatedSeats = seatsData.map((seat) => {
           const isTaken = takenSeatsArray.some(
             (takenSeat) => takenSeat.seatId === seat.id && takenSeat.isTaken
@@ -177,7 +172,7 @@ export default function SeatSelection() {
   };
 
   const handleSeatClick = (seat: Seat) => {
-    if (!seat.isAvailable) return; // This already covers taken seats since we mark them as unavailable
+    if (!seat.isAvailable) return;
 
     setSelectedSeats((prev) =>
       prev.some((s) => s.id === seat.id)
@@ -239,7 +234,7 @@ export default function SeatSelection() {
 
   return (
     <div className="flex flex-col min-h-screen bg-gray-900 text-white">
-      <div className="max-w-[95vw] mx-auto p-6 flex-1 w-full">
+      <div className="container mx-auto p-6 flex-1">
         <Button
           onClick={() => navigate(-1)}
           className="flex items-center gap-2 text-indigo-400 mb-6 hover:text-indigo-300 transition-colors duration-300"
@@ -284,6 +279,7 @@ export default function SeatSelection() {
               : "No showtime selected"}
           </p>
         </div>
+
         <div className="flex flex-wrap justify-center gap-4 md:gap-6 mb-10">
           {seatTypes.map((type) => (
             <div key={type.id} className="flex items-center gap-2">
@@ -304,126 +300,138 @@ export default function SeatSelection() {
             <span className="text-sm text-gray-300">Selected</span>
           </div>
         </div>
-        {layout && (
-          <div
-            className="bg-gradient-to-t from-indigo-950 to-gray-800 text-white text-center py-6 mb-8 rounded-lg shadow-lg shadow-indigo-950/50 mx-auto"
-            style={{
-              width: `${layout.containerWidth}px`,
-              maxWidth: "95vw",
-            }}
-          >
-            <h2 className="text-xl font-bold text-indigo-200 drop-shadow-md">
-              SCREEN
-            </h2>
-          </div>
-        )}
 
-        {!layout ? (
-          <div className="text-center py-12">
-            <p className="text-indigo-300">No seating information available</p>
-          </div>
-        ) : (
-          <>
-            <div className="pb-6 mb-8 flex justify-center overflow-auto">
+        <div className="flex flex-col lg:flex-row lg:gap-8">
+          <div className="flex-1">
+            {layout && (
               <div
-                className="relative border border-gray-700 rounded-lg bg-gray-800 shadow-lg shadow-indigo-950/50 mx-auto"
+                className="bg-gradient-to-t from-indigo-950 to-gray-800 text-white text-center py-6 mb-8 rounded-lg shadow-lg shadow-indigo-950/50 mx-auto"
                 style={{
                   width: `${layout.containerWidth}px`,
-                  height: `${layout.containerHeight}px`,
-                  minWidth: "800px",
-                  minHeight: "500px",
+                  maxWidth: "95vw",
                 }}
               >
-                {layout.uniqueRows.map((row, rowIndex) => (
-                  <div
-                    key={row}
-                    className="absolute w-full"
-                    style={{
-                      top: `${
-                        layout.startY +
-                        rowIndex * (layout.seatSize + layout.gapSize)
-                      }px`,
-                      height: `${layout.seatSize}px`,
-                    }}
-                  >
-                    {layout.seatsByRow[rowIndex].map((seat) => (
-                      <button
-                        key={seat.id}
-                        className={`absolute rounded-full flex items-center justify-center transition-all duration-300 cursor-pointer
-                        ${
-                          !seat.isAvailable
-                            ? "bg-red-600 cursor-not-allowed opacity-70"
-                            : selectedSeats.some((s) => s.id === seat.id)
-                            ? "bg-green-600 text-white scale-110 shadow-md"
-                            : seatTypeColors[seat.seatTypeId] || "bg-indigo-600"
-                        }
-                        ${seat.seatTypeId === 4 ? "ring-3 ring-yellow-400" : ""}
-                        text-white hover:scale-105 hover:shadow-md`}
-                        style={{
-                          width: `${layout.seatSize}px`,
-                          height: `${layout.seatSize}px`,
-                          left: `${
-                            layout.startX +
-                            (seat.seatNumber - 1) *
-                              (layout.seatSize + layout.gapSize)
-                          }px`,
-                          fontSize: `${Math.max(10, layout.seatSize * 0.4)}px`,
-                        }}
-                        onClick={() => handleSeatClick(seat)}
-                        disabled={!seat.isAvailable}
-                        aria-label={`Seat ${seat.row}${seat.seatNumber}`}
-                      >
-                        {seat.row}
-                        {seat.seatNumber}
-                      </button>
-                    ))}
-                  </div>
-                ))}
+                <h2 className="text-xl font-bold text-indigo-200 drop-shadow-md">
+                  SCREEN
+                </h2>
               </div>
-            </div>
+            )}
 
-            <div className="bg-gray-800 rounded-xl p-6 mb-8 shadow-lg shadow-indigo-950/50">
-              <h2 className="text-xl font-extrabold text-indigo-300 mb-4 drop-shadow-lg">
-                Your Selection ({selectedSeats.length})
-              </h2>
-
-              {selectedSeats.length > 0 ? (
-                <>
-                  <ul className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 mb-6">
-                    {selectedSeats.map((seat) => (
-                      <li
-                        key={seat.id}
-                        className="bg-gray-700 p-3 rounded-lg shadow-xs"
-                      >
-                        <span className="font-medium text-indigo-200">
+            {!layout ? (
+              <div className="text-center py-12">
+                <p className="text-indigo-300">
+                  No seating information available
+                </p>
+              </div>
+            ) : (
+              <div className="pb-6 mb-8 flex justify-center overflow-auto">
+                <div
+                  className="relative border border-gray-700 rounded-lg bg-gray-800 shadow-lg shadow-indigo-950/50 mx-auto"
+                  style={{
+                    width: `${layout.containerWidth}px`,
+                    height: `${layout.containerHeight}px`,
+                    minWidth: "800px",
+                    minHeight: "500px",
+                  }}
+                >
+                  {layout.uniqueRows.map((row, rowIndex) => (
+                    <div
+                      key={row}
+                      className="absolute w-full"
+                      style={{
+                        top: `${
+                          layout.startY +
+                          rowIndex * (layout.seatSize + layout.gapSize)
+                        }px`,
+                        height: `${layout.seatSize}px`,
+                      }}
+                    >
+                      {layout.seatsByRow[rowIndex].map((seat) => (
+                        <button
+                          key={seat.id}
+                          className={`absolute rounded-full flex items-center justify-center transition-all duration-300 cursor-pointer
+                          ${
+                            !seat.isAvailable
+                              ? "bg-red-600 cursor-not-allowed opacity-70"
+                              : selectedSeats.some((s) => s.id === seat.id)
+                              ? "bg-green-600 text-white scale-110 shadow-md"
+                              : seatTypeColors[seat.seatTypeId] ||
+                                "bg-indigo-600"
+                          }
+                          ${
+                            seat.seatTypeId === 4
+                              ? "ring-3 ring-yellow-400"
+                              : ""
+                          }
+                          text-white hover:scale-105 hover:shadow-md`}
+                          style={{
+                            width: `${layout.seatSize}px`,
+                            height: `${layout.seatSize}px`,
+                            left: `${
+                              layout.startX +
+                              (seat.seatNumber - 1) *
+                                (layout.seatSize + layout.gapSize)
+                            }px`,
+                            fontSize: `${Math.max(
+                              10,
+                              layout.seatSize * 0.4
+                            )}px`,
+                          }}
+                          onClick={() => handleSeatClick(seat)}
+                          disabled={!seat.isAvailable}
+                          aria-label={`Seat ${seat.row}${seat.seatNumber}`}
+                        >
                           {seat.row}
                           {seat.seatNumber}
-                        </span>
-                        <span className="text-sm text-gray-300 block mt-1">
-                          {getSeatTypeName(seat.seatTypeId)}
-                        </span>
-                      </li>
-                    ))}
-                  </ul>
-                  <Button
-                    onClick={handleCheckout}
-                    className="w-full bg-indigo-700 hover:bg-indigo-600 text-white py-3 rounded-lg font-medium flex items-center justify-center gap-2 transition-all duration-300 shadow-md hover:shadow-lg cursor-pointer"
-                  >
-                    Proceed to Checkout
-                    <TicketIcon className="h-5 w-5" />
-                  </Button>
-                </>
-              ) : (
-                <div className="text-center py-4">
-                  <p className="text-gray-300">Select seats to continue</p>
-                  <p className="text-sm text-gray-400 mt-1">
-                    Click on available seats to select them
-                  </p>
+                        </button>
+                      ))}
+                    </div>
+                  ))}
                 </div>
-              )}
-            </div>
-          </>
-        )}
+              </div>
+            )}
+          </div>
+
+          <div className="lg:w-80 lg:sticky lg:top-6 lg:self-start bg-gray-800 rounded-xl p-6 shadow-lg shadow-indigo-950/50">
+            <h2 className="text-xl font-extrabold text-indigo-300 mb-4 drop-shadow-lg">
+              Your Selection ({selectedSeats.length})
+            </h2>
+            {selectedSeats.length > 0 ? (
+              <>
+                <ul className="space-y-3 mb-6">
+                  {selectedSeats.map((seat) => (
+                    <li
+                      key={seat.id}
+                      className="bg-gray-700 p-3 rounded-lg shadow-xs"
+                    >
+                      <span className="font-medium text-indigo-200">
+                        {seat.row}
+                        {seat.seatNumber}
+                      </span>
+                      <span className="text-sm text-gray-300 block mt-1">
+                        {getSeatTypeName(seat.seatTypeId)}
+                      </span>
+                    </li>
+                  ))}
+                </ul>
+                <Button
+                  onClick={handleCheckout}
+                  className="w-full bg-indigo-700 hover:bg-indigo-600 text-white py-3 rounded-lg font-medium flex items-center justify-center gap-2 transition-all duration-300 shadow-md hover:shadow-lg cursor-pointer"
+                >
+                  Proceed to Checkout
+                  <TicketIcon className="h-5 w-5" />
+                </Button>
+              </>
+            ) : (
+              <div className="text-center py-4">
+                <p className="text-gray-300">Select seats to continue</p>
+                <p className="text-sm text-gray-400 mt-1">
+                  Click on available seats to select them
+                </p>
+              </div>
+            )}
+          </div>
+        </div>
       </div>
 
       <footer className="w-full bg-indigo-950 text-white py-6">
